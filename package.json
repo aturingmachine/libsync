@@ -1,0 +1,26 @@
+{
+  "name": "library-sync",
+  "version": "1.0.0",
+  "description": "sync two directories on windows",
+  "main": "index.js",
+  "scripts": {
+    "clean": "clear && npm run reset && npm run dev",
+    "dev": "tsc && node dist/index.js src=./test-data/test-src-folder dest=./test-data/test-nest-dest/test-dest-folder backupDir=./test-data/test-backup",
+    "reset": "bash ./scripts/reset-test.sh",
+    "help": "tsc && node dist/index.js -- help",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "tsc && node dist/index.js",
+    "dev-service": "tsc && node dist/index.js src=./test-data/test-src-folder dest=./test-data/test-nest-dest/test-dest-folder -- service",
+    "service": "tsc && node dist/index.js  src=/mnt/f/lib-sync-test-src dest=/mnt/f/lib-sync-test-dest -- service"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "chalk": "^4.1.1",
+    "winston": "^3.3.3"
+  },
+  "devDependencies": {
+    "@types/node": "^15.12.4",
+    "typescript": "^4.3.4"
+  }
+}

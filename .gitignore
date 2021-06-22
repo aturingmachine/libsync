@@ -1,0 +1,13 @@
+dist
+
+node_modules
+
+test-data/test-dest-folder/**
+
+.config.json
+
+logs
+
+todos
+
+temp

@@ -1,0 +1,9 @@
+{
+  "srcDir": "",
+  "destDir": "",
+  "backupDir": "",
+  "combinedLogsOutputDir": "",
+  "debounceAmount": 0,
+  "rezAttempts": 0,
+  "rezCooldown": 0
+}
