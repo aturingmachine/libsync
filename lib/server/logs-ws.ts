@@ -43,17 +43,11 @@ async function watchLogFile(): Promise<void> {
 export class LogWebSocket {
   wsServer!: ws.Server
   initTimestamp!: number
-  fileTail!: Tail.Tail
   logger!: Logger
   socket!: ws
 
   constructor(request: any, socket: Socket, head: any) {
     this.logger = logger.child({ func: 'log-websocket' })
-    this.logger.info(`Mounting Tail To ${EnvConfig.get.combinedLogsOutputDir}`)
-    this.fileTail = new Tail.Tail(EnvConfig.get.combinedLogsOutputDir, {
-      follow: true,
-      // nLines: 250,
-    })
 
     this.wsServer = new ws.Server({ noServer: true })
     this.initTimestamp = Date.now()

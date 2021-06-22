@@ -4,6 +4,7 @@
   "description": "sync two directories on windows",
   "main": "index.js",
   "scripts": {
+    "build": "./scripts/build.sh",
     "compile": "tsc",
     "clean": "clear && npm run reset && npm run dev",
     "dev": "tsc && node dist/index.js src=./test-data/test-src-folder dest=./test-data/test-nest-dest/test-dest-folder backupDir=./test-data/test-backup",

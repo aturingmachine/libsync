@@ -17,5 +17,6 @@
     "sourceMap": true,
     "types": ["node", "express"],
     "lib": ["ES2019"]
-  }
+  },
+  "exclude": ["client/**"]
 }

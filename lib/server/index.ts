@@ -8,9 +8,22 @@ function mountApi() {
 
   app.use(express.json())
 
-  app.get('/', (req: express.Request, res: express.Response) => {
-    res.sendFile(path.resolve(__dirname, '../client/index.html'))
+  app.get('/client', (req: express.Request, res: express.Response) => {
+    res.sendFile(path.resolve(__dirname, '../../client/index.html'))
   })
+
+  // TODO this is very, very unsafe and should be fixed
+  app.get(
+    '/client/:dir/:resource',
+    (req: express.Request, res: express.Response) => {
+      res.sendFile(
+        path.resolve(
+          __dirname,
+          `../../client/${req.params.dir}/${req.params.resource}`
+        )
+      )
+    }
+  )
 
   app.use(mountLogsRouter())
 

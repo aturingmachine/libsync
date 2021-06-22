@@ -16,7 +16,7 @@ while [ -n "$1" ]; do # while loop starts
 
 done
 
-echo ">>> Compiling..."
+echo ">>> Compiling LibSync..."
 
 npm run compile
 
@@ -24,8 +24,7 @@ echo ">>> Compilation Complete"
 
 if [ $BUILD_CLIENT == 1 ]
 then
- echo ">>> Moving Client"
- mkdir ./dist/lib/client
- cp ./lib/client/index.html ./dist/lib/client/index.html
+ echo ">>> Compiling LibSync Client..."
+ npm run build --prefix ./client/libsync-client
 fi
 
