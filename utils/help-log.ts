@@ -28,49 +28,49 @@ const argsFlags: HelpGuide = {
 Object.freeze(argsFlags)
 
 const configGuide: HelpGuide = {
-  SRC_DIR: {
+  srcDir: {
     type: ['PathLike'],
     helpMsg: `Equivalent of the "src=" argument.\n${getSpacer()}${LogHelper.Colorize.red(
       'Will be overridden by the "src=" argument.'
     )}`,
   },
-  DEST_DIR: {
+  destDir: {
     type: ['PathLike'],
     helpMsg: `Equivalent of the "dest=" argument.\n${getSpacer()}${LogHelper.Colorize.red(
       'Will be overridden by the "dest=" argument.'
     )}`,
   },
-  BACKUP_DIR: {
+  backupDir: {
     type: ['PathLike'],
     helpMsg: `Equivalent of the "backupDir=" argument.\n${getSpacer()}${LogHelper.Colorize.red(
       'Will be overridden by the "backupDir=" argument.'
     )}`,
   },
-  COMBINED_LOGS_PATH: {
+  combinedLogsOutputDir: {
     type: ['PathLike'],
     helpMsg: `Where all logs should be written.\n${getSpacer()}${LogHelper.Colorize.yellow(
       'Defaults to "./logs/combined.log"'
     )}`,
   },
-  ERROR_LOGS_PATH: {
+  errorLogsOutputdir: {
     type: ['PathLike'],
     helpMsg: `Where error logs should be written.\n${getSpacer()}${LogHelper.Colorize.yellow(
       'Defaults to "./logs/error.log"'
     )}`,
   },
-  DEBOUNCE_AMOUNT: {
+  debounceAmount: {
     type: ['number', 'ms'],
     helpMsg: `How long LibSync should wait between change events before attempting the sync process. Not recommended to set below 20000.\n${getSpacer()}${LogHelper.Colorize.yellow(
       'Defaults to 60000'
     )}`,
   },
-  REZ_ATTEMPTS: {
+  rezAttempts: {
     type: ['number', 'ms'],
     helpMsg: `How many attempts should be made to remount the service if it detaches from the src dir. Will not recover from fatal errors.\n${getSpacer()}${LogHelper.Colorize.yellow(
       'Defaults to 3'
     )}`,
   },
-  REZ_COOLDOWN: {
+  rezCooldown: {
     type: ['number', 'ms'],
     helpMsg: `How long to wait before making a rez attempt. Wait will also occur before first rez attempt.\n${getSpacer()}${LogHelper.Colorize.yellow(
       'Defaults to 10000'
@@ -126,7 +126,7 @@ function logConfig() {
   console.log('\n')
   LogHelper.headboard('LibSync Configuration', LogHelper.green)
   console.log(
-    "LibSync's Behavior can be modified by changing some environment variables. These are read automatically from a local './.env'. A template can be found at './.env.example'."
+    "LibSync's Behavior can be modified by changing some environment variables. These are read automatically from a local './.config.json'. A template can be found at './.config.example.json'."
   )
 
   console.group()

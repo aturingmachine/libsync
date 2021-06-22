@@ -3,6 +3,7 @@
   "destDir": "",
   "backupDir": "",
   "combinedLogsOutputDir": "",
+  "errorLogsOutputdir": "",
   "debounceAmount": 0,
   "rezAttempts": 0,
   "rezCooldown": 0

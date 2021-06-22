@@ -1,6 +1,6 @@
 {
   "name": "library-sync",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "sync two directories on windows",
   "main": "index.js",
   "scripts": {
