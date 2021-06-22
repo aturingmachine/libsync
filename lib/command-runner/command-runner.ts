@@ -1,5 +1,5 @@
 import fs from 'fs/promises'
-import { Command, Commands } from '../../models'
+import { Command, Commands } from '../../models/commands'
 import Config from '../../utils/config/config-holder'
 import { logger, LogHelper, Logger } from '../../utils/log-helper'
 
