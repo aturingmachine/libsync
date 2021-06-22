@@ -1,5 +1,5 @@
 import { PathLike } from 'fs'
-import { DirStruct } from '../../models'
+import { DirStruct } from '../../models/dirs'
 import Config from '../../utils/config/config-holder'
 import { logger, Logger } from '../../utils/log-helper'
 
