@@ -13,7 +13,7 @@
     "start": "tsc && node dist/index.js",
     "dev-service": "tsc && node dist/index.js src=./test-data/test-src-folder dest=./test-data/test-nest-dest/test-dest-folder -- service",
     "service": "tsc && node dist/index.js  src=/mnt/f/lib-sync-test-src dest=/mnt/f/lib-sync-test-dest -- service",
-    "client": "tsc && node dist/index.js  src=/mnt/f/lib-sync-test-src dest=/mnt/f/lib-sync-test-dest -- service client"
+    "client": "./scripts/build.sh -b && node dist/index.js  src=/mnt/f/lib-sync-test-src dest=/mnt/f/lib-sync-test-dest -- service client debug"
   },
   "author": "",
   "license": "MIT",

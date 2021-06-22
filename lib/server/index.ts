@@ -1,7 +1,7 @@
 import express from 'express'
 import path from 'path'
 import mountLogsRouter from './logs'
-import mountLogWebSockets from './logs-ws'
+import { LogWebSocket } from './logs-ws'
 
 function mountApi() {
   const app = express()
@@ -15,15 +15,16 @@ function mountApi() {
   app.use(mountLogsRouter())
 
   const server = app.listen(3000)
-  const wsServer = mountLogWebSockets()
+  // const wsServer = mountLogWebSockets()
 
   console.log('Binding To Upgrade')
   server.on('upgrade', (request, socket, head) => {
     console.log('Incoming Upgrade')
-    wsServer.handleUpgrade(request, socket, head, (socket) => {
-      console.log('Handling Upgrade')
-      wsServer.emit('connection', socket, request)
-    })
+    const LogWs = new LogWebSocket(request, socket, head)
+    // wsServer.handleUpgrade(request, socket, head, (socket) => {
+    //   console.log('Handling Upgrade')
+    //   wsServer.emit('connection', socket, request)
+    // })
   })
 }
 
