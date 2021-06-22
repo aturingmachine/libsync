@@ -1,7 +1,7 @@
 import { Dirent, PathLike } from 'fs'
 import fs from 'fs/promises'
 import path from 'path'
-import { TargetName, DirStruct } from '../../models'
+import { TargetName, DirStruct } from '../../models/dirs'
 import Config from '../../utils/config/config-holder'
 import { Logger, logger, LogHelper } from '../../utils/log-helper'
 import LibSync from '../../utils/state/state'

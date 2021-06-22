@@ -1,5 +1,5 @@
 import { Logger } from 'winston'
-import { DirStructInside } from '../../models'
+import { DirStructInside } from '../../models/dirs'
 import executeCommands from '../command-runner/command-runner'
 import mapDirectoryStructure from './dir-mapper'
 import { logger, LogHelper } from '../../utils/log-helper'

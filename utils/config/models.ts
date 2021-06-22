@@ -1,4 +1,4 @@
-import { DirStruct } from '../../models'
+import { DirStruct } from '../../models/dirs'
 
 interface OptFlag {
   [key: string]: { flags: string[]; helpMsg: string }

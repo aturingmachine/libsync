@@ -1,5 +1,5 @@
-import { Command, CommandType, DirStruct, Commands } from '../../models'
-import Config from '../../utils/config/config-holder'
+import { Command, CommandType, Commands } from '../../models/commands'
+import { DirStruct } from '../../models/dirs'
 import LibSync from '../../utils/state/state'
 
 const commandSorter = (a: Command, b: Command): number => {

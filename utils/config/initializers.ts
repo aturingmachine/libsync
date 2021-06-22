@@ -1,4 +1,4 @@
-import { DirStruct } from '../../models'
+import { DirStruct } from '../../models/dirs'
 import { initLogger, logger } from '../log-helper'
 import Config from './config-holder'
 import { getCliArg } from './config-utils'

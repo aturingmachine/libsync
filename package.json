@@ -5,16 +5,13 @@
   "main": "index.js",
   "scripts": {
     "build": "./scripts/build.sh",
-    "compile": "tsc",
-    "clean": "clear && npm run reset && npm run dev",
-    "dev": "tsc && node dist/index.js src=./test-data/test-src-folder dest=./test-data/test-nest-dest/test-dest-folder backupDir=./test-data/test-backup",
     "reset": "bash ./scripts/reset-test.sh",
-    "help": "tsc && node dist/index.js -- help",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "tsc && node dist/index.js",
-    "dev-service": "tsc && node dist/index.js src=./test-data/test-src-folder dest=./test-data/test-nest-dest/test-dest-folder -- service",
-    "service": "tsc && node dist/index.js  src=/mnt/f/lib-sync-test-src dest=/mnt/f/lib-sync-test-dest -- service",
-    "client": "./scripts/build.sh -b && node dist/index.js  src=/mnt/f/lib-sync-test-src dest=/mnt/f/lib-sync-test-dest -- service client debug"
+    "dev-clean": "npm run reset && npm run dev",
+    "dev": "npm run build && node dist/index.js src=./test-data/test-src-folder dest=./test-data/test-nest-dest/test-dest-folder backupDir=./test-data/test-backup",
+    "dev-service": "npm run build && node dist/index.js src=./test-data/test-src-folder dest=./test-data/test-nest-dest/test-dest-folder -- service",
+    "start": "npm run build && node dist/index.js",
+    "service": "npm run build && node dist/index.js  src=/mnt/f/lib-sync-test-src dest=/mnt/f/lib-sync-test-dest -- service",
+    "help": "npm run build && node dist/index.js -- help"
   },
   "author": "",
   "license": "MIT",
