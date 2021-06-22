@@ -4,6 +4,7 @@ import sync from './lib/dir-sync/dir-sync'
 import executeMount from './lib/service'
 import { logHelpMessage } from './utils/help-log'
 import EnvConfig from './utils/config/env-config'
+import mountApi from './lib/server'
 
 let mainLogger: Logger
 
@@ -52,6 +53,10 @@ const main = async () => {
   if (Config.opts.isService) {
     mainLogger.info('Mounting LibSync Service')
     executeMount()
+
+    if (Config.opts.runClient) {
+      mountApi()
+    }
   } else {
     mainLogger.info('Running Singular Sync')
     runOnce()
