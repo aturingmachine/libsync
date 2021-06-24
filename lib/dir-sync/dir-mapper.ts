@@ -1,8 +1,7 @@
 import { Dirent, PathLike } from 'fs'
 import fs from 'fs/promises'
 import path from 'path'
-import { TargetName, DirStruct } from '../../models/dirs'
-import Config from '../../utils/config/config-holder'
+import { DirStruct, TargetName } from '../../models/dirs'
 import { Logger, logger, LogHelper } from '../../utils/log-helper'
 import LibSync from '../../utils/state/state'
 
@@ -60,8 +59,6 @@ async function recursiveDirTraverse(
       )
     )
   }
-
-  return Promise.resolve()
 }
 
 async function mapDirectoryStructure(path: PathLike, target: TargetName) {
@@ -72,32 +69,56 @@ async function mapDirectoryStructure(path: PathLike, target: TargetName) {
   const sourceEntries = await fs.readdir(path, { withFileTypes: true })
 
   try {
-    return await Promise.all(
-      sourceEntries.length
-        ? sourceEntries.map(
-            async (entry) =>
-              await recursiveDirTraverse(entry, path, target, false)
-          )
-        : [
-            await recursiveDirTraverse(
-              undefined as unknown as Dirent,
-              path,
-              target,
-              true
-            ),
-          ]
+    if (sourceEntries.length === 0) {
+      await recursiveDirTraverse(
+        undefined as unknown as Dirent,
+        path,
+        target,
+        true
+      )
+    } else {
+      for(const entry of sourceEntries) {
+        await recursiveDirTraverse(entry, path, target, false)
+      }
+    }
+
+    dirMapLogger.info(
+      `${target} Directory Structure Mapped in ${LogHelper.stop(
+        `map-${target}`
+      )}ms.`
     )
-      .then((_) => {
-        dirMapLogger.info(
-          `${target} Directory Structure Mapped in ${LogHelper.stop(
-            `map-${target}`
-          )}ms.`
-        )
-      })
-      .catch(console.error)
   } catch (error) {
     console.error(error)
   }
+}
+
+declare type TraversalEntry = { relativePath: string, entry: Dirent };
+
+async function nonRecursiveDirTraversal(root: string): Promise<{ files: TraversalEntry[], directories: TraversalEntry[] }> {
+  const rootDir = await fs.opendir(root);
+
+  const directories: TraversalEntry[] = [];
+  const files: TraversalEntry[] = [];
+  const queued: TraversalEntry[] = [];
+
+  for await (const entry of rootDir) {
+    queued.push({ relativePath: "", entry});
+  }
+
+  while (queued.length !== 0) {
+    const curr = queued.shift() as TraversalEntry;
+    if (curr.entry.isDirectory()) {
+      directories.push(curr);
+      const entries = await fs.readdir(path.join(root, curr.relativePath, curr.entry.name), {withFileTypes: true});
+      for (const entry of entries) {
+        queued.push({ relativePath: path.join(curr.relativePath, curr.entry.name), entry });
+      }
+    } else {
+      files.push(curr);
+    }
+  }
+
+  return {files, directories};
 }
 
 export default mapDirectoryStructure

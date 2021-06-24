@@ -1,10 +1,10 @@
 import { Logger } from 'winston'
 import { DirStructInside } from '../../models/dirs'
+import { logger, LogHelper } from '../../utils/log-helper'
+import LibSync from '../../utils/state/state'
+import buildCommands from '../command-runner/command-mapper'
 import executeCommands from '../command-runner/command-runner'
 import mapDirectoryStructure from './dir-mapper'
-import { logger, LogHelper } from '../../utils/log-helper'
-import buildCommands from '../command-runner/command-mapper'
-import LibSync from '../../utils/state/state'
 
 let syncLogger: Logger
 
@@ -20,14 +20,15 @@ function diffTrees(src: DirStructInside, dest: DirStructInside): string[] {
     .flat()
 }
 
-async function sync(isBackupRun: boolean): Promise<any> {
+async function sync(isBackupRun: boolean): Promise<void> {
   syncLogger = logger.child({ func: 'sync' })
   LibSync.isRunningBackup = isBackupRun
 
   await Promise.all([
     mapDirectoryStructure(LibSync.from.dir, LibSync.from.name),
     mapDirectoryStructure(LibSync.to.dir, LibSync.to.name),
-  ]).then(() => syncLogger.info('Mapping Complete'))
+  ])
+  syncLogger.info('Mapping Complete')
 
   const diffTag = 'diff'
   LogHelper.start('diff')
@@ -63,7 +64,7 @@ async function sync(isBackupRun: boolean): Promise<any> {
     `${commands.mkdir.length} MKDIR Commands ${commands.copy.length} COPY Commands`
   )
 
-  return await executeCommands(commands)
+  await executeCommands(commands)
 }
 
 export default sync
