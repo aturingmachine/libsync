@@ -6,40 +6,6 @@ import { logger, Logger } from '../../utils/log-helper'
 import WebSocket from 'ws'
 import { Socket } from 'net'
 
-const debouncedFileRead = async () => {
-  debounce(async () => {
-    return await fs.readFile(EnvConfig.get.combinedLogsOutputDir, {
-      encoding: 'utf-8',
-    })
-  }, 1000)
-}
-
-// async function watchLogFile(): Promise<void> {}
-
-async function watchLogFile(): Promise<void> {
-  try {
-    const logWatcher = fs.watch(EnvConfig.get.combinedLogsOutputDir)
-
-    for await (const _event of logWatcher) {
-    }
-  } catch (error) {}
-}
-
-// function mountLogWebSockets(): ws.Server {
-//   const wsServer = new ws.Server({ noServer: true })
-
-//   console.log('Binding to Connection in WSS')
-//   wsServer.on('connection', (socket) => {
-//     console.log('Have WS Connection')
-//     socket.on('message', (message) => {
-//       console.log(message)
-//       socket.send(`Hi! You said ${message}`)
-//     })
-//   })
-
-//   return wsServer
-// }
-
 export class LogWebSocket {
   wsServer!: ws.Server
   initTimestamp!: number
@@ -61,14 +27,15 @@ export class LogWebSocket {
   }
 
   mountLogWebSockets(): void {
+    setInterval(() => {
+      this.logger.info('Firing Test Log In Interval')
+    }, 1500)
     console.log('Binding to Connection in WSS')
     this.wsServer.on('connection', (socket) => {
       console.log('Have WS Connection')
       this.socket = socket
 
-      logger.stream({ start: 100 }).on('log', (newLog) => {
-        this.socket.send(JSON.stringify(newLog))
-      })
+      this.streamLogs()
 
       this.socket.on('message', (message) => {
         console.log(message)
@@ -79,11 +46,26 @@ export class LogWebSocket {
     })
   }
 
-  handleUpgrade(request: any, socket: Socket, head: any) {
+  handleUpgrade(request: any, socket: Socket, head: any): void {
     this.wsServer.handleUpgrade(request, socket, head, (socket) => {
       this.wsServer.emit('connection', socket, request)
     })
   }
-}
 
-// export default mountLogWebSockets
+  private streamLogs(): void {
+    const buffer: any[] = []
+
+    logger.stream({ start: 1 }).on('log', (newLog) => {
+      this.socket.send(JSON.stringify([newLog]))
+    })
+
+    // logger.stream({ start: 1 }).on('log', (newLog) => {
+    //   if (buffer.length < 10) {
+    //     buffer.push(newLog)
+    //   } else {
+    //     this.socket.send(JSON.stringify(buffer))
+    //     buffer = []
+    //   }
+    // })
+  }
+}

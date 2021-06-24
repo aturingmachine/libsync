@@ -2,7 +2,6 @@ import { Dirent, PathLike } from 'fs'
 import fs from 'fs/promises'
 import path from 'path'
 import { TargetName, DirStruct } from '../../models/dirs'
-import Config from '../../utils/config/config-holder'
 import { Logger, logger, LogHelper } from '../../utils/log-helper'
 import LibSync from '../../utils/state/state'
 
@@ -64,7 +63,10 @@ async function recursiveDirTraverse(
   return Promise.resolve()
 }
 
-async function mapDirectoryStructure(path: PathLike, target: TargetName) {
+async function mapDirectoryStructure(
+  path: PathLike,
+  target: TargetName
+): Promise<void> {
   dirMapLogger = logger.child({ func: 'dir-mapper' })
 
   dirMapLogger.info(`Mapping ${target} Directory Structure at ${path}`)

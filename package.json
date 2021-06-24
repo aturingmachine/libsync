@@ -7,14 +7,24 @@
     "build": "./scripts/build.sh",
     "reset": "bash ./scripts/reset-test.sh",
     "dev-clean": "npm run reset && npm run dev",
-    "dev": "npm run build && node dist/index.js src=./test-data/test-src-folder dest=./test-data/test-nest-dest/test-dest-folder backupDir=./test-data/test-backup",
-    "dev-service": "npm run build && node dist/index.js src=./test-data/test-src-folder dest=./test-data/test-nest-dest/test-dest-folder -- service",
+    "dev": "node ./scripts/dev.js",
+    "dev-service": "npm run build && node dist/index.js src=./test-data/test-src-folder dest=./test-data/test-nest-dest/test-dest-folder backupDir=./test-data/test-backup -- service",
     "start": "npm run build && node dist/index.js",
     "service": "npm run build && node dist/index.js  src=/mnt/f/lib-sync-test-src dest=/mnt/f/lib-sync-test-dest -- service",
     "help": "npm run build && node dist/index.js -- help"
   },
   "author": "",
   "license": "MIT",
+  "nodemonConfig": {
+    "ignore": [
+      "client/libsync-client/*.*",
+      "test-data/*.*",
+      "scripts/*.*",
+      "temp/*.*",
+      "logs/*.*"
+    ],
+    "delay": 2000
+  },
   "dependencies": {
     "@types/express": "^4.17.12",
     "chalk": "^4.1.1",
@@ -25,6 +35,15 @@
   "devDependencies": {
     "@types/node": "^15.12.4",
     "@types/ws": "^7.4.5",
-    "typescript": "^4.3.4"
+    "@typescript-eslint/eslint-plugin": "^4.28.0",
+    "eslint": "^7.29.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^3.4.0",
+    "eslint-plugin-vue": "^7.11.1",
+    "nodemon": "^2.0.7",
+    "prettier": "2.3.1",
+    "typescript": "^4.3.4",
+    "@vue/eslint-config-typescript": "^7.0.0",
+    "@vue/eslint-config-prettier": "^6.0.0"
   }
 }

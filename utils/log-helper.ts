@@ -7,6 +7,14 @@ export type Logger = winston.Logger
 
 const { combine, timestamp, colorize, printf, json, splat } = winston.format
 
+function createUUID() {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+    const r = (Math.random() * 16) | 0,
+      v = c == 'x' ? r : (r & 0x3) | 0x8
+    return v.toString(16)
+  })
+}
+
 const consoleLogFormat = printf(
   ({ level, message, timestamp, func, service }) => {
     const funcName = `(${func || service})`
@@ -14,9 +22,15 @@ const consoleLogFormat = printf(
   }
 )
 
+const id = winston.format((info) => {
+  info.id = createUUID()
+
+  return info
+})
+
 export const logger = winston.createLogger({
   level: 'debug',
-  format: combine(splat(), timestamp(), json()),
+  format: combine(splat(), timestamp(), id(), json()),
   defaultMeta: { service: 'libsync' },
   transports: [
     new winston.transports.File({
@@ -29,7 +43,7 @@ export const logger = winston.createLogger({
   ],
 })
 
-export function initLogger() {
+export function initLogger(): void {
   if (!Config.opts.isService || Config.opts.isDebug) {
     logger.add(
       new winston.transports.Console({
