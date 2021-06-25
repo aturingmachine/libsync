@@ -5,6 +5,9 @@ labels: 'type:bug'
 
 ---
 
+**README**
+Don't forget to add this to the default project board using the option on the right. Delete this after you have done so.
+
 ## Brief Description
 > Short explanation of what lead up to the bug
 
