@@ -9,7 +9,8 @@
     "start": "npm run build && node ./dist/index.js",
     "dev": "tsc --watch & nodemon ./dist/index.js -- service client debug",
     "single-run": "npm sun start",
-    "help": "npm run start -- help"
+    "help": "npm run start -- help",
+    "lint": "eslint --fix"
   },
   "author": "",
   "license": "MIT",
