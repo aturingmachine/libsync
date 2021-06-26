@@ -2,29 +2,12 @@
 
 echo ">>> Building LibSync..."
 
-BUILD_CLIENT=0
+echo ">>> Compiling LibSync Service..."
+npm run build --prefix ./core
+echo ">>> Service Compilation Complete"
 
-while [ -n "$1" ]; do # while loop starts
+echo ">>> Compiling LibSync Client..."
+npm run build --prefix ./client
+echo ">>> Compiling LibSync Client..."
 
-	case "$1" in
-
-	-b) BUILD_CLIENT=1; echo ">>> Will Build Client" ;; # Message for -a option
-
-	esac
-
-	shift
-
-done
-
-echo ">>> Compiling LibSync..."
-
-npm run compile
-
-echo ">>> Compilation Complete"
-
-if [ $BUILD_CLIENT == 1 ]
-then
- echo ">>> Compiling LibSync Client..."
- npm run build --prefix ./client/libsync-client
-fi
-
+echo ">>> LibSync Compiled."

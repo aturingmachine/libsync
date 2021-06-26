@@ -1,49 +1,29 @@
 {
-  "name": "library-sync",
-  "version": "0.0.1",
-  "description": "sync two directories on windows",
-  "main": "index.js",
+  "name": "lib-sync",
+  "version": "0.0.2",
+  "description": "",
   "scripts": {
-    "build": "./scripts/build.sh",
-    "reset": "bash ./scripts/reset-test.sh",
-    "dev-clean": "npm run reset && npm run dev",
+    "build": "bash ./scripts/build.sh",
+    "build:service": "npm run build --prefix ./core",
+    "build:client": "npm run build --prefix ./client",
     "dev": "node ./scripts/dev.js",
-    "dev-service": "npm run build && node dist/index.js src=./test-data/test-src-folder dest=./test-data/test-nest-dest/test-dest-folder backupDir=./test-data/test-backup -- service",
-    "start": "npm run build && node dist/index.js",
-    "service": "npm run build && node dist/index.js  src=/mnt/f/lib-sync-test-src dest=/mnt/f/lib-sync-test-dest -- service",
-    "help": "npm run build && node dist/index.js -- help"
+    "dev:service": "npm run dev --prefix ./core",
+    "dev:client": "npm run serve --prefix ./client",
+    "reset": "bash ./scripts/reset-test.sh",
+    "clear-logs": "echo \"\" > ./core/logs/combined.log && echo \"\" > ./core/logs/error.log",
+    "help": "npm run help --prefix ./core"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aturingmachine/libsync.git"
   },
   "author": "",
   "license": "MIT",
-  "nodemonConfig": {
-    "ignore": [
-      "client/libsync-client/*.*",
-      "test-data/*.*",
-      "scripts/*.*",
-      "temp/*.*",
-      "logs/*.*"
-    ],
-    "delay": 2000
+  "bugs": {
+    "url": "https://github.com/aturingmachine/libsync/issues"
   },
+  "homepage": "https://github.com/aturingmachine/libsync#readme",
   "dependencies": {
-    "@types/express": "^4.17.12",
-    "chalk": "^4.1.1",
-    "express": "^4.17.1",
-    "winston": "^3.3.3",
-    "ws": "^7.5.0"
-  },
-  "devDependencies": {
-    "@types/node": "^15.12.4",
-    "@types/ws": "^7.4.5",
-    "@typescript-eslint/eslint-plugin": "^4.28.0",
-    "eslint": "^7.29.0",
-    "eslint-config-prettier": "^8.3.0",
-    "eslint-plugin-prettier": "^3.4.0",
-    "eslint-plugin-vue": "^7.11.1",
-    "nodemon": "^2.0.7",
-    "prettier": "2.3.1",
-    "typescript": "^4.3.4",
-    "@vue/eslint-config-typescript": "^7.0.0",
-    "@vue/eslint-config-prettier": "^6.0.0"
+    "chalk": "^4.1.1"
   }
 }

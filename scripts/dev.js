@@ -1,8 +1,11 @@
 /* eslint-disable @typescript-eslint/no-var-requires*/
 const chalk = require('chalk')
 const spawn = require('child_process').spawn
+const ex = require('child_process').execSync
 
-const tscTag = chalk.green('[compile]:'.padEnd(10))
+const a = ex('pwd')
+console.log(a.toString())
+
 const serviceTag = chalk.magentaBright('[service]:')
 const clientTag = chalk.cyan('[client]:'.padEnd(10))
 
@@ -20,26 +23,22 @@ function relog(tag, data, err) {
 
 console.log(chalk.blue('Starting LibSync dev process...'))
 const args = process.argv.slice(2)
-console.log(args)
-console.log(args.find((x) => x.includes('src=')))
 
 const srcArg = args.find((x) => x.includes('src='))
 const destArg = args.find((x) => x.includes('dest='))
 const backupArg = args.find((x) => x.includes('backupDir='))
 const optsArgs = args.filter((x) => !x.includes('='))
 
-let src = srcArg || 'src=./test-data/test-src-folder'
-let dest = destArg || 'dest=./test-data/test-nest-dest/test-dest-folder'
-let backup = backupArg || 'backupDir=./test-data/test-backup'
+let src = srcArg || 'src=../test-data/test-src-folder'
+let dest = destArg || 'dest=../test-data/test-nest-dest/test-dest-folder'
+let backup = backupArg || 'backupDir=../test-data/test-backup'
 
 console.log(srcArg, destArg, backupArg)
 console.log(src, dest, backup)
 console.log(optsArgs)
-// process.exit(0)
 
 const clientProcess = spawn(
-  'npm',
-  ['run', 'serve', '--prefix', './client/libsync-client', '--silent'],
+  'npm', ['run', 'dev:client'],
   { signal }
 )
 
@@ -55,23 +54,19 @@ clientProcess.on('exit', (code, sig) => {
   console.log(`${clientTag} EXIT ${code} ${sig}`)
 })
 
-const tscProcess = spawn('tsc', ['-w'], { signal })
-
-tscProcess.stdout.on('data', (data) => {
-  relog(tscTag, data)
-})
-
-tscProcess.stderr.on('data', (data) => {
-  relog(tscTag, data, true)
-})
-
-tscProcess.on('exit', (code, sig) => {
-  console.log(`${tscTag} EXIT ${code} ${sig}`)
-})
-
 const serviceProcess = spawn(
-  'nodemon',
-  ['dist/index.js', 'debug', src, dest, backup, ...optsArgs],
+  'npm',
+  [
+    'run', 
+    'dev:service',
+    'debug', 
+    'service',
+    'client',
+    src, 
+    dest, 
+    backup, 
+    ...optsArgs
+  ],
   { signal }
 )
 
@@ -88,11 +83,9 @@ serviceProcess.on('exit', (code, sig) => {
 })
 
 function endAll() {
-  tscProcess.stdin.pause()
   serviceProcess.stdin.pause()
   clientProcess.stdin.pause()
   controller.abort()
-  tscProcess.kill()
   serviceProcess.kill()
   clientProcess.kill()
   process.exit()
