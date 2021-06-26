@@ -2,18 +2,11 @@ import chalk from 'chalk'
 import winston from 'winston'
 import Config from './config/config-holder'
 import EnvConfig from './config/env-config'
+import { v4 as uuidv4 } from 'uuid'
 
 export type Logger = winston.Logger
 
 const { combine, timestamp, colorize, printf, json, splat } = winston.format
-
-function createUUID() {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-    const r = (Math.random() * 16) | 0,
-      v = c == 'x' ? r : (r & 0x3) | 0x8
-    return v.toString(16)
-  })
-}
 
 const consoleLogFormat = printf(
   ({ level, message, timestamp, func, service }) => {
@@ -23,7 +16,7 @@ const consoleLogFormat = printf(
 )
 
 const id = winston.format((info) => {
-  info.id = createUUID()
+  info.id = uuidv4()
 
   return info
 })

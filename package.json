@@ -3,6 +3,7 @@
   "version": "0.0.2",
   "description": "",
   "scripts": {
+    "setup": "bash ./scripts/init.sh",
     "build": "bash ./scripts/build.sh",
     "build:service": "npm run build --prefix ./core",
     "build:client": "npm run build --prefix ./client",
