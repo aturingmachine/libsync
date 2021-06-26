@@ -12,42 +12,50 @@ If someone else finds use of LibSync as software or as a project to hack themsel
 
 ## Installation
 
-Currently the best method of installation is to clone the repo and run `npm install` in the root project directory. A setup/installation script is in the works.
+Run 
+```bash
+npm run setup
+```
+
+> This will run `npm ci` in the child project directories and do any needed configuration.
 
 ## Running LibSync
 
-> TODO Look to `npm run help` and the scripts in `package.json` for now. However it can be assumed any script prefaced with `dev-` will run using the included `test-data/` directory as its `src`, `dest`, and `backupDir`.
+Running LibSync is easiest done from the root project directory. 
 
-## Roadmap
-
-These are some of the things I want LibSync to be able to do. Multiple Roadmap items may be developed at once and released at the same time.
-
-### Features
-
-```
-[ ] - Build Client that interacts with LibSync API
-
-[ ] - Add ability to roll back to a backup
-
-[ ] - Expand Backups to not modify previous backup
+To start both the Service and Client
+```bash
+npm run dev
 ```
 
-### Data
-
-```
-[ ] - Build API for interacting with data and setting configurations
-
-[ ] - Stream logs to client
-
-[ ] - Add log parsing/searching
-
-[ ] - Snapshot library mappings for later use (?)
+To start the service by itself
+```bash
+npm run dev:service
 ```
 
-### DevEx
-
+To start the client by itself (not very useful unless you do not need data from the service)
+```bash
+npm run dev:client
 ```
-[ ] - Clean up Config, currently confusing and makes little to no sense
 
-[ ] - Get more strict/expand eslint config
+## Building LibSync
+
+From the root project directory:
+
+To buidl both the Service and Client
+```bash
+npm run build
 ```
+
+To build the service by itself
+```bash
+npm run build:service
+```
+
+To build the client by itself (not very useful unless you do not need data from the service)
+```bash
+npm run build:client
+```
+
+## [Roadmap](https://github.com/aturingmachine/libsync/projects/1)
+

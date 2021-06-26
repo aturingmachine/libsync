@@ -61,7 +61,10 @@ async function recursiveDirTraverse(
   }
 }
 
-async function mapDirectoryStructure(path: PathLike, target: TargetName) {
+async function mapDirectoryStructure(
+  path: PathLike,
+  target: TargetName
+): Promise<void> {
   dirMapLogger = logger.child({ func: 'dir-mapper' })
 
   dirMapLogger.info(`Mapping ${target} Directory Structure at ${path}`)
@@ -77,7 +80,7 @@ async function mapDirectoryStructure(path: PathLike, target: TargetName) {
         true
       )
     } else {
-      for(const entry of sourceEntries) {
+      for (const entry of sourceEntries) {
         await recursiveDirTraverse(entry, path, target, false)
       }
     }
@@ -92,33 +95,41 @@ async function mapDirectoryStructure(path: PathLike, target: TargetName) {
   }
 }
 
-declare type TraversalEntry = { relativePath: string, entry: Dirent };
+declare type TraversalEntry = { relativePath: string; entry: Dirent }
 
-async function nonRecursiveDirTraversal(root: string): Promise<{ files: TraversalEntry[], directories: TraversalEntry[] }> {
-  const rootDir = await fs.opendir(root);
+async function nonRecursiveDirTraversal(
+  root: string
+): Promise<{ files: TraversalEntry[]; directories: TraversalEntry[] }> {
+  const rootDir = await fs.opendir(root)
 
-  const directories: TraversalEntry[] = [];
-  const files: TraversalEntry[] = [];
-  const queued: TraversalEntry[] = [];
+  const directories: TraversalEntry[] = []
+  const files: TraversalEntry[] = []
+  const queued: TraversalEntry[] = []
 
   for await (const entry of rootDir) {
-    queued.push({ relativePath: "", entry});
+    queued.push({ relativePath: '', entry })
   }
 
   while (queued.length !== 0) {
-    const curr = queued.shift() as TraversalEntry;
+    const curr = queued.shift() as TraversalEntry
     if (curr.entry.isDirectory()) {
-      directories.push(curr);
-      const entries = await fs.readdir(path.join(root, curr.relativePath, curr.entry.name), {withFileTypes: true});
+      directories.push(curr)
+      const entries = await fs.readdir(
+        path.join(root, curr.relativePath, curr.entry.name),
+        { withFileTypes: true }
+      )
       for (const entry of entries) {
-        queued.push({ relativePath: path.join(curr.relativePath, curr.entry.name), entry });
+        queued.push({
+          relativePath: path.join(curr.relativePath, curr.entry.name),
+          entry,
+        })
       }
     } else {
-      files.push(curr);
+      files.push(curr)
     }
   }
 
-  return {files, directories};
+  return { files, directories }
 }
 
 export default mapDirectoryStructure

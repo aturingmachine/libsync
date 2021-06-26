@@ -37,6 +37,10 @@ const optsFlags: OptFlag = {
     flags: ['help', '-h'],
     helpMsg: 'Display this message',
   },
+  runClient: {
+    flags: ['client', '-c'],
+    helpMsg: 'Stand up an api and local web client to manage LibSync',
+  },
 }
 Object.freeze(optsFlags)
 
@@ -64,6 +68,7 @@ export interface LibSyncOpts {
   syncOnStart: boolean
   runBackUp: boolean
   runHelp: boolean
+  runClient: boolean
 }
 
 export interface LibSyncConfig {

@@ -11,6 +11,7 @@ const Config: LibSyncConfig = {
     syncOnStart: false,
     runBackUp: false,
     runHelp: false,
+    runClient: false,
   },
   dirs: { ...baseDirConf },
   libs: { ...baseDirConf },

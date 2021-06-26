@@ -2,6 +2,7 @@ import chalk from 'chalk'
 import winston from 'winston'
 import Config from './config/config-holder'
 import EnvConfig from './config/env-config'
+import { v4 as uuidv4 } from 'uuid'
 
 export type Logger = winston.Logger
 
@@ -14,9 +15,15 @@ const consoleLogFormat = printf(
   }
 )
 
+const id = winston.format((info) => {
+  info.id = uuidv4()
+
+  return info
+})
+
 export const logger = winston.createLogger({
   level: 'debug',
-  format: combine(splat(), timestamp(), json()),
+  format: combine(splat(), timestamp(), id(), json()),
   defaultMeta: { service: 'libsync' },
   transports: [
     new winston.transports.File({
@@ -29,7 +36,7 @@ export const logger = winston.createLogger({
   ],
 })
 
-export function initLogger() {
+export function initLogger(): void {
   if (!Config.opts.isService || Config.opts.isDebug) {
     logger.add(
       new winston.transports.Console({
