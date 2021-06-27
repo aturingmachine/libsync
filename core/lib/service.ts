@@ -11,6 +11,7 @@ let watcherLogger: Logger
 let rezTimer: NodeJS.Timeout
 let rezCount = 0
 let mounted = false
+let abort: AbortController
 
 export function isWatcherMounted(): boolean {
   return mounted
@@ -30,7 +31,7 @@ async function initiateSync() {
   }
 }
 
-function attemptRez(srcPath: PathLike) {
+function attemptRez(srcPath: PathLike): void {
   if (rezCount >= EnvConfig.get.rezAttempts) {
     watcherLogger.error(
       `${EnvConfig.get.rezAttempts} Rez Attempts failed - aborting`
@@ -52,7 +53,7 @@ function attemptRez(srcPath: PathLike) {
   }, EnvConfig.get.rezCooldown)
 }
 
-async function mountWatcher(srcPath: PathLike) {
+async function mountWatcher(srcPath: PathLike): Promise<void> {
   watcherLogger.info(`Attempting to mount file watcher to ${srcPath}`)
   const debouncedSync = debounce(
     () => initiateSync(),
@@ -63,6 +64,7 @@ async function mountWatcher(srcPath: PathLike) {
   try {
     const watcher = fs.watch(srcPath, {
       recursive: true,
+      signal: abort.signal,
     })
 
     allGoodTimer = setTimeout(() => {
@@ -87,8 +89,9 @@ async function mountWatcher(srcPath: PathLike) {
   }
 }
 
-async function executeMount(): Promise<any> {
+async function executeMount(): Promise<void> {
   watcherLogger = logger.child({ func: 'watcher' })
+  abort = new AbortController()
 
   if (Config.opts.syncOnStart) {
     watcherLogger.info('Initiating Sync On Start')
@@ -96,6 +99,11 @@ async function executeMount(): Promise<any> {
   }
 
   LibSync.isRunningBackup = false
+
+  EnvConfig.listen(['srcDir', 'debounceAmount']).call(() => {
+    mountWatcher(LibSync.from.dir)
+  })
+
   return await mountWatcher(LibSync.from.dir)
 }
 

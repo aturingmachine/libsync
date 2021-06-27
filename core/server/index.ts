@@ -1,6 +1,7 @@
 import express, { NextFunction } from 'express'
 import path from 'path'
 import { nextTick } from 'process'
+import EnvConfig from '../utils/config/env-config'
 import configApi from './config-api'
 import mountLogsRouter from './logs-api'
 import { LogWebSocket } from './logs-ws'
@@ -52,6 +53,10 @@ function mountApi(): void {
 
   server.on('upgrade', (request, socket, head) => {
     new LogWebSocket(request, socket, head)
+  })
+
+  EnvConfig.listen('srcDir').call((param, newSrcDir) => {
+    console.log('Update Listener Pinged At', param, newSrcDir)
   })
 }
 

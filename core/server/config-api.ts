@@ -1,6 +1,9 @@
 import express from 'express'
 import path from 'path'
 import EnvConfig from '../utils/config/env-config'
+import { logger } from '../utils/log-helper'
+
+const configApiLogger = logger.child({ func: 'config-api' })
 
 const configApi = express()
 
@@ -16,6 +19,8 @@ configApi.get('/api/config', (req: express.Request, res: express.Response) => {
 // TODO implement this
 configApi.post('/api/config', (req: express.Request, res: express.Response) => {
   console.log(req.body.config)
+  configApiLogger.info('Attempting to FAKE update config')
+  EnvConfig.updateConfigFields({ srcDir: './some/new/value' })
   res.sendStatus(200)
 })
 

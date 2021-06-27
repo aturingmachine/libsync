@@ -1,4 +1,4 @@
-import { initDirs, initOpts, initRoots } from './initializers'
+import { initDirs, initOpts } from './initializers'
 import { baseDirConf, LibSyncConfig } from './models'
 
 const Config: LibSyncConfig = {
@@ -20,7 +20,6 @@ const Config: LibSyncConfig = {
   init: {
     opts: initOpts,
     dirs: initDirs,
-    roots: initRoots,
   },
 }
 

@@ -17,18 +17,6 @@ export const initOpts = (): void => {
   initLogger()
 }
 
-export const initRoots = (
-  src: DirStruct,
-  dest: DirStruct,
-  backup?: DirStruct
-): void => {
-  Config.roots = {
-    src: Object.keys(src)[0],
-    dest: Object.keys(dest)[0],
-    backup: backup ? Object.keys(backup)[0] : '',
-  }
-}
-
 export const initDirs = (): void => {
   const resolvedSrcDir = getCliArg(process.argv, 'src=') || EnvConfig.get.srcDir
   const resolveDestDir =

@@ -36,6 +36,10 @@ export const logger = winston.createLogger({
   ],
 })
 
+EnvConfig.listen(['errorLogsOutputdir', 'combinedLogsOutputDir']).call(() => {
+  // Figure out how to update logs? Might have to restart lol
+})
+
 export function initLogger(): void {
   if (!Config.opts.isService || Config.opts.isDebug) {
     logger.add(

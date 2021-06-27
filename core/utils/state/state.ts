@@ -20,8 +20,6 @@ class LibSyncStateRecord {
   private destDirStructure: DirStruct = {}
   private backupDirStructure: DirStruct = {}
 
-  constructor() {}
-
   get src(): DirStruct {
     return this.srcDirStructure
   }

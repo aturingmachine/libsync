@@ -46,7 +46,7 @@
         v-model="localConfig.rezCooldown"
       />
 
-      <input type="submit" disabled />
+      <input type="submit" />
     </form>
   </div>
 </template>

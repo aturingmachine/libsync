@@ -81,6 +81,5 @@ export interface LibSyncConfig {
   init: {
     opts: () => void
     dirs: () => void
-    roots: (src: DirStruct, dest: DirStruct) => void
   }
 }
