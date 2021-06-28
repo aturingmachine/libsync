@@ -20,10 +20,6 @@ export class LogWebSocket {
 
     this.mountLogWebSockets()
     this.handleUpgrade(request, socket, head)
-
-    setInterval(() => {
-      logger.info('Forever Log')
-    }, 6000)
   }
 
   mountLogWebSockets(): void {

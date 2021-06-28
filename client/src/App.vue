@@ -20,6 +20,7 @@
   display: flex;
   align-items: center;
   flex-direction: column;
+  padding-bottom: 48px;
 }
 
 #nav {
@@ -33,5 +34,11 @@
 
 #nav a.router-link-exact-active {
   color: #42b983;
+}
+
+input {
+  border: 2px solid lightgray;
+  border-radius: 8px;
+  padding: 2px 4px;
 }
 </style>

@@ -1,27 +1,45 @@
-import { Config } from '@/models/config'
-
-// function http<T = unknown>(url: string) {
-//   return fetch('http://192.168.1.4:3000' + url)
-//     .then(res => res && res.json())
-//     .then(json => json && (json as T))
-//     .catch(console.error)
-// }
+import { EnvConfig, RunTimeConfig } from '@/models/config'
 
 export class ConfigService {
-  static getConfig(): Promise<Config> {
-    return fetch('http://192.168.1.4:3000/api/config')
+  static getEnvConfig(): Promise<EnvConfig> {
+    return fetch('http://localhost:3000/api/config/env')
       .then(res => {
         console.log(res)
         return res.json()
       })
       .then(json => {
         console.log(json)
-        return json.config as Config
+        return json.config as EnvConfig
       })
   }
 
-  static updateConfig(newConfig: Config): Promise<any> {
-    return fetch('http://192.168.1.4:3000/api/config', {
+  static updateEnvConfig(newConfig: EnvConfig): Promise<EnvConfig> {
+    return fetch('http://localhost:3000/api/config/env', {
+      method: 'POST',
+      body: JSON.stringify({ config: newConfig }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }).then(res => {
+      console.log(res)
+      return res.json()
+    })
+  }
+
+  static getRuntimeConfig(): Promise<RunTimeConfig> {
+    return fetch('http://localhost:3000/api/config/runtime')
+      .then(res => {
+        console.log(res)
+        return res.json()
+      })
+      .then(json => {
+        console.log(json)
+        return json.config as RunTimeConfig
+      })
+  }
+
+  static updateRuntimeConfig(newConfig: RunTimeConfig): Promise<RunTimeConfig> {
+    return fetch('http://localhost:3000/api/config/env', {
       method: 'POST',
       body: JSON.stringify({ config: newConfig }),
       headers: {

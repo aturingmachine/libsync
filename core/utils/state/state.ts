@@ -33,6 +33,13 @@ class LibSyncStateRecord {
   }
 }
 
+/**
+ * TODO #19
+ *
+ * When updating the ConfigHolder (runtime configuration) values we
+ * will want to make sure anyone consuming the state updates? But as long as nothing
+ * is actively running I think it will pull latest unless it uses some kind of init.
+ */
 class LibSyncState {
   private _state!: LibSyncStateRecord
   private logger: Logger = logger.child({ func: 'state' })

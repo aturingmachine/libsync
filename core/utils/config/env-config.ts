@@ -129,6 +129,10 @@ class EnvConfig {
   ): {
     call: (handler: EventHandler<keyof EnvConfigStruct>) => void
   } {
+    if (!this.eventBinder) {
+      EnvConfig.eventBinder = new EventBinder()
+    }
+
     return this.eventBinder.on(properties)
   }
 

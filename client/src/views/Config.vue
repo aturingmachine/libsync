@@ -1,127 +1,150 @@
 <template>
-  <div class="config-wrapper">
-    <h2>LibSync Configuration</h2>
-    <form @submit.prevent="updateConfig()" class="config-form">
-      <label for="src">Source Library</label>
-      <input name="src" type="text" v-model="localConfig.srcDir" />
+  <div class="config-page-wrapper">
+    <div class="tabs">
+      <button
+        class="config-tab left"
+        :class="currentTab === 0 ? 'active' : ''"
+        @click="setTab(0)"
+      >
+        Env Config
+      </button>
+      <button
+        class="config-tab right"
+        :class="currentTab === 1 ? 'active' : ''"
+        @click="setTab(1)"
+      >
+        Runtime Config
+      </button>
+    </div>
 
-      <label for="dest">Destination Library</label>
-      <input name="dest" type="text" v-model="localConfig.destDir" />
-
-      <label for="backup">Backup Library</label>
-      <input name="backup" type="text" v-model="localConfig.backupDir" />
-
-      <label for="combinedLogs">Combined Logs File</label>
-      <input
-        name="combinedLogs"
-        type="text"
-        v-model="localConfig.combinedLogsOutputDir"
-      />
-
-      <label for="errorLogs">Error Logs File</label>
-      <input
-        name="errorLogs"
-        type="text"
-        v-model="localConfig.errorLogsOutputdir"
-      />
-
-      <label for="debounceAmount">Debounce Amount</label>
-      <input
-        name="debounceAmount"
-        type="number"
-        v-model="localConfig.debounceAmount"
-      />
-
-      <label for="rezAttempts">Rez Attempts</label>
-      <input
-        name="rezAttempts"
-        type="number"
-        v-model="localConfig.rezAttempts"
-      />
-
-      <label for="rezCooldown">Rez Cooldown</label>
-      <input
-        name="rezCooldown"
-        type="number"
-        v-model="localConfig.rezCooldown"
-      />
-
-      <input type="submit" />
-    </form>
+    <div class="env-page-content">
+      <transition :name="transitionName" mode="out-in">
+        <component v-bind:is="page"></component>
+      </transition>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
-import { Config } from '@/models/config'
 import Vue from 'vue'
+import EnvConfig from '@/components/config-tab/EnvConfig.vue'
+import RuntimeConfig from '@/components/config-tab/RuntimeConfig.vue'
+
 export default Vue.extend({
   name: 'Config',
 
-  data: () => {
-    return {
-      localConfig: {},
-    }
+  components: {
+    'env-config': EnvConfig,
+    'runtime-config': RuntimeConfig,
   },
 
   computed: {
-    hasConfigLoaded(): boolean {
-      return this.$store.getters['config/HasConfigLoaded']
+    page(): string {
+      return this.currentTab === 0 ? 'env-config' : 'runtime-config'
     },
 
-    isConfigUpdating(): boolean {
-      return this.$store.getters['config/IsConfigUpdating']
-    },
-
-    config(): Config {
-      return this.$store.getters['config/GetConfig']
+    transitionName(): string {
+      return this.currentTab === 0 ? 'fade-left' : 'fade-right'
     },
   },
 
-  watch: {
-    config() {
-      this.copyConfig()
-    },
-  },
-
-  mounted(): void {
-    this.copyConfig()
-    this.getConfig()
+  data: () => {
+    return {
+      currentTab: 0,
+    }
   },
 
   methods: {
-    getConfig(): void {
-      this.$store.dispatch('config/GetConfig')
-    },
-
-    copyConfig(): void {
-      this.localConfig = { ...this.config }
-    },
-
-    updateConfig(): void {
-      this.$store.dispatch('config/UpdateConfig', this.config)
+    setTab(tabNumber: number): void {
+      this.currentTab = tabNumber
     },
   },
 })
 </script>
 
 <style scoped>
-.config-wrapper {
-  display: flex;
-  flex-direction: column;
-  max-width: 900px;
-  align-items: center;
-}
-
-.config-form {
-  margin-top: 16px;
-  display: flex;
-  flex-direction: column;
-  width: 300px;
-  align-items: flex-start;
-}
-
-.config-form > input {
+.config-page-wrapper {
   width: 100%;
-  margin-bottom: 10px;
+}
+
+.env-page-content {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-top: 16px;
+  overflow-x: hidden;
+  min-height: 90vh;
+}
+
+.tabs {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  border-bottom: 2px solid black;
+}
+
+.config-tab {
+  padding: 6px 16px;
+  font-size: 24px;
+  border: 2px solid black;
+  border-bottom: none;
+  border-radius: 8px 8px 0 0;
+  cursor: pointer;
+}
+
+.config-tab.active {
+  padding-bottom: 15px;
+}
+
+.config-tab.active:hover {
+  padding-bottom: 15px;
+}
+
+.config-tab:hover {
+  padding-bottom: 10px;
+}
+
+.config-tab.left {
+  margin-right: 8px;
+}
+
+.config-tab.right {
+  margin-left: 8px;
+}
+
+.fade-left-enter-active,
+.fade-right-enter-active {
+  transition: all 0.5s ease-in-out;
+}
+
+.fade-left-leave-active,
+.fade-right-leave-active {
+  transition: all 0.5s ease-in-out;
+}
+
+.fade-left-enter,
+.fade-right-enter {
+  opacity: 0;
+}
+
+.fade-left-enter {
+  transform: translateX(-250px);
+}
+
+.fade-right-enter {
+  transform: translateX(250px);
+}
+
+.fade-left-leave-to {
+  transform: translateX(250px);
+}
+
+.fade-right-leave-to {
+  transform: translateX(-250px);
+}
+
+.fade-left-leave-to,
+.fade-right-leave-to {
+  opacity: 0;
 }
 </style>

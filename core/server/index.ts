@@ -55,7 +55,7 @@ function mountApi(): void {
     new LogWebSocket(request, socket, head)
   })
 
-  EnvConfig.listen('srcDir').call((param, newSrcDir) => {
+  EnvConfig.listen(['srcDir']).call((param, newSrcDir) => {
     console.log('Update Listener Pinged At', param, newSrcDir)
   })
 }
