@@ -1,8 +1,9 @@
 import express from 'express'
 import path from 'path'
-import Config from '../utils/config/config-holder'
 import EnvConfig from '../utils/config/env-config'
+import { ConfigurableLibSyncState } from '../utils/config/models'
 import { logger } from '../utils/log-helper'
+import LibSync from '../utils/state/state'
 
 const configApiLogger = logger.child({ func: 'config-api' })
 
@@ -23,18 +24,24 @@ configApi.get(
 // TODO implement this
 configApi.post(
   '/api/config/env',
-  (req: express.Request, res: express.Response) => {
+  async (req: express.Request, res: express.Response) => {
     console.log(req.body.config)
     configApiLogger.info('Attempting to FAKE update config')
-    EnvConfig.updateConfigFields({ srcDir: './some/new/value' })
-    res.sendStatus(200)
+
+    try {
+      await EnvConfig.updateConfigFields(req.body.config)
+      res.status(202).json({ config: EnvConfig.get })
+    } catch (error) {
+      res.sendStatus(500)
+      configApiLogger.error('Failed To Update EnvConfig', error)
+    }
   }
 )
 
 configApi.get(
   '/api/config/runtime',
   (req: express.Request, res: express.Response) => {
-    const { init, roots, ...currentConfig } = Config
+    const currentConfig = LibSync.configurableState // not right
 
     console.log(currentConfig)
     res.json({ config: currentConfig })
@@ -44,11 +51,20 @@ configApi.get(
 // TODO implement this
 configApi.post(
   '/api/config/runtime',
-  (req: express.Request, res: express.Response) => {
+  async (req: express.Request, res: express.Response) => {
     console.log(req.body.config)
     // configApiLogger.info('Attempting to FAKE update config')
-    // EnvConfig.updateConfigFields({ srcDir: './some/new/value' })
-    res.sendStatus(200)
+    // LibSync.updateConfigFields(req.body.config)
+
+    try {
+      await LibSync.updateConfigFields(
+        req.body.config as ConfigurableLibSyncState
+      )
+      res.status(202).json({ config: LibSync.configurableState })
+    } catch (error) {
+      res.sendStatus(500)
+      configApiLogger.error('Failed To Update RuntimeConfig', error)
+    }
   }
 )
 

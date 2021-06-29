@@ -1,8 +1,8 @@
 import chalk from 'chalk'
 import winston from 'winston'
-import Config from './config/config-holder'
 import EnvConfig from './config/env-config'
 import { v4 as uuidv4 } from 'uuid'
+import LibSync from './state/state'
 
 export type Logger = winston.Logger
 
@@ -38,10 +38,12 @@ export const logger = winston.createLogger({
 
 EnvConfig.listen(['errorLogsOutputdir', 'combinedLogsOutputDir']).call(() => {
   // Figure out how to update logs? Might have to restart lol
+  return Promise.resolve()
 })
 
 export function initLogger(): void {
-  if (!Config.opts.isService || Config.opts.isDebug) {
+  // TODO rethink this check for console output, should just check prod flag maybe
+  if (!LibSync.options.isService || LibSync.options.isDebug) {
     logger.add(
       new winston.transports.Console({
         format: combine(colorize(), timestamp(), splat(), consoleLogFormat),

@@ -1,4 +1,4 @@
-import { EnvConfig, RunTimeConfig } from '@/models/config'
+import { EnvConfig, RuntimeConfig } from '@/models/config'
 
 export class ConfigService {
   static getEnvConfig(): Promise<EnvConfig> {
@@ -26,7 +26,7 @@ export class ConfigService {
     })
   }
 
-  static getRuntimeConfig(): Promise<RunTimeConfig> {
+  static getRuntimeConfig(): Promise<RuntimeConfig> {
     return fetch('http://localhost:3000/api/config/runtime')
       .then(res => {
         console.log(res)
@@ -34,12 +34,12 @@ export class ConfigService {
       })
       .then(json => {
         console.log(json)
-        return json.config as RunTimeConfig
+        return json.config as RuntimeConfig
       })
   }
 
-  static updateRuntimeConfig(newConfig: RunTimeConfig): Promise<RunTimeConfig> {
-    return fetch('http://localhost:3000/api/config/env', {
+  static updateRuntimeConfig(newConfig: RuntimeConfig): Promise<RuntimeConfig> {
+    return fetch('http://localhost:3000/api/config/runtime', {
       method: 'POST',
       body: JSON.stringify({ config: newConfig }),
       headers: {

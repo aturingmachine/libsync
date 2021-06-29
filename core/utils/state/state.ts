@@ -1,6 +1,19 @@
 import { PathLike } from 'fs'
 import { DirStruct, TargetName } from '../../models/dirs'
-import Config from '../config/config-holder'
+import {
+  getLibFromDir,
+  parseCliDirs,
+  RuntimeConfigvalidator,
+} from '../config/config-utils'
+import EnvConfig from '../config/env-config'
+import {
+  ConfigurableLibSyncState,
+  EnvConfigStruct,
+  LibSyncDirConfig,
+  LibSyncOpts,
+  optsFlags,
+} from '../config/models'
+import { EventBinder, EventHandler } from '../event-binder'
 import { Logger, logger } from '../log-helper'
 
 interface SyncTarget {
@@ -15,10 +28,79 @@ interface SyncTargets {
   to: SyncTarget
 }
 
+class LibSyncOptsRecord {
+  private _options!: LibSyncOpts
+
+  constructor() {
+    this.initOpts()
+    EnvConfig.listen(['options']).call(this.handleEnvUpdate)
+  }
+
+  get record(): LibSyncOpts {
+    return { ...this._options }
+  }
+
+  update(
+    values: Pick<LibSyncOpts, 'isDebug' | 'syncOnStart' | 'runBackUp'>
+  ): void {
+    this._options = {
+      ...this._options,
+      ...values,
+    }
+  }
+
+  private initOpts(): void {
+    // Get all flags turned on by Command Line Args
+    const cliOptions = Object.fromEntries(
+      Object.keys(optsFlags)
+        .filter((opt) =>
+          optsFlags[opt].flags.some((flag) => process.argv.includes(flag))
+        )
+        .map((opt) => {
+          return [opt, true]
+        })
+    ) as LibSyncOpts
+
+    // Merge config'ed options and parsed options
+    this._options = { ...EnvConfig.get.options, ...cliOptions }
+  }
+
+  private handleEnvUpdate(
+    field: keyof EnvConfigStruct,
+    _value: string | number | LibSyncOpts
+  ): Promise<void> {
+    if (field === 'options') {
+      this.initOpts()
+    }
+
+    return Promise.resolve()
+  }
+}
+
+/**
+ * Inner Class for holding the actual state.
+ * This allows us to abstract a bit of how the state is consumed
+ * and makes the main state a bit cleaner maybe.
+ */
 class LibSyncStateRecord {
+  private _dirs!: LibSyncDirConfig
+  private _libs!: LibSyncDirConfig
+  private _options!: LibSyncOptsRecord
+  private logger!: Logger
   private srcDirStructure: DirStruct = {}
   private destDirStructure: DirStruct = {}
   private backupDirStructure: DirStruct = {}
+
+  constructor(logger: Logger) {
+    this.logger = logger
+    this._options = new LibSyncOptsRecord()
+    this.initDirs()
+    this.initLibs()
+
+    EnvConfig.listen(['srcDir', 'destDir', 'backupDir']).call(
+      this.handleEnvUpdate
+    )
+  }
 
   get src(): DirStruct {
     return this.srcDirStructure
@@ -31,6 +113,89 @@ class LibSyncStateRecord {
   get backup(): DirStruct {
     return this.backupDirStructure
   }
+
+  get options(): LibSyncOpts {
+    return this._options.record
+  }
+
+  get dirs(): LibSyncDirConfig {
+    return { ...this._dirs }
+  }
+
+  get libs(): LibSyncDirConfig {
+    return { ...this._libs }
+  }
+
+  get configurableOptions(): Pick<
+    LibSyncOpts,
+    'isDebug' | 'syncOnStart' | 'runBackUp'
+  > {
+    return {
+      isDebug: this.options.isDebug,
+      syncOnStart: this.options.syncOnStart,
+      runBackUp: this.options.runBackUp,
+    }
+  }
+
+  update(
+    key: '_dirs' | '_libs' | '_options',
+    value:
+      | LibSyncDirConfig
+      | Pick<LibSyncOpts, 'isDebug' | 'syncOnStart' | 'runBackUp'>
+  ): void {
+    if (key !== '_options') {
+      this[key] = value as LibSyncDirConfig
+    } else {
+      this._options.update(
+        value as Pick<LibSyncOpts, 'isDebug' | 'syncOnStart' | 'runBackUp'>
+      )
+    }
+  }
+
+  private initDirs(): void {
+    const { resolvedSrcDir, resolveDestDir, resolvedBackupDir } = parseCliDirs()
+
+    if (!resolvedSrcDir || !resolveDestDir) {
+      this.logger.error(
+        `Missing Dir Paths SRC: ${resolvedSrcDir} DEST: ${resolveDestDir}`
+      )
+      throw new Error('No Dir Path Provided')
+    }
+
+    if (this._options.record.runBackUp && !resolvedBackupDir) {
+      this.logger.error(
+        `No Backup dir provided for Backup option: ${resolvedBackupDir}`
+      )
+      throw new Error('No Backup Dir Path Provided')
+    }
+
+    this._dirs = {
+      src: resolvedSrcDir,
+      dest: resolveDestDir,
+      backup: resolvedBackupDir || '',
+    }
+  }
+
+  private initLibs(): void {
+    this._libs = {
+      src: getLibFromDir(this._dirs.src),
+      dest: getLibFromDir(this._dirs.dest),
+      backup: getLibFromDir(this._dirs.backup),
+    }
+  }
+
+  private handleEnvUpdate(
+    field: keyof EnvConfigStruct,
+    _value: string | number | LibSyncOpts
+  ): Promise<void> {
+    if (field === 'options') {
+    } else {
+      this.initDirs()
+      this.initLibs()
+    }
+
+    return Promise.resolve()
+  }
 }
 
 /**
@@ -39,21 +204,38 @@ class LibSyncStateRecord {
  * When updating the ConfigHolder (runtime configuration) values we
  * will want to make sure anyone consuming the state updates? But as long as nothing
  * is actively running I think it will pull latest unless it uses some kind of init.
+ *
+ * Looks like best idea is to rip ConfigHolder out of the application. We
+ * can manage its responsibilities in EnvConfig and here in state
  */
 class LibSyncState {
   private _state!: LibSyncStateRecord
-  private logger: Logger = logger.child({ func: 'state' })
+  private logger!: Logger
   private _isRunningBackup = false
   private _to!: SyncTarget
   private _from!: SyncTarget
+  private eventBinder!: EventBinder<ConfigurableLibSyncState>
 
   get state(): LibSyncStateRecord {
     if (!this._state) {
+      this.logger = logger.child({ func: 'state' })
       this.logger.info('Initializing new Lib Sync State')
-      this._state = new LibSyncStateRecord()
+      this._state = new LibSyncStateRecord(logger)
     }
 
     return this._state
+  }
+
+  get options(): LibSyncOpts {
+    return this.state.options
+  }
+
+  get dirs(): LibSyncDirConfig {
+    return this.state.dirs
+  }
+
+  get libs(): LibSyncDirConfig {
+    return this.state.libs
   }
 
   get src(): DirStruct {
@@ -71,8 +253,8 @@ class LibSyncState {
   get srcTarget(): SyncTarget {
     return {
       name: TargetName.Source,
-      dir: Config.dirs.src,
-      lib: Config.libs.src,
+      dir: this._state.dirs.src,
+      lib: this._state.libs.src,
       dirStruct: LibSync.src,
     }
   }
@@ -80,8 +262,8 @@ class LibSyncState {
   get destTarget(): SyncTarget {
     return {
       name: TargetName.Target,
-      dir: Config.dirs.dest,
-      lib: Config.libs.dest,
+      dir: this._state.dirs.dest,
+      lib: this._state.libs.dest,
       dirStruct: LibSync.dest,
     }
   }
@@ -89,8 +271,8 @@ class LibSyncState {
   get backupTarget(): SyncTarget {
     return {
       name: TargetName.Backup,
-      dir: Config.dirs.backup,
-      lib: Config.libs.backup,
+      dir: this._state.dirs.backup,
+      lib: this._state.libs.backup,
       dirStruct: LibSync.backup,
     }
   }
@@ -131,6 +313,64 @@ class LibSyncState {
       this._from = this.syncTargetConf.from
       this._to = this.syncTargetConf.to
     }
+  }
+
+  get configurableState(): ConfigurableLibSyncState {
+    return {
+      dirs: { ...this.state.dirs },
+      libs: { ...this.state.libs },
+      options: {
+        isDebug: this.options.isDebug,
+        runBackUp: this.options.runBackUp,
+        syncOnStart: this.options.syncOnStart,
+      },
+    }
+  }
+
+  listen<K extends keyof ConfigurableLibSyncState>(
+    properties: Array<K>
+  ): {
+    call: (handler: EventHandler<K, ConfigurableLibSyncState>) => void
+  } {
+    if (!this.eventBinder) {
+      this.eventBinder = new EventBinder()
+    }
+
+    return this.eventBinder.on(properties)
+  }
+
+  updateConfigFields(
+    changedFields: Partial<ConfigurableLibSyncState>
+  ): Promise<any> {
+    if (!this.eventBinder) {
+      this.eventBinder = new EventBinder()
+    }
+
+    return Promise.all(
+      Object.keys(changedFields).map(async (key) => {
+        const typedKey = key as keyof ConfigurableLibSyncState
+        const newValue = changedFields[typedKey]
+        if (newValue && RuntimeConfigvalidator[typedKey].valid(newValue)) {
+          this._update(typedKey, changedFields[typedKey])
+          await this.eventBinder.triggerUpdate(typedKey, newValue)
+        }
+        console.log('Should be updated', EnvConfig.get)
+      })
+    )
+  }
+
+  _update(
+    key: keyof ConfigurableLibSyncState,
+    val:
+      | LibSyncDirConfig
+      | Pick<LibSyncOpts, 'isDebug' | 'syncOnStart' | 'runBackUp'>
+      | undefined
+  ) {
+    if (val === undefined) {
+      return
+    }
+
+    this.state.update(`_${key}`, val)
   }
 }
 

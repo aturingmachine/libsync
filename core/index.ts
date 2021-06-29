@@ -1,15 +1,15 @@
-import { logger, Logger } from './utils/log-helper'
-import Config from './utils/config/config-holder'
+import { initLogger, logger, Logger } from './utils/log-helper'
 import sync from './lib/dir-sync/dir-sync'
 import executeMount from './lib/service'
 import { logHelpMessage } from './utils/help-log'
 import EnvConfig from './utils/config/env-config'
 import mountApi from './server'
+import LibSync from './utils/state/state'
 
 let mainLogger: Logger
 
 async function runOnce(): Promise<any> {
-  if (Config.opts.runBackUp) {
+  if (LibSync.options.runBackUp) {
     mainLogger.info('Running Backup Sync')
     await sync(true)
   }
@@ -19,15 +19,14 @@ async function runOnce(): Promise<any> {
 async function init() {
   await EnvConfig.init()
 
-  Config.init.opts()
+  LibSync.state // TODO this is a fucked up way to init lol
+  initLogger()
 
-  if (Config.opts.runHelp) {
+  if (LibSync.options.runHelp) {
     logHelpMessage()
   }
 
   mainLogger = logger.child({ func: 'main' })
-  mainLogger.info('Initialising LibSync')
-  Config.init.dirs()
   mainLogger.info('LibSync Initialised.')
 }
 
@@ -37,24 +36,24 @@ const main = async () => {
   mainLogger.log(
     'info',
     'Running with opts src: %s dest: %s debug: %s service: %s',
-    Config.dirs.src,
-    Config.dirs.dest,
-    Config.opts.isDebug,
-    Config.opts.isService,
+    LibSync.dirs.src,
+    LibSync.dirs.dest,
+    LibSync.options.isDebug,
+    LibSync.options.isService,
     {
       opts: {
-        src: Config.dirs.src,
-        dest: Config.dirs.dest,
-        opts: { ...Config.opts },
+        src: LibSync.dirs.src,
+        dest: LibSync.dirs.dest,
+        opts: { ...LibSync.options },
       },
     }
   )
 
-  if (Config.opts.isService) {
+  if (LibSync.options.isService) {
     mainLogger.info('Mounting LibSync Service')
     executeMount()
 
-    if (Config.opts.runClient) {
+    if (LibSync.options.runClient) {
       mountApi()
     }
   } else {

@@ -114,17 +114,17 @@ export default Vue.extend({
 
 .fade-left-enter-active,
 .fade-right-enter-active {
-  transition: all 0.5s ease-in-out;
+  transition: all 0.3s ease-in-out;
 }
 
 .fade-left-leave-active,
 .fade-right-leave-active {
-  transition: all 0.5s ease-in-out;
+  transition: all 0.3s ease-in-out;
 }
 
 .fade-left-enter,
 .fade-right-enter {
-  opacity: 0;
+  opacity: 0.2;
 }
 
 .fade-left-enter {
@@ -145,6 +145,6 @@ export default Vue.extend({
 
 .fade-left-leave-to,
 .fade-right-leave-to {
-  opacity: 0;
+  opacity: 0.2;
 }
 </style>

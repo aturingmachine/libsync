@@ -2,61 +2,12 @@ import { PathLike } from 'fs'
 import fs from 'fs/promises'
 import path from 'path'
 import { EventBinder, EventHandler } from '../event-binder'
-import Config from './config-holder'
-
-type EnvConfigStruct = {
-  srcDir: string
-  destDir: string
-  backupDir: string
-  combinedLogsOutputDir: string
-  errorLogsOutputdir: string
-  debounceAmount: number
-  rezAttempts: number
-  rezCooldown: number
-}
-
-const dirValidator = {
-  type: 'string',
-  valid: async (newVal: any): Promise<boolean> => {
-    try {
-      const candidate = await fs.lstat(newVal)
-      return candidate.isDirectory()
-    } catch (error) {
-      return false
-    }
-  },
-}
-
-const EnvConfigValidator: {
-  [k in keyof EnvConfigStruct]: {
-    type: string
-    valid: (newVal: any) => boolean | Promise<boolean>
-  }
-} = {
-  srcDir: dirValidator,
-  destDir: dirValidator,
-  backupDir: dirValidator,
-  combinedLogsOutputDir: dirValidator,
-  errorLogsOutputdir: dirValidator,
-  debounceAmount: {
-    type: 'number',
-    valid: (newVal: any): boolean => {
-      return typeof newVal === 'number' && newVal > 5000
-    },
-  },
-  rezAttempts: {
-    type: 'number',
-    valid: (newVal: any): boolean => {
-      return typeof newVal === 'number' && newVal > -2
-    },
-  },
-  rezCooldown: {
-    type: 'number',
-    valid: (newVal: any): boolean => {
-      return typeof newVal === 'number' && newVal > 1000
-    },
-  },
-}
+import {
+  defaultEnvConfigOptions,
+  EnvConfigValidator,
+  parseDefaults,
+} from './config-utils'
+import { EnvConfigStruct } from './models'
 
 const defaultEnvConfig: EnvConfigStruct = {
   srcDir: '',
@@ -67,39 +18,15 @@ const defaultEnvConfig: EnvConfigStruct = {
   debounceAmount: 60000,
   rezAttempts: 3,
   rezCooldown: 10000,
+  options: defaultEnvConfigOptions,
 }
 
-function shouldDefault(val: number | string | undefined): boolean {
-  if (typeof val === 'number') {
-    return !val
-  } else {
-    return !val || !val.toString().length
-  }
-}
-
-function getDefault(key: keyof EnvConfigStruct, val: number | string) {
-  return shouldDefault(val) ? defaultEnvConfig[key] : val
-}
-
-function parseDefaults(config: EnvConfigStruct): EnvConfigStruct {
-  return {
-    srcDir: getDefault('srcDir', config.srcDir) as string,
-    destDir: getDefault('destDir', config.destDir) as string,
-    backupDir: getDefault('backupDir', config.backupDir) as string,
-    combinedLogsOutputDir: getDefault(
-      'combinedLogsOutputDir',
-      config.combinedLogsOutputDir
-    ) as string,
-    errorLogsOutputdir: getDefault(
-      'errorLogsOutputdir',
-      config.errorLogsOutputdir
-    ) as string,
-    debounceAmount: getDefault('debounceAmount', 60000) as number,
-    rezAttempts: getDefault('rezAttempts', 3) as number,
-    rezCooldown: getDefault('rezCooldown', 10000) as number,
-  }
-}
-
+/**
+ * EnvConfig
+ *
+ * Used to hold the current parsed .config.json. This configuration is
+ * considered static, and can be overrided by parsed command line arguments.
+ */
 class EnvConfig {
   private static _initialConfig: EnvConfigStruct
   private static _config: EnvConfigStruct
@@ -116,10 +43,10 @@ class EnvConfig {
       })
       .then((contents) => {
         const config = JSON.parse(contents) as EnvConfigStruct
-        EnvConfig._config = parseDefaults(config)
+        EnvConfig._config = parseDefaults(config, defaultEnvConfig)
 
         if (!EnvConfig._initialConfig) {
-          EnvConfig._initialConfig = parseDefaults(config)
+          EnvConfig._initialConfig = parseDefaults(config, defaultEnvConfig)
         }
       })
   }
@@ -127,7 +54,9 @@ class EnvConfig {
   static listen<K extends keyof EnvConfigStruct>(
     properties: K[]
   ): {
-    call: (handler: EventHandler<keyof EnvConfigStruct>) => void
+    call: (
+      handler: EventHandler<keyof EnvConfigStruct, EnvConfigStruct>
+    ) => void
   } {
     if (!this.eventBinder) {
       EnvConfig.eventBinder = new EventBinder()
@@ -136,18 +65,22 @@ class EnvConfig {
     return this.eventBinder.on(properties)
   }
 
-  static updateConfigFields(changedFields: Partial<EnvConfigStruct>): void {
-    Object.keys(changedFields).forEach((key) => {
-      const typedKey = key as keyof EnvConfigStruct
-      const newValue = changedFields[typedKey]
-      if (newValue && EnvConfigValidator[typedKey].valid(newValue)) {
-        EnvConfig._update(typedKey, changedFields[typedKey])
-        this.eventBinder.triggerUpdate(typedKey, newValue)
-      }
-      console.log('Should be updated', EnvConfig.get)
-    })
+  static updateConfigFields(
+    changedFields: Partial<EnvConfigStruct>
+  ): Promise<any> {
+    return Promise.all(
+      Object.keys(changedFields).map(async (key) => {
+        const typedKey = key as keyof EnvConfigStruct
+        const newValue = changedFields[typedKey]
+        if (newValue && EnvConfigValidator[typedKey].valid(newValue)) {
+          EnvConfig._update(typedKey, changedFields[typedKey])
+          await this.eventBinder.triggerUpdate(typedKey, newValue)
+        }
+        console.log('Should be updated', EnvConfig.get)
+      })
+    )
 
-    Config.init.dirs()
+    // TODO needs to update State
   }
 
   static get get(): EnvConfigStruct {

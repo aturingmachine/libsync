@@ -4,7 +4,10 @@ export interface NamespacedModuleTypes<G, M, A> {
   actions: Record<keyof A, string>
 }
 
-function name<T>(getters: T, namespace: string): Record<keyof T, string> {
+export function name<T>(
+  getters: T,
+  namespace: string
+): Record<keyof T, string> {
   return Object.fromEntries(
     Object.keys(getters).map(key => {
       return [key as keyof T, `${namespace}/${getters[key as keyof T]}`]

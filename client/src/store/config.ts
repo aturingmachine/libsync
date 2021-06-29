@@ -1,4 +1,4 @@
-import { EnvConfig, RunTimeConfig } from '@/models/config'
+import { EnvConfig, RuntimeConfig } from '@/models/config'
 import { ConfigService } from '@/services/config-service'
 import { ActionTree, GetterTree, Module, MutationTree } from 'vuex'
 import { RootState } from '.'
@@ -16,32 +16,32 @@ export interface ConfigState {
   envConfigStatus: ConfigStatus
   runtimeConfigStatus: ConfigStatus
   envConfigRecord?: EnvConfig
-  runtimeConfigRecord?: RunTimeConfig
+  runtimeConfigRecord?: RuntimeConfig
 }
 
-export const ConfigGetterTypes = {
-  IsEnvConfigUpdating: 'IsEnvConfigUpdating',
-  IsRuntimeConfigUpdating: 'IsRuntimeConfigUpdating',
-  HasEnvConfigLoaded: 'HasEnvConfigLoaded',
-  HasRuntimeConfigLoaded: 'HasRuntimeConfigLoaded',
-  GetEnvConfig: 'GetEnvConfig',
-  GetRuntimeConfig: 'GetRuntimeConfig',
+export enum ConfigGetterTypes {
+  IsEnvConfigUpdating = 'IsEnvConfigUpdating',
+  IsRuntimeConfigUpdating = 'IsRuntimeConfigUpdating',
+  HasEnvConfigLoaded = 'HasEnvConfigLoaded',
+  HasRuntimeConfigLoaded = 'HasRuntimeConfigLoaded',
+  GetEnvConfig = 'GetEnvConfig',
+  GetRuntimeConfig = 'GetRuntimeConfig',
 }
 
-export const ConfigMutationsTypes = {
-  SetEnvConfigLoading: 'SetEnvConfigLoading',
-  SetRuntimeConfigLoading: 'SetRuntimeConfigLoading',
-  SetEnvConfigSuccess: 'SetEnvConfigSuccess',
-  SetRuntimeConfigSuccess: 'SetRuntimeConfigSuccess',
-  SetEnvConfigUpdating: 'SetEnvConfigUpdating',
-  SetRuntimeConfigUpdating: 'SetRuntimeConfigUpdating',
+export enum ConfigMutationsTypes {
+  SetEnvConfigLoading = 'SetEnvConfigLoading',
+  SetRuntimeConfigLoading = 'SetRuntimeConfigLoading',
+  SetEnvConfigSuccess = 'SetEnvConfigSuccess',
+  SetRuntimeConfigSuccess = 'SetRuntimeConfigSuccess',
+  SetEnvConfigUpdating = 'SetEnvConfigUpdating',
+  SetRuntimeConfigUpdating = 'SetRuntimeConfigUpdating',
 }
 
-export const ConfigActionsTypes = {
-  GetEnvConfig: 'GetEnvConfig',
-  UpdateEnvConfig: 'UpdateEnvConfig',
-  GetRuntimeConfig: 'GetRuntimeConfig',
-  UpdateRuntimeConfig: 'UpdateRuntimeConfig',
+export enum ConfigActionsTypes {
+  GetEnvConfig = 'GetEnvConfig',
+  UpdateEnvConfig = 'UpdateEnvConfig',
+  GetRuntimeConfig = 'GetRuntimeConfig',
+  UpdateRuntimeConfig = 'UpdateRuntimeConfig',
 }
 
 export const configState = (): ConfigState => ({
@@ -67,7 +67,7 @@ export const configGetters: GetterTree<ConfigState, RootState> = {
   [ConfigGetterTypes.GetEnvConfig]: (state): EnvConfig | undefined =>
     state.envConfigRecord,
 
-  [ConfigGetterTypes.GetRuntimeConfig]: (state): RunTimeConfig | undefined =>
+  [ConfigGetterTypes.GetRuntimeConfig]: (state): RuntimeConfig | undefined =>
     state.runtimeConfigRecord,
 }
 
@@ -128,7 +128,7 @@ export const configActions: ActionTree<ConfigState, RootState> = {
       return
     }
 
-    commit({ type: 'SetConfigUpdating' })
+    commit({ type: ConfigMutationsTypes.SetEnvConfigUpdating })
 
     ConfigService.updateEnvConfig(newConfig).then(res => {
       console.log(res)

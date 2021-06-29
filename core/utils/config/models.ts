@@ -1,10 +1,8 @@
-import { DirStruct } from '../../models/dirs'
-
 interface OptFlag {
   [key: string]: { flags: string[]; helpMsg: string }
 }
 
-const optsFlags: OptFlag = {
+export const optsFlags: OptFlag = {
   isKill: {
     flags: ['kill', '-k'],
     helpMsg: 'Exit The Process Early without running any syncs',
@@ -48,19 +46,14 @@ export const getOptsFlags = (): OptFlag => {
   return optsFlags
 }
 
-interface LibSyncDirConfig {
+export type LibSyncDirConfig = {
   src: string
   dest: string
   backup: string
 }
 
-export const baseDirConf: LibSyncDirConfig = {
-  src: '',
-  dest: '',
-  backup: '',
-}
-
-export interface LibSyncOpts {
+// Rename some of these to make more sense
+export type LibSyncOpts = {
   isKill: boolean
   isPlan: boolean
   isService: boolean
@@ -71,15 +64,20 @@ export interface LibSyncOpts {
   runClient: boolean
 }
 
-export interface LibSyncConfig {
-  opts: LibSyncOpts
+export type ConfigurableLibSyncState = {
   dirs: LibSyncDirConfig
   libs: LibSyncDirConfig
-  roots: LibSyncDirConfig
-  isLocked: boolean
+  options: Pick<LibSyncOpts, 'isDebug' | 'runBackUp' | 'syncOnStart'>
+}
 
-  init: {
-    opts: () => void
-    dirs: () => void
-  }
+export type EnvConfigStruct = {
+  srcDir: string
+  destDir: string
+  backupDir: string
+  combinedLogsOutputDir: string
+  errorLogsOutputdir: string
+  debounceAmount: number
+  rezAttempts: number
+  rezCooldown: number
+  options: LibSyncOpts
 }

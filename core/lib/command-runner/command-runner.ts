@@ -1,7 +1,7 @@
 import fs from 'fs/promises'
 import { Command, Commands } from '../../models/commands'
-import Config from '../../utils/config/config-holder'
 import { logger, Logger, LogHelper } from '../../utils/log-helper'
+import LibSync from '../../utils/state/state'
 
 let cmdRunnerLogger: Logger
 
@@ -25,7 +25,7 @@ async function executeCopyCommands(copyCommands: Command[]): Promise<void> {
 
 async function executeCommands(commands: Commands): Promise<void> {
   cmdRunnerLogger = logger.child({ func: 'cmd-runner' })
-  if (Config.opts.isPlan) {
+  if (LibSync.options.isPlan) {
     return
   }
 

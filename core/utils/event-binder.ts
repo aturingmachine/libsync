@@ -1,11 +1,26 @@
-export type EventHandler<K extends keyof EnvConfigEvents> = (
+import EnvConfig from './config/env-config'
+import {
+  ConfigurableLibSyncState,
+  EnvConfigStruct,
+  LibSyncDirConfig,
+  LibSyncOpts,
+} from './config/models'
+
+type EventHolder<C> = EnvConfigEvents extends C
+  ? EnvConfigEvents
+  : RuntimeConfigEvents
+
+export type EventHandler<K extends keyof C, C> = (
   param: K,
-  newVal: EnvConfigEvents[K]
-) => void
+  newVal: C[K]
+) => Promise<any>
 
-type EventDictionary<T> = Record<keyof T, EventHandler<keyof EnvConfigEvents>[]>
+type EventDictionary<T> = Record<
+  keyof T,
+  EventHandler<keyof EventHolder<T>, EventHolder<T>>[]
+>
 
-interface EnvConfigEvents {
+interface EnvConfigEvents extends EnvConfigStruct {
   srcDir: string
   rezCooldown: number
   destDir: string
@@ -14,22 +29,33 @@ interface EnvConfigEvents {
   errorLogsOutputdir: string
   debounceAmount: number
   rezAttempts: number
+  options: LibSyncOpts
 }
 
-export class EventBinder<T = unknown> {
+interface RuntimeConfigEvents extends ConfigurableLibSyncState {
+  dirs: LibSyncDirConfig
+  libs: LibSyncDirConfig
+  options: Pick<LibSyncOpts, 'isDebug' | 'runBackUp' | 'syncOnStart'>
+}
+
+/**
+ * Will need to be updated to handle updates to state
+ */
+
+export class EventBinder<T> {
   private callbacks!: EventDictionary<T>
 
   constructor() {
     this.callbacks = {} as EventDictionary<T>
   }
 
-  on<K extends keyof EnvConfigEvents>(
+  on<K extends keyof EventHolder<T>>(
     properties: K[],
     thisArg: EventBinder<T> = this
-  ): { call: (handler: EventHandler<K>) => void } {
+  ): { call: (handler: EventHandler<K, EventHolder<T>>) => void } {
     return function () {
       return {
-        call: (handler: EventHandler<K>) => {
+        call: (handler: EventHandler<K, EventHolder<T>>) => {
           properties.forEach((property) => {
             thisArg.add(property, handler)
           })
@@ -38,24 +64,33 @@ export class EventBinder<T = unknown> {
     }.bind(this)()
   }
 
-  triggerUpdate<K extends keyof EnvConfigEvents>(
+  triggerUpdate<K extends keyof EventHolder<T>>(
     property: K,
-    newValue: EnvConfigEvents[K]
-  ): void {
-    this.callbacks[property as keyof EnvConfigEvents as keyof T].forEach(
-      (cbFn) => cbFn(property as keyof EnvConfigEvents, newValue)
+    newValue: EventHolder<T>[K]
+  ): Promise<any> {
+    console.log(this.callbacks)
+    console.log(this.callbacks[property as unknown as keyof T])
+
+    if (!this.callbacks[property as unknown as keyof T]) {
+      this.callbacks[property as unknown as keyof T] = []
+    }
+
+    return Promise.all(
+      this.callbacks[property as unknown as keyof T].map(
+        async (cbFn) => await cbFn(property as keyof EventHolder<T>, newValue)
+      )
     )
   }
 
-  private add<K extends keyof EnvConfigEvents>(
+  private add<K extends keyof EventHolder<T>>(
     property: K,
-    handler: EventHandler<K>
+    handler: EventHandler<K, EventHolder<T>>
   ): void {
-    if (!this.callbacks[property as keyof EnvConfigEvents as keyof T]) {
-      this.callbacks[property as keyof EnvConfigEvents as keyof T] = []
+    if (!this.callbacks[property as unknown as keyof T]) {
+      this.callbacks[property as unknown as keyof T] = []
     }
-    this.callbacks[property as keyof EnvConfigEvents as keyof T].push(
-      handler as EventHandler<keyof EnvConfigEvents>
+    this.callbacks[property as unknown as keyof T].push(
+      handler as EventHandler<keyof EventHolder<T>, EventHolder<T>>
     )
   }
 }

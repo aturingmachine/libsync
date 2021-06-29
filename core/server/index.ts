@@ -30,7 +30,7 @@ function mountApi(): void {
   })
 
   app.get('/client', (req: express.Request, res: express.Response) => {
-    res.sendFile(path.resolve(__dirname, '../../client/index.html'))
+    res.sendFile(path.resolve(__dirname, '../client/index.html'))
   })
 
   // TODO this is very, very unsafe and should be fixed
@@ -40,7 +40,7 @@ function mountApi(): void {
       res.sendFile(
         path.resolve(
           __dirname,
-          `../../client/${req.params.dir}/${req.params.resource}`
+          `../client/${req.params.dir}/${req.params.resource}`
         )
       )
     }
@@ -57,6 +57,7 @@ function mountApi(): void {
 
   EnvConfig.listen(['srcDir']).call((param, newSrcDir) => {
     console.log('Update Listener Pinged At', param, newSrcDir)
+    return Promise.resolve()
   })
 }
 

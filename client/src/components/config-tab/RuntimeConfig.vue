@@ -81,7 +81,7 @@
         :disabled="disableInputs"
         name="backup-opt"
         type="checkbox"
-        v-model="localConfig.opts.runBackup"
+        v-model="localConfig.options.runBackup"
       />
 
       <label class="checkbox-label" for="debug-opt">Run In Debug Mode</label>
@@ -89,7 +89,7 @@
         :disabled="disableInputs"
         name="debug-opt"
         type="checkbox"
-        v-model="localConfig.opts.isDebug"
+        v-model="localConfig.options.isDebug"
       />
 
       <input
@@ -103,9 +103,9 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { RunTimeConfig } from '@/models/config'
 import { ConfigStoreTypes } from '@/store/config'
 import { deepInequals } from '@/utils/deep-equals'
+import { RuntimeConfig } from '@/models/config'
 
 export default Vue.extend({
   name: 'RuntimeConfig',
@@ -129,7 +129,7 @@ export default Vue.extend({
       ]
     },
 
-    runtimeConfig(): RunTimeConfig {
+    runtimeConfig(): RuntimeConfig {
       return this.$store.getters[ConfigStoreTypes.getters.GetRuntimeConfig]
     },
 

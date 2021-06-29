@@ -1,6 +1,5 @@
 import { PathLike } from 'fs'
 import fs from 'fs/promises'
-import Config from '../utils/config/config-holder'
 import { debounce } from '../utils/debounce'
 import sync from './dir-sync/dir-sync'
 import { Logger, logger } from '../utils/log-helper'
@@ -19,7 +18,7 @@ export function isWatcherMounted(): boolean {
 
 async function initiateSync() {
   try {
-    if (Config.opts.runBackUp) {
+    if (LibSync.options.runBackUp) {
       watcherLogger.info('Attempting Backup Sync')
       await sync(true)
     }
@@ -93,16 +92,16 @@ async function executeMount(): Promise<void> {
   watcherLogger = logger.child({ func: 'watcher' })
   abort = new AbortController()
 
-  if (Config.opts.syncOnStart) {
+  if (LibSync.options.syncOnStart) {
     watcherLogger.info('Initiating Sync On Start')
     initiateSync()
   }
 
   LibSync.isRunningBackup = false
 
-  EnvConfig.listen(['srcDir', 'debounceAmount']).call(() => {
+  EnvConfig.listen(['srcDir', 'debounceAmount']).call(() =>
     mountWatcher(LibSync.from.dir)
-  })
+  )
 
   return await mountWatcher(LibSync.from.dir)
 }

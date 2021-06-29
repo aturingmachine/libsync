@@ -15,26 +15,14 @@ interface LibSyncDirConfig {
   backup: string
 }
 
-export interface LibSyncOpts {
-  isKill: boolean
-  isPlan: boolean
-  isService: boolean
+type LibSyncOpts = {
   isDebug: boolean
-  syncOnStart: boolean
   runBackUp: boolean
-  runHelp: boolean
-  runClient: boolean
+  syncOnStart: boolean
 }
 
-export interface RunTimeConfig {
-  opts: LibSyncOpts
+export interface RuntimeConfig {
   dirs: LibSyncDirConfig
   libs: LibSyncDirConfig
-  roots: LibSyncDirConfig // TODO believe this is unused atm
-  isLocked: boolean
-
-  init: {
-    opts: () => void
-    dirs: () => void
-  }
+  options: LibSyncOpts
 }
