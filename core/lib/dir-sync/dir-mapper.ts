@@ -3,7 +3,7 @@ import fs from 'fs/promises'
 import path from 'path'
 import { DirStruct, TargetName } from '../../models/dirs'
 import { Logger, logger, LogHelper } from '../../utils/log-helper'
-import LibSync from '../../utils/state/state'
+import LibSync from '../../utils/config/runtime-config/state'
 
 let dirMapLogger: Logger
 

@@ -1,4 +1,4 @@
-import EnvConfig from './config/env-config'
+import EnvConfig from './config/env-config/env-config'
 import {
   ConfigurableLibSyncState,
   EnvConfigStruct,

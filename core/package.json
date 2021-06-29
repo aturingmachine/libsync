@@ -7,7 +7,7 @@
     "test": "tsc && node ./dist/index.js",
     "build": "tsc",
     "start": "npm run build && node ./dist/index.js",
-    "dev": "tsc --watch & nodemon ./dist/index.js -- service client debug",
+    "dev": "tsc --watch & nodemon ./dist/index.js -- debug",
     "single-run": "npm sun start",
     "help": "npm run start -- help",
     "lint": "eslint --fix"

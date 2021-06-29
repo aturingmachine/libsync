@@ -1,5 +1,5 @@
 import fs from 'fs/promises'
-import EnvConfig from './env-config'
+import EnvConfig from './env-config/env-config'
 import {
   ConfigurableLibSyncState,
   EnvConfigStruct,
@@ -86,12 +86,12 @@ const RuntimeConfigvalidator: {
 const defaultEnvConfigOptions: LibSyncOpts = {
   isKill: false,
   isPlan: false,
-  isService: true,
+  runOnce: false,
   isDebug: false,
   syncOnStart: false,
   runBackUp: false,
   runHelp: false,
-  runClient: true,
+  isHeadless: false,
 }
 
 const dirValidator = {

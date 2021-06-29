@@ -1,7 +1,7 @@
 import ws from 'ws'
 import fs from 'fs/promises'
 import { debounce } from '../utils/debounce'
-import EnvConfig from '../utils/config/env-config'
+import EnvConfig from '../utils/config/env-config/env-config'
 import { logger, Logger } from '../utils/log-helper'
 import WebSocket from 'ws'
 import { Socket } from 'net'

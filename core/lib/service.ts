@@ -3,8 +3,8 @@ import fs from 'fs/promises'
 import { debounce } from '../utils/debounce'
 import sync from './dir-sync/dir-sync'
 import { Logger, logger } from '../utils/log-helper'
-import LibSync from '../utils/state/state'
-import EnvConfig from '../utils/config/env-config'
+import LibSync from '../utils/config/runtime-config/state'
+import EnvConfig from '../utils/config/env-config/env-config'
 
 let watcherLogger: Logger
 let rezTimer: NodeJS.Timeout

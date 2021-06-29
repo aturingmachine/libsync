@@ -1,9 +1,9 @@
 import express from 'express'
 import path from 'path'
-import EnvConfig from '../utils/config/env-config'
+import EnvConfig from '../utils/config/env-config/env-config'
 import { ConfigurableLibSyncState } from '../utils/config/models'
 import { logger } from '../utils/log-helper'
-import LibSync from '../utils/state/state'
+import LibSync from '../utils/config/runtime-config/state'
 
 const configApiLogger = logger.child({ func: 'config-api' })
 

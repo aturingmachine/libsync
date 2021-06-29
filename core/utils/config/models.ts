@@ -1,43 +1,54 @@
-interface OptFlag {
-  [key: string]: { flags: string[]; helpMsg: string }
+type OptFlag = {
+  [key in keyof LibSyncOpts]: {
+    longFlag: string
+    shortFlag: string
+    helpMsg: string
+  }
 }
 
 export const optsFlags: OptFlag = {
   isKill: {
-    flags: ['kill', '-k'],
+    longFlag: 'kill',
+    shortFlag: 'k',
     helpMsg: 'Exit The Process Early without running any syncs',
   },
   isPlan: {
-    flags: ['plan', '-p'],
+    longFlag: 'plan',
+    shortFlag: 'p',
     helpMsg: 'Display what running the scan would do and exit',
   },
-  isService: {
-    flags: ['service', '-s'],
-    helpMsg:
-      'Runs LibSync as a service mounting a file watcher to the provided src library. Will debounce changes to the src library ',
+  runOnce: {
+    longFlag: 'run-once',
+    shortFlag: 'r',
+    helpMsg: 'Runs LibSync once over the provided libraries.',
   },
   isDebug: {
-    flags: ['debug', '-d'],
+    longFlag: 'debug',
+    shortFlag: 'd',
     helpMsg:
       'Will increase the amount of logs written to the log files as well as writing logs to the console',
   },
   syncOnStart: {
-    flags: ['sync-on-start', '-o'],
+    longFlag: 'sync-on-start',
+    shortFlag: 'o',
     helpMsg:
       'When run in addition to service mode will attempt to run a sync cycle on start',
   },
   runBackUp: {
-    flags: ['backup', '-b'],
+    longFlag: 'backup',
+    shortFlag: 'b',
     helpMsg:
       'Will execute a sync of the destination directory to the provided ',
   },
   runHelp: {
-    flags: ['help', '-h'],
+    longFlag: 'help',
+    shortFlag: 'h',
     helpMsg: 'Display this message',
   },
-  runClient: {
-    flags: ['client', '-c'],
-    helpMsg: 'Stand up an api and local web client to manage LibSync',
+  isHeadless: {
+    longFlag: 'headless',
+    shortFlag: 'H',
+    helpMsg: 'Run LibSync without the API or Admin Client',
   },
 }
 Object.freeze(optsFlags)
@@ -56,12 +67,12 @@ export type LibSyncDirConfig = {
 export type LibSyncOpts = {
   isKill: boolean
   isPlan: boolean
-  isService: boolean
+  runOnce: boolean
   isDebug: boolean
   syncOnStart: boolean
   runBackUp: boolean
   runHelp: boolean
-  runClient: boolean
+  isHeadless: boolean
 }
 
 export type ConfigurableLibSyncState = {

@@ -1,20 +1,20 @@
 import { PathLike } from 'fs'
-import { DirStruct, TargetName } from '../../models/dirs'
+import { DirStruct, TargetName } from '../../../models/dirs'
 import {
   getLibFromDir,
   parseCliDirs,
   RuntimeConfigvalidator,
-} from '../config/config-utils'
-import EnvConfig from '../config/env-config'
+} from '../config-utils'
+import EnvConfig from '../env-config/env-config'
 import {
   ConfigurableLibSyncState,
   EnvConfigStruct,
   LibSyncDirConfig,
   LibSyncOpts,
   optsFlags,
-} from '../config/models'
-import { EventBinder, EventHandler } from '../event-binder'
-import { Logger, logger } from '../log-helper'
+} from '../models'
+import { EventBinder, EventHandler } from '../../event-binder'
+import { Logger, logger } from '../../log-helper'
 
 interface SyncTarget {
   name: TargetName
@@ -51,15 +51,27 @@ class LibSyncOptsRecord {
 
   private initOpts(): void {
     // Get all flags turned on by Command Line Args
+    const args = process.argv.slice(2)
+    const shortFlags = args
+      .find((a) => /^-[A-Za-z]+/.test(a))
+      ?.slice(1)
+      .split('')
+    console.log(shortFlags)
+
     const cliOptions = Object.fromEntries(
-      Object.keys(optsFlags)
-        .filter((opt) =>
-          optsFlags[opt].flags.some((flag) => process.argv.includes(flag))
+      Object.entries(optsFlags)
+        .filter(
+          ([key, opt]) =>
+            args.includes(opt.longFlag) ||
+            args.includes(`--${opt.longFlag}`) ||
+            shortFlags?.includes(opt.shortFlag)
         )
-        .map((opt) => {
-          return [opt, true]
+        .map(([key, opt]) => {
+          return [key, true]
         })
     ) as LibSyncOpts
+
+    console.log('>>>>>', cliOptions)
 
     // Merge config'ed options and parsed options
     this._options = { ...EnvConfig.get.options, ...cliOptions }

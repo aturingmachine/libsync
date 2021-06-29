@@ -1,7 +1,7 @@
 import express, { NextFunction } from 'express'
 import path from 'path'
 import { nextTick } from 'process'
-import EnvConfig from '../utils/config/env-config'
+import EnvConfig from '../utils/config/env-config/env-config'
 import configApi from './config-api'
 import mountLogsRouter from './logs-api'
 import { LogWebSocket } from './logs-ws'

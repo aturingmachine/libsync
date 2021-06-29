@@ -1,7 +1,7 @@
 import { Logger } from 'winston'
 import { DirStructInside } from '../../models/dirs'
 import { logger, LogHelper } from '../../utils/log-helper'
-import LibSync from '../../utils/state/state'
+import LibSync from '../../utils/config/runtime-config/state'
 import buildCommands from '../command-runner/command-mapper'
 import executeCommands from '../command-runner/command-runner'
 import mapDirectoryStructure from './dir-mapper'
@@ -51,7 +51,7 @@ async function sync(isBackupRun: boolean): Promise<void> {
   }
 
   const fullPaths = pathsToCopy.map((path) => {
-    let targetPath = path.slice(
+    const targetPath = path.slice(
       path.indexOf('/', path.indexOf(LibSync.from.lib))
     )
 

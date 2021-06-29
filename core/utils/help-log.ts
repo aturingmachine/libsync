@@ -86,7 +86,7 @@ function logOptions() {
   const optFlags = optsFlags
 
   const optionsMessages = Object.keys(optFlags).map((flag) => {
-    const flags = optFlags[flag].flags.join(', ')
+    const flags = optFlags[flag].longFlag.concat(' ', optFlags[flag].shortFlag)
     return `\n${flag})\n  ${flags.padEnd(17, ' ')} - ${optFlags[flag].helpMsg}`
   })
 

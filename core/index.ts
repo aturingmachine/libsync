@@ -2,9 +2,9 @@ import { initLogger, logger, Logger } from './utils/log-helper'
 import sync from './lib/dir-sync/dir-sync'
 import executeMount from './lib/service'
 import { logHelpMessage } from './utils/help-log'
-import EnvConfig from './utils/config/env-config'
+import EnvConfig from './utils/config/env-config/env-config'
 import mountApi from './server'
-import LibSync from './utils/state/state'
+import LibSync from './utils/config/runtime-config/state'
 
 let mainLogger: Logger
 
@@ -39,7 +39,7 @@ const main = async () => {
     LibSync.dirs.src,
     LibSync.dirs.dest,
     LibSync.options.isDebug,
-    LibSync.options.isService,
+    LibSync.options.runOnce,
     {
       opts: {
         src: LibSync.dirs.src,
@@ -49,11 +49,11 @@ const main = async () => {
     }
   )
 
-  if (LibSync.options.isService) {
+  if (!LibSync.options.runOnce) {
     mainLogger.info('Mounting LibSync Service')
     executeMount()
 
-    if (LibSync.options.runClient) {
+    if (!LibSync.options.isHeadless) {
       mountApi()
     }
   } else {
