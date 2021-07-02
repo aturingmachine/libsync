@@ -21,6 +21,43 @@ export const logsState = (): LogsState => ({ logs: [], hasInitialized: false })
 
 export const logsGetters: GetterTree<LogsState, RootState> = {
   getLogs: (state): Log[] => state.logs,
+
+  filteredLogs: state => (searchTerm: string): Log[] => {
+    if (searchTerm.length === 0) {
+      return state.logs
+    }
+
+    const lcTerms = searchTerm.toLowerCase().split(/\s|\//g)
+
+    console.log(lcTerms)
+
+    return state.logs.filter(log => {
+      console.log(log.message.toLowerCase().split(/\s|\//g))
+      return (
+        lcTerms.includes(log.func.toLowerCase()) ||
+        lcTerms.includes(log.service.toLowerCase()) ||
+        log.message
+          .toLowerCase()
+          .split(/\s|\//g)
+          .filter(word => word.length > 1)
+          .some(word => {
+            return (
+              lcTerms.includes(word) ||
+              lcTerms.some(
+                term =>
+                  (term.includes(word) || word.includes(term)) &&
+                  word.length > 4
+              )
+            )
+          }) ||
+        new Date(log.timestamp)
+          .toLocaleString()
+          .toLowerCase()
+          .split(' ')
+          .some(x => lcTerms.includes(x))
+      )
+    })
+  },
 }
 
 export const logsMutations: MutationTree<LogsState> = {
@@ -28,8 +65,12 @@ export const logsMutations: MutationTree<LogsState> = {
     state.hasInitialized = true
   },
 
-  addLogs(state, payload) {
-    state.logs = [...payload.logs.reverse(), ...state.logs]
+  addLogs(state, payload: { logs: Log[] }) {
+    state.logs = payload.logs
+      .reverse()
+      .concat(state.logs)
+      .slice(0, 350)
+    // state.logs = [...payload.logs.reverse(), ...state.logs]
   },
 }
 

@@ -80,28 +80,33 @@ export default Vue.extend({
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  border-bottom: 2px solid black;
+  border-bottom: 2px solid rgb(153, 153, 152);
 }
 
 .config-tab {
   padding: 6px 16px;
   font-size: 24px;
-  border: 2px solid black;
+  border: 2px solid rgb(153, 153, 152);
   border-bottom: none;
   border-radius: 8px 8px 0 0;
   cursor: pointer;
+  background-color: rgb(21, 32, 43);
+  color: rgb(232, 230, 227);
 }
 
 .config-tab.active {
   padding-bottom: 15px;
+  background-color: rgb(30, 41, 52);
 }
 
 .config-tab.active:hover {
   padding-bottom: 15px;
+  box-shadow: none;
 }
 
 .config-tab:hover {
   padding-bottom: 10px;
+  box-shadow: #42b983 0px -7px 10px 0px;
 }
 
 .config-tab.left {

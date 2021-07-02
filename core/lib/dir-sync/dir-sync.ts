@@ -21,6 +21,7 @@ function diffTrees(src: DirStructInside, dest: DirStructInside): string[] {
 }
 
 async function sync(isBackupRun: boolean): Promise<void> {
+  LibSync.lock()
   syncLogger = logger.child({ func: 'sync' })
   LibSync.isRunningBackup = isBackupRun
 
@@ -65,6 +66,7 @@ async function sync(isBackupRun: boolean): Promise<void> {
   )
 
   await executeCommands(commands)
+  LibSync.unlock()
 }
 
 export default sync

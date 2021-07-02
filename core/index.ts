@@ -60,6 +60,7 @@ const main = async () => {
     mainLogger.info('Running Singular Sync')
     runOnce()
   }
+  LibSync.unlock()
 }
 
 main()

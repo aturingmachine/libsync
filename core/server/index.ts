@@ -3,6 +3,7 @@ import path from 'path'
 import { nextTick } from 'process'
 import EnvConfig from '../utils/config/env-config/env-config'
 import configApi from './config-api'
+import { LockWebSocket } from './lock-ws'
 import mountLogsRouter from './logs-api'
 import { LogWebSocket } from './logs-ws'
 
@@ -51,8 +52,21 @@ function mountApi(): void {
 
   const server = app.listen(3000)
 
+  LogWebSocket.init()
+  LockWebSocket.init()
+
   server.on('upgrade', (request, socket, head) => {
-    new LogWebSocket(request, socket, head)
+    const pathName: string = request.url
+
+    if (pathName === '/ws/logs') {
+      console.log('Got WS Upgrade for Logs')
+      LogWebSocket.handleUpgrade(request, socket, head)
+    }
+
+    if (pathName === '/ws/lock-status') {
+      console.log('Upgrade Lock')
+      LockWebSocket.handleUpgrade(request, socket, head)
+    }
   })
 
   EnvConfig.listen(['srcDir']).call((param, newSrcDir) => {

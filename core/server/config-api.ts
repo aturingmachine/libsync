@@ -29,8 +29,10 @@ configApi.post(
     configApiLogger.info('Attempting to FAKE update config')
 
     try {
+      LibSync.lock()
       await EnvConfig.updateConfigFields(req.body.config)
       res.status(202).json({ config: EnvConfig.get })
+      LibSync.unlock()
     } catch (error) {
       res.sendStatus(500)
       configApiLogger.error('Failed To Update EnvConfig', error)
@@ -57,10 +59,12 @@ configApi.post(
     // LibSync.updateConfigFields(req.body.config)
 
     try {
+      LibSync.lock()
       await LibSync.updateConfigFields(
         req.body.config as ConfigurableLibSyncState
       )
       res.status(202).json({ config: LibSync.configurableState })
+      LibSync.unlock()
     } catch (error) {
       res.sendStatus(500)
       configApiLogger.error('Failed To Update RuntimeConfig', error)

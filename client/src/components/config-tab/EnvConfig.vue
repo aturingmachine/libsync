@@ -15,6 +15,7 @@
       <h3>Log Directories</h3>
       <label for="combinedLogs">Combined Logs File</label>
       <input
+        disabled
         name="combinedLogs"
         type="text"
         v-model="localConfig.combinedLogsOutputDir"
@@ -22,6 +23,7 @@
 
       <label for="errorLogs">Error Logs File</label>
       <input
+        disabled
         name="errorLogs"
         type="text"
         v-model="localConfig.errorLogsOutputdir"

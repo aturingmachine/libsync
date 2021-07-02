@@ -218,7 +218,9 @@ export default Vue.extend({
 caption {
   text-align: left;
   border-left: 5px solid gray;
-  background-color: lightgray;
+  background-color: rgb(30, 41, 52);
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
   padding: 10px;
   margin-bottom: 16px;
 }

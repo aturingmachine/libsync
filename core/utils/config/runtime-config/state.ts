@@ -16,6 +16,8 @@ import {
 import { EventBinder, EventHandler } from '../../event-binder'
 import { Logger, logger } from '../../log-helper'
 
+declare type Lockhandler = (lockStatus: boolean) => any
+
 interface SyncTarget {
   name: TargetName
   dir: PathLike
@@ -95,6 +97,7 @@ class LibSyncOptsRecord {
  * and makes the main state a bit cleaner maybe.
  */
 class LibSyncStateRecord {
+  private _isLocked = false
   private _dirs!: LibSyncDirConfig
   private _libs!: LibSyncDirConfig
   private _options!: LibSyncOptsRecord
@@ -102,6 +105,7 @@ class LibSyncStateRecord {
   private srcDirStructure: DirStruct = {}
   private destDirStructure: DirStruct = {}
   private backupDirStructure: DirStruct = {}
+  private _lockEventListeners: Lockhandler[] = []
 
   constructor(logger: Logger) {
     this.logger = logger
@@ -136,6 +140,28 @@ class LibSyncStateRecord {
 
   get libs(): LibSyncDirConfig {
     return { ...this._libs }
+  }
+
+  get isLocked(): boolean {
+    return this._isLocked
+  }
+
+  set isLocked(newVal: boolean) {
+    this._isLocked = newVal
+    this._lockEventListeners.forEach((cb) => {
+      cb(newVal)
+    })
+  }
+
+  addLockHander(handler: Lockhandler): void {
+    this._lockEventListeners.push(handler)
+  }
+
+  removeLockhandler(handler: Lockhandler): void {
+    this._lockEventListeners.splice(
+      this._lockEventListeners.indexOf(handler),
+      1
+    )
   }
 
   get configurableOptions(): Pick<
@@ -210,16 +236,6 @@ class LibSyncStateRecord {
   }
 }
 
-/**
- * TODO #19
- *
- * When updating the ConfigHolder (runtime configuration) values we
- * will want to make sure anyone consuming the state updates? But as long as nothing
- * is actively running I think it will pull latest unless it uses some kind of init.
- *
- * Looks like best idea is to rip ConfigHolder out of the application. We
- * can manage its responsibilities in EnvConfig and here in state
- */
 class LibSyncState {
   private _state!: LibSyncStateRecord
   private logger!: Logger
@@ -309,6 +325,27 @@ class LibSyncState {
 
   get from(): SyncTarget {
     return this._from
+  }
+
+  get isLocked(): boolean {
+    return this._state.isLocked
+  }
+
+  lock(): void {
+    this._state.isLocked = true
+  }
+
+  unlock(): void {
+    this._state.isLocked = false
+  }
+
+  lockStatus = {
+    on: (handler: Lockhandler) => {
+      this.state.addLockHander(handler)
+    },
+    off: (handler: Lockhandler) => {
+      this.state.removeLockhandler(handler)
+    },
   }
 
   get isRunningBackup(): boolean {
