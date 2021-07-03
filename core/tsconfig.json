@@ -18,6 +18,7 @@
     "sourceMap": true,
     "types": ["node", "express"],
     "lib": ["ES2019"],
+    "resolveJsonModule": true
   },
   "exclude": ["client/**"],
   "watchOptions": {

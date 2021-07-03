@@ -1,8 +1,7 @@
 import express, { NextFunction } from 'express'
 import path from 'path'
-import { nextTick } from 'process'
-import EnvConfig from '../utils/config/env-config/env-config'
 import { logger, Logger } from '../utils/log-helper'
+import aboutApi from './about-api'
 import configApi from './config-api'
 import { LockWebSocket } from './lock-ws'
 import mountLogsRouter from './logs-api'
@@ -53,6 +52,7 @@ function mountApi(): void {
 
   app.use(mountLogsRouter())
   app.use(configApi)
+  app.use(aboutApi)
   apiLogger.info('REST Controllers mounted')
 
   const server = app.listen(3000)

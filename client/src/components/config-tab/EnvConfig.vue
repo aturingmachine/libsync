@@ -2,7 +2,7 @@
   <div class="config-wrapper">
     <h2>Environment Configuration</h2>
     <form
-      v-if="hasConfigLoaded"
+      v-if="!!localConfig && !!localConfig.options"
       @submit.prevent="updateConfig()"
       class="config-form"
     >

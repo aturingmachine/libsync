@@ -10,6 +10,7 @@
     <router-link
       class="nav-link"
       v-for="(link, index) in navLinks"
+      @click.native="handleMenuClick()"
       :key="index"
       :to="link.route"
     >
@@ -30,11 +31,6 @@ export default Vue.extend({
     return {
       navLinks: [
         {
-          title: 'About',
-          route: '/about',
-          icon: 'info',
-        },
-        {
           title: 'Logs',
           route: '/logs',
           icon: 'list',
@@ -43,6 +39,11 @@ export default Vue.extend({
           title: 'Configuration',
           route: '/config',
           icon: 'settings',
+        },
+        {
+          title: 'About',
+          route: '/about',
+          icon: 'info',
         },
       ],
     }
@@ -65,6 +66,12 @@ export default Vue.extend({
         isCollapsed: !isCollapsed,
       })
     },
+
+    handleMenuClick(): void {
+      if (!this.isCollapsed) {
+        this.collapse(false)
+      }
+    },
   },
 })
 </script>
@@ -84,9 +91,35 @@ export default Vue.extend({
   align-items: flex-start;
   transition: all 0.2s ease-out;
   z-index: 2;
+  border-right: 1px solid rgb(35, 46, 57);
+
+  &::after {
+    transition: all 0.2s ease-out;
+    content: '';
+    position: absolute;
+    margin-left: 200px;
+    height: 100vh;
+    width: 75px;
+    padding-top: 0;
+    margin-top: -20px;
+    background: rgb(35, 46, 57);
+    background: linear-gradient(
+      90deg,
+      rgba(35, 46, 57, 1) 0%,
+      rgba(35, 46, 57, 1) 1%,
+      rgba(0, 0, 0, 0) 40%,
+      rgba(0, 0, 0, 0) 100%
+    );
+  }
 
   &.collapsed {
     width: 50px;
+
+    &::after {
+      margin-left: 0;
+      opacity: 0;
+      visibility: hidden;
+    }
 
     .nav-link {
       width: calc(100% - 22px);
@@ -122,6 +155,11 @@ export default Vue.extend({
   left: 100%;
   border: none;
   border-bottom-right-radius: 10px;
+  z-index: 3;
+
+  &:hover {
+    background-color: $tertiary;
+  }
 
   span {
     transition: all 0.2s ease-out;
@@ -130,6 +168,10 @@ export default Vue.extend({
   &.collapsed {
     span {
       transform: rotate(180deg);
+    }
+
+    &::after {
+      visibility: hidden;
     }
   }
 }

@@ -10,7 +10,7 @@ export default Vue.extend({
 })
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
 .material-icons {
   font-family: 'Material Icons';
   font-weight: normal;
@@ -34,5 +34,10 @@ export default Vue.extend({
 
   /* Support for IE. */
   font-feature-settings: 'liga';
+
+  &.inline-icon {
+    height: 100%;
+    font-size: inherit;
+  }
 }
 </style>

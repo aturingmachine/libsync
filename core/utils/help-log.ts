@@ -1,4 +1,4 @@
-import { getOptsFlags, optsFlags } from './config/models'
+import { getOptsFlags, LibSyncOpts, optsFlags } from './config/models'
 import { LogHelper } from './log-helper'
 
 function getSpacer(): string {
@@ -86,8 +86,13 @@ function logOptions() {
   const optFlags = optsFlags
 
   const optionsMessages = Object.keys(optFlags).map((flag) => {
-    const flags = optFlags[flag].longFlag.concat(' ', optFlags[flag].shortFlag)
-    return `\n${flag})\n  ${flags.padEnd(17, ' ')} - ${optFlags[flag].helpMsg}`
+    const flags = optFlags[flag as keyof LibSyncOpts].longFlag.concat(
+      ' ',
+      optFlags[flag as keyof LibSyncOpts].shortFlag
+    )
+    return `\n${flag})\n  ${flags.padEnd(17, ' ')} - ${
+      optFlags[flag as keyof LibSyncOpts].helpMsg
+    }`
   })
 
   line = Array(

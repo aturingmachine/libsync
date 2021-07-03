@@ -10,8 +10,19 @@ const { combine, timestamp, colorize, printf, json, splat } = winston.format
 
 const consoleLogFormat = printf(
   ({ level, message, timestamp, func, service }) => {
+    const d = new Date(timestamp)
+
+    const time = d.toLocaleTimeString()
+    const spaceIndex = time.indexOf(' ')
+    const timeString = time
+      .slice(0, spaceIndex)
+      .concat(`.${d.getMilliseconds()}`)
+      .concat(time.slice(spaceIndex))
+
     const funcName = `(${func || service})`
-    return `[${funcName.padEnd(14)} :: <${level}> :: ${timestamp}] ${message}`
+    return `[${funcName.padEnd(
+      10
+    )} :: <${level}> :: ${d.toLocaleDateString()} ${timeString}] ${message}`
   }
 )
 

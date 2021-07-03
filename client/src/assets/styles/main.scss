@@ -31,6 +31,12 @@ body {
   }
 }
 
+a {
+  font-weight: 700;
+  color: $accent-text;
+  text-decoration: none;
+}
+
 input {
   border: 2px solid $border-primary;
   border-radius: 8px;
@@ -40,6 +46,10 @@ input {
   color: $primary-text;
   font-weight: 600;
   font-family: 'Roboto Mono';
+
+  &:focus-within {
+    border: solid 2px $border-highlight;
+  }
 
   &:disabled {
     color: $tertiary-text;

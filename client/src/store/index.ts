@@ -9,6 +9,7 @@ export interface RootState {
   isLoading: boolean
   isNavDrawerOpen: boolean
   isNavDrawerCollapsed: boolean
+  hasShownIntro: boolean
 }
 
 export const rootState = (): RootState => ({
@@ -17,6 +18,7 @@ export const rootState = (): RootState => ({
   isLoading: false,
   isNavDrawerOpen: false,
   isNavDrawerCollapsed: false,
+  hasShownIntro: false,
 })
 
 export enum RootGetterTypes {
@@ -24,6 +26,7 @@ export enum RootGetterTypes {
   IsNavDrawerOpen = 'IsNavDrawerOpen',
   IsNavDrawerCollapsed = 'IsNavDrawerCollapsed',
   IsLocked = 'IsLocked',
+  HasShownIntro = 'HasShownIntro',
 }
 
 export enum RootMutationTypes {
@@ -31,6 +34,7 @@ export enum RootMutationTypes {
   SetIsLoading = 'SetIsLoading',
   SetNavDrawerOpen = 'SetNavDrawerOpen',
   SetNavDrawerCollapsed = 'SetNavDrawerCollapsed',
+  SetHasShownIntro = 'SetHasShownIntro',
 }
 
 const getters: GetterTree<RootState, RootState> = {
@@ -42,6 +46,8 @@ const getters: GetterTree<RootState, RootState> = {
 
   [RootGetterTypes.IsNavDrawerCollapsed]: (state): boolean =>
     state.isNavDrawerCollapsed,
+
+  [RootGetterTypes.HasShownIntro]: (state): boolean => state.hasShownIntro,
 }
 
 const mutations: MutationTree<RootState> = {
@@ -59,6 +65,10 @@ const mutations: MutationTree<RootState> = {
 
   [RootMutationTypes.SetNavDrawerCollapsed](state, payload) {
     state.isNavDrawerCollapsed = payload.isCollapsed
+  },
+
+  [RootMutationTypes.SetHasShownIntro](state) {
+    state.hasShownIntro = true
   },
 }
 

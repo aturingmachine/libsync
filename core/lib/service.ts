@@ -85,7 +85,7 @@ async function mountWatcher(srcPath: PathLike): Promise<void> {
     mountedSignal = runAllGood(srcPath)
 
     for await (const _event of watcher) {
-      watcherLogger.silly('File Change Event Recieved - Debouncing')
+      watcherLogger.verbose('File Change Event Recieved - Debouncing')
       debouncedSync()
     }
   } catch (error) {

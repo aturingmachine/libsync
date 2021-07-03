@@ -5,7 +5,9 @@
     </transition>
     <div class="button-container">
       <button @click.prevent="setDrawerOpen(isOpen)" class="menu-button">
-        <icon>menu</icon>
+        <transition name="menu-icon">
+          <icon :key="menuIcon">{{ menuIcon }}</icon>
+        </transition>
       </button>
 
       <router-link class="logo" to="/">
@@ -51,6 +53,10 @@ export default Vue.extend({
         ? 'LibSync is currently locked. A Configuration may be updating or a Sync is in progress.'
         : 'LibSync is not currently occupied with a blocking task.'
     },
+
+    menuIcon(): string {
+      return this.isOpen ? 'menu_open' : 'menu'
+    },
   },
 
   methods: {
@@ -79,14 +85,16 @@ export default Vue.extend({
 
 .material-icons {
   font-size: 36px !important;
-  transition: color 0.5s ease-out;
+  transition: all 0.5s ease-out;
 
   &.locked {
     color: $warning;
+    transform: none;
   }
 
   &.unlocked {
     color: $success;
+    transform: none;
   }
 }
 
@@ -101,6 +109,12 @@ export default Vue.extend({
 
 .menu-button {
   display: flex;
+}
+
+#nav a.logo {
+  &.router-link-exact-active {
+    color: rgb(232, 230, 227);
+  }
 }
 
 .logo,
@@ -135,11 +149,6 @@ export default Vue.extend({
   text-shadow: 2px 2px 2px #42b983, -2px -2px 2px #42b983;
 }
 
-.logo.router-link-exact-active:hover,
-.nav-link.router-link-exact-active:hover {
-  text-shadow: none;
-}
-
 .slide-in-enter-active,
 .slide-in-leave-active {
   transition: all 0.3s ease;
@@ -149,5 +158,18 @@ export default Vue.extend({
 .slide-in-leave-to {
   position: fixed;
   margin-left: -100%;
+}
+
+.menu-icon-enter-active,
+.menu-icon-leave-active {
+  transition: all 0.5s ease-out;
+}
+
+.menu-icon-enter,
+.menu-icon-leave-to {
+  position: absolute;
+  opacity: 0;
+  // transform: translateZ(10%);
+  transform: rotate3d(0.5, 0.1, 2, 180deg);
 }
 </style>

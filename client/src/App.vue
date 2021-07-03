@@ -61,34 +61,42 @@ export default Vue.extend({
   flex-direction: column;
   position: fixed;
   top: 0;
-  z-index: 5;
+  z-index: 10;
 }
 
 .page {
   padding: 100px;
   transition: width 0.3s ease, margin 0.2s ease;
 
+  &::before {
+    opacity: 0;
+    transition: all 0.3s ease-in;
+  }
+
   &.drawer-open {
     width: calc(100% - 200px) !important;
     margin-left: 200px !important;
+
     &.drawer-collapsed {
       width: calc(100% - 50px) !important;
       margin-left: 50px !important;
 
       &::before {
-        display: none;
+        opacity: 0;
+        visibility: hidden;
       }
     }
 
     &::before {
+      opacity: 1;
       content: '';
       height: 100%;
       width: 100%;
-      display: block;
       position: fixed;
       top: 0;
       right: 0;
       background-color: rgba(0, 0, 0, 0.733);
+      z-index: 9;
     }
   }
 }

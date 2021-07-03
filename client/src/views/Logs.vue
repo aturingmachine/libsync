@@ -2,12 +2,13 @@
   <div class="page logs-page">
     <div class="logs-header">
       <div class="search-holder">
-        <span class="log-count">
-          <!-- <animated-number :number="filteredLogs.length" /> -->
-        </span>
         <transition name="label-slide">
-          <label class="search-label" for="log-search" v-show="hasSearchTerm">
-            Filter Logs <animated-number :number="filteredLogs.length" />
+          <label
+            class="search-label"
+            for="log-search"
+            v-show="hasSearchTerm || isSearching"
+          >
+            Filtered Logs: <animated-number :number="filteredLogs.length" />
           </label>
         </transition>
         <div class="search-input">
@@ -17,6 +18,8 @@
             placeholder="Filter Logs"
             v-model="searchTerm"
             @input.prevent="debounceTermUpdate()"
+            @focus="isSearching = true"
+            @blur="isSearching = false"
           />
           <transition name="button-twist">
             <button
@@ -59,6 +62,7 @@ export default Vue.extend({
 
   data: () => {
     return {
+      isSearching: false,
       searchTerm: '',
       otherSearchTerm: '',
       debouncedUpdate: () => Promise.resolve(),
@@ -165,7 +169,7 @@ export default Vue.extend({
 
 .search-label {
   position: absolute;
-  top: 70px;
+  top: 85px;
   font-weight: 700;
   font-size: 18px;
 }
