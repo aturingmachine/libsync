@@ -48,6 +48,7 @@ async function sync(isBackupRun: boolean): Promise<void> {
 
   if (pathsToCopy.length === 0) {
     syncLogger.info('No Updates to be made')
+    LibSync.unlock()
     return Promise.resolve()
   }
 

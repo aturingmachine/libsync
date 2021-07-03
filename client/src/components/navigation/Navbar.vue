@@ -12,6 +12,14 @@
         LibSync
       </router-link>
     </div>
+
+    <div class="lock-status">
+      <tooltip direction="Left" :msg="lockTooltip">
+        <icon :class="isLocked ? 'locked' : 'unlocked'">
+          {{ isLocked ? 'lock' : 'lock_open' }}
+        </icon>
+      </tooltip>
+    </div>
   </div>
 </template>
 
@@ -19,17 +27,29 @@
 import Vue from 'vue'
 import NavDrawer from '@/components/navigation/NavDrawer.vue'
 import { RootGetterTypes, RootMutationTypes } from '@/store'
+import Tooltip from '@/components/misc/Tooltip.vue'
 
 export default Vue.extend({
   name: 'Navbar',
 
   components: {
     NavDrawer,
+    Tooltip,
   },
 
   computed: {
     isOpen(): boolean {
       return this.$store.getters[RootGetterTypes.IsNavDrawerOpen]
+    },
+
+    isLocked(): boolean {
+      return this.$store.getters[RootGetterTypes.IsLocked]
+    },
+
+    lockTooltip(): string {
+      return this.isLocked
+        ? 'LibSync is currently locked. A Configuration may be updating or a Sync is in progress.'
+        : 'LibSync is not currently occupied with a blocking task.'
     },
   },
 
@@ -44,7 +64,9 @@ export default Vue.extend({
 })
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+@import '@/assets/styles/colors.scss';
+
 .nav-bar {
   width: 100%;
   height: 60px;
@@ -57,6 +79,19 @@ export default Vue.extend({
 
 .material-icons {
   font-size: 36px !important;
+  transition: color 0.5s ease-out;
+
+  &.locked {
+    color: $warning;
+  }
+
+  &.unlocked {
+    color: $success;
+  }
+}
+
+.lock-status {
+  margin-right: 20px;
 }
 
 .button-container {

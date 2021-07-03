@@ -154,7 +154,7 @@
               :disabled="disableInputs"
               name="sync-on-start-opt"
               type="checkbox"
-              v-model="localConfig.options.isDebug"
+              v-model="localConfig.options.syncOnStart"
             />
             <tooltip
               msg="If true LibSync will run a sync job on startup when run non-headless."

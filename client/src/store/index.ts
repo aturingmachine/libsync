@@ -23,6 +23,7 @@ export enum RootGetterTypes {
   IsLoading = 'IsLoading',
   IsNavDrawerOpen = 'IsNavDrawerOpen',
   IsNavDrawerCollapsed = 'IsNavDrawerCollapsed',
+  IsLocked = 'IsLocked',
 }
 
 export enum RootMutationTypes {
@@ -33,6 +34,8 @@ export enum RootMutationTypes {
 }
 
 const getters: GetterTree<RootState, RootState> = {
+  [RootGetterTypes.IsLocked]: (state): boolean => state.isLocked,
+
   [RootGetterTypes.IsLoading]: (state): boolean => state.isLoading,
 
   [RootGetterTypes.IsNavDrawerOpen]: (state): boolean => state.isNavDrawerOpen,

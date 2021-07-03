@@ -1,5 +1,5 @@
 <template>
-  <div class="tooltip">
+  <div class="tooltip" :class="tooltipDirection">
     <span class="tooltip-text">
       {{ msg }}
     </span>
@@ -10,7 +10,14 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
+import Vue, { PropType } from 'vue'
+
+enum ToolTipDirection {
+  Top = 'Top',
+  Bottom = 'Bottom',
+  Left = 'Left',
+  Right = 'Right',
+}
 
 export default Vue.extend({
   name: 'Tooltip',
@@ -18,6 +25,17 @@ export default Vue.extend({
   props: {
     msg: {
       type: String,
+    },
+
+    direction: {
+      type: String as PropType<ToolTipDirection>,
+      default: ToolTipDirection.Right,
+    },
+  },
+
+  computed: {
+    tooltipDirection(): string {
+      return this.direction
     },
   },
 })
@@ -31,28 +49,56 @@ export default Vue.extend({
   display: inline-block;
 }
 
-.tooltip .tooltip-text {
-  visibility: hidden;
-  min-width: 200px;
-  background-color: rgb(48, 68, 87);
-  color: #fff;
-  text-align: center;
-  border-radius: 6px;
-  padding: 8px 4px;
-  position: absolute;
-  z-index: 1;
-  bottom: 30%;
-  left: calc(100% + 75px);
-  margin-left: -60px;
-  opacity: 0;
-  transition: all 0.3s ease-in-out;
+.tooltip {
+  .tooltip-text {
+    visibility: hidden;
+    min-width: 200px;
+    background-color: rgb(48, 68, 87);
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 8px 4px;
+    position: absolute;
+    z-index: 1;
+    bottom: 30%;
+    margin-left: -60px;
+    opacity: 0;
+    transition: all 0.3s ease-in-out;
+  }
+
+  &.Right {
+    .tooltip-text {
+      left: calc(100% + 75px);
+      bottom: 30%;
+
+      &::after {
+        left: -10px;
+        bottom: 8%;
+        border-color: transparent rgb(48, 68, 87) transparent transparent;
+      }
+    }
+  }
+
+  &.Left {
+    .tooltip-text {
+      top: 30%;
+      right: calc(100% + 5px);
+      height: max-content;
+
+      &::after {
+        right: -20px;
+        top: 5px;
+        border-color: transparent transparent transparent rgb(48, 68, 87);
+      }
+    }
+  }
+
+  // TODO add Top and Bottom tooltips
 }
 
 .tooltip .tooltip-text::after {
   content: '';
   position: absolute;
-  bottom: 8%;
-  left: -10px;
   margin-left: -10px;
   border-width: 10px;
   border-style: solid;
