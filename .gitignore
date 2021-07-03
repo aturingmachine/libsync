@@ -6,7 +6,7 @@ test-data/test-dest-folder/**
 
 .config.json
 
-logs
+core/logs/**
 
 todos
 
