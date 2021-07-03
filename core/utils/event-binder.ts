@@ -1,4 +1,3 @@
-import EnvConfig from './config/env-config/env-config'
 import {
   ConfigurableLibSyncState,
   EnvConfigStruct,
@@ -37,10 +36,6 @@ interface RuntimeConfigEvents extends ConfigurableLibSyncState {
   libs: LibSyncDirConfig
   options: Pick<LibSyncOpts, 'isDebug' | 'runBackUp' | 'syncOnStart'>
 }
-
-/**
- * Will need to be updated to handle updates to state
- */
 
 export class EventBinder<T> {
   private callbacks!: EventDictionary<T>

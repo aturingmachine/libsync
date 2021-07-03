@@ -169,7 +169,6 @@ export default Vue.extend({
 .menu-icon-leave-to {
   position: absolute;
   opacity: 0;
-  // transform: translateZ(10%);
   transform: rotate3d(0.5, 0.1, 2, 180deg);
 }
 </style>

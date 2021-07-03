@@ -49,7 +49,6 @@ export default Vue.extend({
 .loading-bar-fade-enter,
 .loading-bar-fade-leave-to {
   opacity: 0;
-  /* transform: translateY(25px); */
 }
 
 @keyframes loading-bar-slide {

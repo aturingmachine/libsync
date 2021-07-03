@@ -68,7 +68,6 @@ export default Vue.extend({
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
-  // flex-direction: column;
 
   .about-data {
     width: 45%;

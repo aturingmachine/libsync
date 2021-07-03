@@ -114,6 +114,5 @@ export default Vue.extend({
   font-family: 'Roboto Mono', monospace;
   border-bottom-right-radius: 10px;
   border-bottom-left-radius: 10px;
-  /* margin: 4px 0; */
 }
 </style>

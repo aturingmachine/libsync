@@ -67,7 +67,6 @@ export const logsMutations: MutationTree<LogsState> = {
       .reverse()
       .concat(state.logs)
       .slice(0, 350)
-    // state.logs = [...payload.logs.reverse(), ...state.logs]
   },
 }
 
