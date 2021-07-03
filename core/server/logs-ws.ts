@@ -1,56 +1,52 @@
 import ws from 'ws'
-import fs from 'fs/promises'
-import { debounce } from '../utils/debounce'
-import EnvConfig from '../utils/config/env-config'
 import { logger, Logger } from '../utils/log-helper'
-import WebSocket from 'ws'
 import { Socket } from 'net'
+import { IncomingMessage } from 'http'
 
 export class LogWebSocket {
-  wsServer!: ws.Server
-  initTimestamp!: number
-  logger!: Logger
-  socket!: ws
+  static wsServer: ws.Server
+  static initTimestamp: number
+  static logger: Logger
+  static socket: ws
 
-  constructor(request: any, socket: Socket, head: any) {
-    this.logger = logger.child({ func: 'log-ws' })
+  static init(): void {
+    LogWebSocket.logger = logger.child({ func: 'log-ws' })
 
-    this.wsServer = new ws.Server({ noServer: true })
-    this.initTimestamp = Date.now()
+    LogWebSocket.wsServer = new ws.Server({ noServer: true })
+    LogWebSocket.initTimestamp = Date.now()
 
-    this.mountLogWebSockets()
-    this.handleUpgrade(request, socket, head)
-
-    setInterval(() => {
-      logger.info('Forever Log')
-    }, 6000)
+    LogWebSocket.mountLogWebSockets()
   }
 
-  mountLogWebSockets(): void {
-    this.wsServer.on('connection', (socket) => {
-      this.socket = socket
-
-      this.streamLogs()
-
-      this.socket.on('message', (message) => {
-        console.log(message)
-        this.socket.send(`Hi! You said ${message}`)
-      })
+  static handleUpgrade(request: any, socket: Socket, head: any): void {
+    LogWebSocket.wsServer.handleUpgrade(request, socket, head, (socket) => {
+      LogWebSocket.wsServer.emit('connection', socket, request)
     })
   }
 
-  handleUpgrade(request: any, socket: Socket, head: any): void {
-    this.wsServer.handleUpgrade(request, socket, head, (socket) => {
-      this.wsServer.emit('connection', socket, request)
+  private static mountLogWebSockets(): void {
+    LogWebSocket.wsServer.on('connection', LogWebSocket.onConnection)
+
+    LogWebSocket.wsServer.on('close', () => {
+      LogWebSocket.closeLogStream()
     })
   }
 
-  private streamLogs(): void {
-    const buffer: any[] = []
-    const hasDoneInitialSend = false
+  private static onConnection(socket: ws, request: IncomingMessage): void {
+    LogWebSocket.socket = socket
 
-    logger.stream({ start: 1 }).on('log', (newLog) => {
-      this.socket.send(JSON.stringify([newLog]))
-    })
+    LogWebSocket.streamLogs()
+  }
+
+  private static streamLogs(): void {
+    logger.stream({ start: 20 }).on('log', LogWebSocket.sendLog)
+  }
+
+  private static closeLogStream(): void {
+    logger.stream({ start: 20 }).off('log', LogWebSocket.sendLog)
+  }
+
+  private static sendLog(newLog: any): void {
+    LogWebSocket.socket.send(JSON.stringify([newLog]))
   }
 }

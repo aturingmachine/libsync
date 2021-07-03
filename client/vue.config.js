@@ -8,11 +8,16 @@ module.exports = {
     progress: false,
     stats: 'minimal',
     overlay: true,
-    // proxy: {
-    //   '/api': {
-    //     target: 'localhost:3000/api',
-    //   },
-    // },
+    index: '',
+    proxy: {
+      // '/ws': {
+      //   target: 'ws://localhost:3000',
+      //   ws: true,
+      // },
+      '/api': {
+        target: 'http://localhost:3000',
+      },
+    },
     watchOptions: {
       aggregateTimeout: 300,
       poll: 1000,

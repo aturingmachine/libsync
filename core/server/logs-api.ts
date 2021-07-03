@@ -1,6 +1,6 @@
 import express from 'express'
 import fs from 'fs/promises'
-import EnvConfig from '../utils/config/env-config'
+import EnvConfig from '../utils/config/env-config/env-config'
 import { Logger, logger } from '../utils/log-helper'
 
 function mountLogsRouter(): express.Express {

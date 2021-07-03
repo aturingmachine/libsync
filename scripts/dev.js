@@ -60,8 +60,6 @@ const serviceProcess = spawn(
     'run', 
     'dev:service',
     'debug', 
-    'service',
-    'client',
     src, 
     dest, 
     backup, 

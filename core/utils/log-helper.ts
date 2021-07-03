@@ -1,8 +1,8 @@
 import chalk from 'chalk'
 import winston from 'winston'
-import Config from './config/config-holder'
-import EnvConfig from './config/env-config'
+import EnvConfig from './config/env-config/env-config'
 import { v4 as uuidv4 } from 'uuid'
+import LibSync from './config/runtime-config/state'
 
 export type Logger = winston.Logger
 
@@ -10,8 +10,19 @@ const { combine, timestamp, colorize, printf, json, splat } = winston.format
 
 const consoleLogFormat = printf(
   ({ level, message, timestamp, func, service }) => {
+    const d = new Date(timestamp)
+
+    const time = d.toLocaleTimeString()
+    const spaceIndex = time.indexOf(' ')
+    const timeString = time
+      .slice(0, spaceIndex)
+      .concat(`.${d.getMilliseconds()}`)
+      .concat(time.slice(spaceIndex))
+
     const funcName = `(${func || service})`
-    return `[${funcName.padEnd(14)} :: <${level}> :: ${timestamp}] ${message}`
+    return `[${funcName.padEnd(
+      10
+    )} :: <${level}> :: ${d.toLocaleDateString()} ${timeString}] ${message}`
   }
 )
 
@@ -36,8 +47,14 @@ export const logger = winston.createLogger({
   ],
 })
 
+EnvConfig.listen(['errorLogsOutputdir', 'combinedLogsOutputDir']).call(() => {
+  // Figure out how to update logs? Might have to restart lol
+  return Promise.resolve()
+})
+
 export function initLogger(): void {
-  if (!Config.opts.isService || Config.opts.isDebug) {
+  // TODO rethink this check for console output, should just check prod flag maybe
+  if (!LibSync.options.runOnce || LibSync.options.isDebug) {
     logger.add(
       new winston.transports.Console({
         format: combine(colorize(), timestamp(), splat(), consoleLogFormat),

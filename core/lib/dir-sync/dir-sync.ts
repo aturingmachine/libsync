@@ -1,7 +1,7 @@
 import { Logger } from 'winston'
 import { DirStructInside } from '../../models/dirs'
 import { logger, LogHelper } from '../../utils/log-helper'
-import LibSync from '../../utils/state/state'
+import LibSync from '../../utils/config/runtime-config/state'
 import buildCommands from '../command-runner/command-mapper'
 import executeCommands from '../command-runner/command-runner'
 import mapDirectoryStructure from './dir-mapper'
@@ -21,6 +21,7 @@ function diffTrees(src: DirStructInside, dest: DirStructInside): string[] {
 }
 
 async function sync(isBackupRun: boolean): Promise<void> {
+  LibSync.lock()
   syncLogger = logger.child({ func: 'sync' })
   LibSync.isRunningBackup = isBackupRun
 
@@ -47,11 +48,12 @@ async function sync(isBackupRun: boolean): Promise<void> {
 
   if (pathsToCopy.length === 0) {
     syncLogger.info('No Updates to be made')
+    LibSync.unlock()
     return Promise.resolve()
   }
 
   const fullPaths = pathsToCopy.map((path) => {
-    let targetPath = path.slice(
+    const targetPath = path.slice(
       path.indexOf('/', path.indexOf(LibSync.from.lib))
     )
 
@@ -65,6 +67,7 @@ async function sync(isBackupRun: boolean): Promise<void> {
   )
 
   await executeCommands(commands)
+  LibSync.unlock()
 }
 
 export default sync

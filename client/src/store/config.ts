@@ -1,7 +1,8 @@
-import { Config } from '@/models/config'
+import { EnvConfig, RuntimeConfig } from '@/models/config'
 import { ConfigService } from '@/services/config-service'
 import { ActionTree, GetterTree, Module, MutationTree } from 'vuex'
-import { RootState } from '.'
+import { RootMutationTypes, RootState } from '.'
+import { namespaceModule } from './utils/module-helpers'
 
 export enum ConfigStatus {
   UNLOADED = 'UNLOADED',
@@ -12,69 +13,179 @@ export enum ConfigStatus {
 }
 
 export interface ConfigState {
-  status: ConfigStatus
-  record?: Config
+  envConfigStatus: ConfigStatus
+  runtimeConfigStatus: ConfigStatus
+  envConfigRecord?: EnvConfig
+  runtimeConfigRecord?: RuntimeConfig
+}
+
+export enum ConfigGetterTypes {
+  IsEnvConfigUpdating = 'IsEnvConfigUpdating',
+  IsRuntimeConfigUpdating = 'IsRuntimeConfigUpdating',
+  HasEnvConfigLoaded = 'HasEnvConfigLoaded',
+  HasRuntimeConfigLoaded = 'HasRuntimeConfigLoaded',
+  GetEnvConfig = 'GetEnvConfig',
+  GetRuntimeConfig = 'GetRuntimeConfig',
+  IsConfigUpdating = 'IsConfigUpdating',
+  IsConfigLoading = 'IsConfigLoading',
+}
+
+export enum ConfigMutationsTypes {
+  SetEnvConfigLoading = 'SetEnvConfigLoading',
+  SetRuntimeConfigLoading = 'SetRuntimeConfigLoading',
+  SetEnvConfigSuccess = 'SetEnvConfigSuccess',
+  SetRuntimeConfigSuccess = 'SetRuntimeConfigSuccess',
+  SetEnvConfigUpdating = 'SetEnvConfigUpdating',
+  SetRuntimeConfigUpdating = 'SetRuntimeConfigUpdating',
+}
+
+export enum ConfigActionsTypes {
+  GetEnvConfig = 'GetEnvConfig',
+  UpdateEnvConfig = 'UpdateEnvConfig',
+  GetRuntimeConfig = 'GetRuntimeConfig',
+  UpdateRuntimeConfig = 'UpdateRuntimeConfig',
 }
 
 export const configState = (): ConfigState => ({
-  status: ConfigStatus.UNLOADED,
-  record: undefined,
+  envConfigStatus: ConfigStatus.UNLOADED,
+  runtimeConfigStatus: ConfigStatus.UNLOADED,
+  envConfigRecord: undefined,
+  runtimeConfigRecord: undefined,
 })
 
 export const configGetters: GetterTree<ConfigState, RootState> = {
-  IsConfigUpdating: (state): boolean => state.status === ConfigStatus.UPDATING,
-  HasConfigLoaded: (state): boolean => state.status === ConfigStatus.SUCCESS,
-  GetConfig: (state): Config | undefined => state.record,
+  [ConfigGetterTypes.IsEnvConfigUpdating]: (state): boolean =>
+    state.envConfigStatus === ConfigStatus.UPDATING,
+
+  [ConfigGetterTypes.HasEnvConfigLoaded]: (state): boolean =>
+    state.envConfigStatus === ConfigStatus.SUCCESS,
+
+  [ConfigGetterTypes.IsRuntimeConfigUpdating]: (state): boolean =>
+    state.runtimeConfigStatus === ConfigStatus.UPDATING,
+
+  [ConfigGetterTypes.HasRuntimeConfigLoaded]: (state): boolean =>
+    state.runtimeConfigStatus === ConfigStatus.SUCCESS,
+
+  [ConfigGetterTypes.GetEnvConfig]: (state): EnvConfig | undefined =>
+    state.envConfigRecord,
+
+  [ConfigGetterTypes.GetRuntimeConfig]: (state): RuntimeConfig | undefined =>
+    state.runtimeConfigRecord,
+
+  [ConfigGetterTypes.IsConfigUpdating]: (state): boolean =>
+    [state.envConfigStatus, state.runtimeConfigStatus].includes(
+      ConfigStatus.UPDATING
+    ),
+
+  [ConfigGetterTypes.IsConfigLoading]: (state): boolean =>
+    [state.envConfigStatus, state.runtimeConfigStatus].includes(
+      ConfigStatus.LOADING
+    ),
 }
 
 export const configMutations: MutationTree<ConfigState> = {
-  SetConfigLoading(state) {
-    state.status = ConfigStatus.LOADING
+  [ConfigMutationsTypes.SetEnvConfigLoading](state) {
+    state.envConfigStatus = ConfigStatus.LOADING
   },
 
-  SetConfigSuccess(state, payload) {
-    state.status = ConfigStatus.SUCCESS
-    console.log(payload.config)
-    state.record = payload.config
+  [ConfigMutationsTypes.SetRuntimeConfigLoading](state) {
+    state.runtimeConfigStatus = ConfigStatus.LOADING
   },
 
-  SetConfigUpdating(state) {
-    state.status = ConfigStatus.UPDATING
+  [ConfigMutationsTypes.SetEnvConfigSuccess](state, payload) {
+    state.envConfigStatus = ConfigStatus.SUCCESS
+    state.envConfigRecord = payload.config
+  },
+
+  [ConfigMutationsTypes.SetRuntimeConfigSuccess](state, payload) {
+    state.runtimeConfigStatus = ConfigStatus.SUCCESS
+    state.runtimeConfigRecord = payload.config
+  },
+
+  [ConfigMutationsTypes.SetEnvConfigUpdating](state) {
+    state.envConfigStatus = ConfigStatus.UPDATING
+  },
+
+  [ConfigMutationsTypes.SetRuntimeConfigUpdating](state) {
+    state.runtimeConfigStatus = ConfigStatus.UPDATING
   },
 }
 
 export const configActions: ActionTree<ConfigState, RootState> = {
-  GetConfig({ commit, state }) {
+  [ConfigActionsTypes.GetEnvConfig]({ commit, state }) {
     if (
       [
         ConfigStatus.SUCCESS,
         ConfigStatus.UPDATING,
         ConfigStatus.LOADING,
-      ].includes(state.status)
+      ].includes(state.envConfigStatus)
     ) {
       return
     }
 
-    commit({ type: 'SetConfigLoading' })
+    commit({ type: ConfigMutationsTypes.SetEnvConfigLoading })
 
-    ConfigService.getConfig().then(config => {
-      console.log(config)
-      commit({ type: 'SetConfigSuccess', config })
+    ConfigService.getEnvConfig().then(config => {
+      commit({ type: ConfigMutationsTypes.SetEnvConfigSuccess, config })
     })
   },
 
-  UpdateConfig({ commit, state }, newConfig) {
-    if (state.status !== ConfigStatus.SUCCESS) {
+  [ConfigActionsTypes.UpdateEnvConfig]({ commit, state }, newConfig) {
+    if (state.envConfigStatus !== ConfigStatus.SUCCESS) {
       return
     }
 
-    commit({ type: 'SetConfigUpdating' })
+    commit({ type: ConfigMutationsTypes.SetEnvConfigUpdating })
 
-    ConfigService.updateConfig(newConfig).then(res => {
+    ConfigService.updateEnvConfig(newConfig).then(res => {
+      commit({
+        type: ConfigMutationsTypes.SetEnvConfigSuccess,
+        config: res.config,
+      })
+    })
+  },
+
+  [ConfigActionsTypes.GetRuntimeConfig]({ commit, state }) {
+    if (
+      [
+        ConfigStatus.SUCCESS,
+        ConfigStatus.UPDATING,
+        ConfigStatus.LOADING,
+      ].includes(state.runtimeConfigStatus)
+    ) {
+      return
+    }
+
+    commit({ type: ConfigMutationsTypes.SetRuntimeConfigLoading })
+
+    ConfigService.getRuntimeConfig().then(config => {
+      commit({ type: ConfigMutationsTypes.SetRuntimeConfigSuccess, config })
+    })
+  },
+
+  [ConfigActionsTypes.UpdateRuntimeConfig]({ commit, state }, newConfig) {
+    if (state.runtimeConfigStatus !== ConfigStatus.SUCCESS) {
+      return
+    }
+
+    commit({ type: ConfigMutationsTypes.SetRuntimeConfigUpdating })
+
+    ConfigService.updateRuntimeConfig(newConfig).then(res => {
       console.log(res)
+      commit({
+        type: ConfigMutationsTypes.SetRuntimeConfigSuccess,
+        config: res.config,
+      })
     })
   },
 }
+
+export const ConfigStoreTypes = namespaceModule(
+  'config',
+  ConfigGetterTypes,
+  ConfigMutationsTypes,
+  ConfigActionsTypes
+)
 
 export const configModule: Module<ConfigState, RootState> = {
   namespaced: true,

@@ -1,24 +1,40 @@
 import { PathLike } from 'fs'
 import fs from 'fs/promises'
-import Config from '../utils/config/config-holder'
 import { debounce } from '../utils/debounce'
 import sync from './dir-sync/dir-sync'
 import { Logger, logger } from '../utils/log-helper'
-import LibSync from '../utils/state/state'
-import EnvConfig from '../utils/config/env-config'
+import LibSync from '../utils/config/runtime-config/state'
+import EnvConfig from '../utils/config/env-config/env-config'
 
 let watcherLogger: Logger
 let rezTimer: NodeJS.Timeout
 let rezCount = 0
 let mounted = false
+let abort: AbortController
+let allGoodTimer: NodeJS.Timer | undefined = undefined
+let mountedSignal: Promise<void>
 
 export function isWatcherMounted(): boolean {
   return mounted
 }
 
+function runAllGood(srcPath: PathLike): Promise<void> {
+  return new Promise((resolve) => {
+    allGoodTimer = setTimeout(() => {
+      watcherLogger.info(
+        `File Watcher mounted. Listening for changes to ${srcPath}`
+      )
+      mounted = true
+
+      clearTimeout(allGoodTimer as NodeJS.Timer)
+      resolve()
+    }, 2500)
+  })
+}
+
 async function initiateSync() {
   try {
-    if (Config.opts.runBackUp) {
+    if (LibSync.options.runBackUp) {
       watcherLogger.info('Attempting Backup Sync')
       await sync(true)
     }
@@ -30,7 +46,7 @@ async function initiateSync() {
   }
 }
 
-function attemptRez(srcPath: PathLike) {
+function attemptRez(srcPath: PathLike): void {
   if (rezCount >= EnvConfig.get.rezAttempts) {
     watcherLogger.error(
       `${EnvConfig.get.rezAttempts} Rez Attempts failed - aborting`
@@ -52,26 +68,21 @@ function attemptRez(srcPath: PathLike) {
   }, EnvConfig.get.rezCooldown)
 }
 
-async function mountWatcher(srcPath: PathLike) {
+async function mountWatcher(srcPath: PathLike): Promise<void> {
+  clearTimeout(allGoodTimer as NodeJS.Timer)
   watcherLogger.info(`Attempting to mount file watcher to ${srcPath}`)
   const debouncedSync = debounce(
     () => initiateSync(),
     EnvConfig.get.debounceAmount
   )
-  let allGoodTimer: NodeJS.Timer | undefined = undefined
 
   try {
     const watcher = fs.watch(srcPath, {
       recursive: true,
+      signal: abort.signal,
     })
 
-    allGoodTimer = setTimeout(() => {
-      watcherLogger.info(
-        `File Watcher mounted. Listening for changes to ${srcPath}`
-      )
-      mounted = true
-      clearTimeout(allGoodTimer as NodeJS.Timer)
-    }, 2500)
+    mountedSignal = runAllGood(srcPath)
 
     for await (const _event of watcher) {
       watcherLogger.verbose('File Change Event Recieved - Debouncing')
@@ -87,15 +98,29 @@ async function mountWatcher(srcPath: PathLike) {
   }
 }
 
-async function executeMount(): Promise<any> {
-  watcherLogger = logger.child({ func: 'watcher' })
+function bindUpdateListenter(): void {
+  watcherLogger.info('Binding Watcher Update Listener')
+  EnvConfig.listen(['srcDir', 'debounceAmount']).call(async () => {
+    mounted = false
+    watcherLogger.info('Watcher recieved update signal - Remounting')
+    mountWatcher(LibSync.from.dir)
+    return mountedSignal
+  })
+}
 
-  if (Config.opts.syncOnStart) {
+async function executeMount(): Promise<void> {
+  watcherLogger = logger.child({ func: 'watcher' })
+  abort = new AbortController()
+
+  if (LibSync.options.syncOnStart) {
     watcherLogger.info('Initiating Sync On Start')
     initiateSync()
   }
 
   LibSync.isRunningBackup = false
+
+  bindUpdateListenter()
+
   return await mountWatcher(LibSync.from.dir)
 }
 
