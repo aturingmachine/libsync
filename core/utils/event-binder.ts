@@ -68,9 +68,6 @@ export class EventBinder<T> {
     property: K,
     newValue: EventHolder<T>[K]
   ): Promise<any> {
-    console.log(this.callbacks)
-    console.log(this.callbacks[property as unknown as keyof T])
-
     if (!this.callbacks[property as unknown as keyof T]) {
       this.callbacks[property as unknown as keyof T] = []
     }

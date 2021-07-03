@@ -33,6 +33,8 @@ export class LockWebSocket {
     LockWebSocket.wsServer.on('connection', (socket) => {
       LockWebSocket.socket = socket
 
+      LockWebSocket.socket.send(JSON.stringify({ isLocked: LibSync.isLocked }))
+
       LockWebSocket.streamLockStatus()
     })
 

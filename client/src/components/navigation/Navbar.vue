@@ -23,11 +23,6 @@
   </div>
 </template>
 
-|
-<router-link to="/about">About</router-link> |
-<router-link to="/logs">Logs</router-link> |
-<router-link to="/config">Config</router-link>
-
 <script lang="ts">
 import Vue from 'vue'
 export default Vue.extend({
@@ -38,10 +33,6 @@ export default Vue.extend({
   data: () => {
     return {
       navLinks: [
-        {
-          title: 'Home',
-          route: '/',
-        },
         {
           title: 'About',
           route: '/about',

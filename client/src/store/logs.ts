@@ -29,10 +29,7 @@ export const logsGetters: GetterTree<LogsState, RootState> = {
 
     const lcTerms = searchTerm.toLowerCase().split(/\s|\//g)
 
-    console.log(lcTerms)
-
     return state.logs.filter(log => {
-      console.log(log.message.toLowerCase().split(/\s|\//g))
       return (
         lcTerms.includes(log.func.toLowerCase()) ||
         lcTerms.includes(log.service.toLowerCase()) ||
@@ -81,7 +78,6 @@ export const logsActions: ActionTree<LogsState, RootState> = {
     }
 
     LogsService.loadInitialLogs().then(res => {
-      console.log(res)
       commit('setHasInitialized')
       commit({ type: 'addLogs', logs: res })
       LogsWebSocket.addLogStreamHandler(ev =>

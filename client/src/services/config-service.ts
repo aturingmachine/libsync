@@ -4,16 +4,16 @@ export class ConfigService {
   static getEnvConfig(): Promise<EnvConfig> {
     return fetch('http://localhost:3000/api/config/env')
       .then(res => {
-        console.log(res)
         return res.json()
       })
       .then(json => {
-        console.log(json)
         return json.config as EnvConfig
       })
   }
 
-  static updateEnvConfig(newConfig: EnvConfig): Promise<EnvConfig> {
+  static updateEnvConfig(
+    newConfig: EnvConfig
+  ): Promise<Record<'config', EnvConfig>> {
     return fetch('http://localhost:3000/api/config/env', {
       method: 'POST',
       body: JSON.stringify({ config: newConfig }),
@@ -21,7 +21,6 @@ export class ConfigService {
         'Content-Type': 'application/json',
       },
     }).then(res => {
-      console.log(res)
       return res.json()
     })
   }
@@ -29,16 +28,16 @@ export class ConfigService {
   static getRuntimeConfig(): Promise<RuntimeConfig> {
     return fetch('http://localhost:3000/api/config/runtime')
       .then(res => {
-        console.log(res)
         return res.json()
       })
       .then(json => {
-        console.log(json)
         return json.config as RuntimeConfig
       })
   }
 
-  static updateRuntimeConfig(newConfig: RuntimeConfig): Promise<RuntimeConfig> {
+  static updateRuntimeConfig(
+    newConfig: RuntimeConfig
+  ): Promise<Record<'config', RuntimeConfig>> {
     return fetch('http://localhost:3000/api/config/runtime', {
       method: 'POST',
       body: JSON.stringify({ config: newConfig }),
@@ -46,7 +45,6 @@ export class ConfigService {
         'Content-Type': 'application/json',
       },
     }).then(res => {
-      console.log(res)
       return res.json()
     })
   }

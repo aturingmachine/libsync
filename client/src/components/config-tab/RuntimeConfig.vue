@@ -76,27 +76,55 @@
       <caption>
         Not all included options can be changed while LibSync is running.
       </caption>
-      <label class="checkbox-label" for="backup-opt">Will Run Backups</label>
-      <input
-        :disabled="disableInputs"
-        name="backup-opt"
-        type="checkbox"
-        v-model="localConfig.options.runBackup"
-      />
+      <div class="options-grid">
+        <div class="option">
+          <label class="checkbox-label" for="backup-opt"
+            >Will Run Backups
+          </label>
+          <span class="checkbox-tooltip-holder">
+            <input
+              :disabled="disableInputs"
+              name="backup-opt"
+              type="checkbox"
+              v-model="localConfig.options.runBackUp"
+            />
+            <tooltip
+              msg="Will run a backup of the destination directory before each sync."
+            />
+          </span>
+        </div>
 
-      <label class="checkbox-label" for="debug-opt">Run In Debug Mode</label>
-      <input
-        :disabled="disableInputs"
-        name="debug-opt"
-        type="checkbox"
-        v-model="localConfig.options.isDebug"
-      />
+        <div class="option">
+          <label class="checkbox-label" for="debug-opt">
+            Run In Debug Mode
+          </label>
+          <span class="checkbox-tooltip-holder">
+            <input
+              :disabled="disableInputs"
+              name="debug-opt"
+              type="checkbox"
+              v-model="localConfig.options.isDebug"
+            />
+            <tooltip msg="Increases the allowed log level." />
+          </span>
+        </div>
+      </div>
 
-      <input
-        :disabled="shouldDisableSubmit"
-        type="submit"
-        value="Update Configuration"
-      />
+      <div class="form-footer">
+        <input
+          class="button secondary-button"
+          :disabled="shouldDisableSubmit"
+          type="button"
+          @click.prevent="copyConfig()"
+          value="Reset Configuration"
+        />
+        <input
+          class="button submit-button"
+          :disabled="shouldDisableSubmit"
+          type="submit"
+          value="Update Configuration"
+        />
+      </div>
     </form>
   </div>
 </template>
@@ -106,9 +134,14 @@ import Vue from 'vue'
 import { ConfigStoreTypes } from '@/store/config'
 import { deepInequals } from '@/utils/deep-equals'
 import { RuntimeConfig } from '@/models/config'
+import Tooltip from '@/components/misc/Tooltip.vue'
 
 export default Vue.extend({
   name: 'RuntimeConfig',
+
+  components: {
+    Tooltip,
+  },
 
   data: () => {
     return {
@@ -124,9 +157,7 @@ export default Vue.extend({
     },
 
     isConfigUpdating(): boolean {
-      return this.$store.getters[
-        ConfigStoreTypes.getters.IsRuntimeConfigUpdating
-      ]
+      return this.$store.getters[ConfigStoreTypes.getters.IsConfigUpdating]
     },
 
     runtimeConfig(): RuntimeConfig {
@@ -182,7 +213,9 @@ export default Vue.extend({
 })
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+@import '@/assets/styles/colors.scss';
+
 .config-wrapper {
   display: flex;
   flex-direction: column;
@@ -213,15 +246,5 @@ export default Vue.extend({
 
 .config-description {
   text-align: left;
-}
-
-caption {
-  text-align: left;
-  border-left: 5px solid gray;
-  background-color: rgb(30, 41, 52);
-  border-top-right-radius: 8px;
-  border-bottom-right-radius: 8px;
-  padding: 10px;
-  margin-bottom: 16px;
 }
 </style>

@@ -74,13 +74,12 @@ class EnvConfig {
         const newValue = changedFields[typedKey]
         if (newValue && EnvConfigValidator[typedKey].valid(newValue)) {
           EnvConfig._update(typedKey, changedFields[typedKey])
+          console.log('updating field', typedKey)
           await this.eventBinder.triggerUpdate(typedKey, newValue)
+          console.log('update done')
         }
-        console.log('Should be updated', EnvConfig.get)
       })
     )
-
-    // TODO needs to update State
   }
 
   static get get(): EnvConfigStruct {

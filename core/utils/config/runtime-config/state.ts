@@ -35,7 +35,7 @@ class LibSyncOptsRecord {
 
   constructor() {
     this.initOpts()
-    EnvConfig.listen(['options']).call(this.handleEnvUpdate)
+    EnvConfig.listen(['options']).call(this.handleEnvUpdate.bind(this))
   }
 
   get record(): LibSyncOpts {
@@ -58,7 +58,6 @@ class LibSyncOptsRecord {
       .find((a) => /^-[A-Za-z]+/.test(a))
       ?.slice(1)
       .split('')
-    console.log(shortFlags)
 
     const cliOptions = Object.fromEntries(
       Object.entries(optsFlags)
@@ -72,8 +71,6 @@ class LibSyncOptsRecord {
           return [key, true]
         })
     ) as LibSyncOpts
-
-    console.log('>>>>>', cliOptions)
 
     // Merge config'ed options and parsed options
     this._options = { ...EnvConfig.get.options, ...cliOptions }
@@ -114,7 +111,7 @@ class LibSyncStateRecord {
     this.initLibs()
 
     EnvConfig.listen(['srcDir', 'destDir', 'backupDir']).call(
-      this.handleEnvUpdate
+      this.handleEnvUpdate.bind(this)
     )
   }
 
@@ -403,7 +400,6 @@ class LibSyncState {
           this._update(typedKey, changedFields[typedKey])
           await this.eventBinder.triggerUpdate(typedKey, newValue)
         }
-        console.log('Should be updated', EnvConfig.get)
       })
     )
   }

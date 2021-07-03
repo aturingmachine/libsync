@@ -1,0 +1,148 @@
+@import './colors.scss';
+
+body {
+  background-color: $primary;
+  font-family: Roboto;
+  margin: 0;
+}
+
+#app {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color: $primary-text;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  padding-bottom: 48px;
+}
+
+#nav {
+  width: 100%;
+
+  a {
+    font-weight: bold;
+    color: $primary-text;
+
+    &.router-link-exact-active {
+      color: $accent-text;
+    }
+  }
+}
+
+input {
+  border: 2px solid $border-primary;
+  border-radius: 8px;
+  padding: 2px 4px;
+  font-size: 16px;
+  background-color: $tertiary;
+  color: $primary-text;
+  font-weight: 600;
+  font-family: 'Roboto Mono';
+
+  &:disabled {
+    color: $tertiary-text;
+    background-color: $primary;
+  }
+
+  &::placeholder {
+    color: $placeholder-text;
+    font-weight: 600;
+  }
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+html::-webkit-scrollbar {
+  // display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+html {
+  overflow-x: hidden;
+}
+
+.config-wrapper {
+  min-width: 600px;
+}
+
+// form {
+//   label {
+//     margin-bottom: 6px;
+//   }
+// }
+
+.form-footer {
+  margin-top: 24px;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+
+  button, .button {
+    height: 48px;
+  }
+}
+
+button, .button {
+  transition: background-color 0.2s ease-in, color 0.2s ease-in;
+  cursor: pointer;
+
+  &:disabled {
+    cursor: not-allowed;
+  }
+
+  &.submit-button {
+    color: $primary-text;
+    background-color: $button-primary;
+
+    &:disabled {
+      color: $tertiary-text;
+      background-color: $button-primary-disabled;
+    }
+  }
+
+  &.secondary-button {
+    background-color: $button-destructive;
+
+    &:disabled {
+      color: $tertiary-text;
+      background-color: $button-destructive-disabled;
+    }
+  }
+}
+
+caption {
+  text-align: left;
+  border-left: 5px solid gray;
+  background-color: $accent;
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+  padding: 10px;
+  margin-bottom: 16px;
+}
+
+.options-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  width: 100%;
+
+  .option {
+    display: flex;
+    width: 40%;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    align-items: center;
+    height: 26px;
+  }
+}
+
+.checkbox-label {
+  text-align: left;
+}
+
+.checkbox-tooltip-holder {
+  display: flex;
+  input {
+    margin-right: 6px;
+  }
+}

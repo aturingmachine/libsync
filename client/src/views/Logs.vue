@@ -1,5 +1,5 @@
 <template>
-  <div class="logs-page">
+  <div class="page logs-page">
     <div class="logs-header">
       <div class="search-holder">
         <span class="log-count">
@@ -89,7 +89,6 @@ export default Vue.extend({
     },
 
     updateTerm(): void {
-      console.log('updating term')
       this.otherSearchTerm = this.searchTerm
     },
 
@@ -106,7 +105,9 @@ export default Vue.extend({
 })
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+@import '@/assets/styles/colors.scss';
+
 .logs-page {
   width: 100%;
 }
@@ -128,7 +129,7 @@ export default Vue.extend({
 
 .search-input {
   width: 100%;
-  background-color: white;
+  background-color: rgb(65, 92, 117);
   border: 1px solid;
   border-radius: 15px;
   display: flex;
@@ -136,10 +137,11 @@ export default Vue.extend({
   justify-content: space-between;
   border: 2px solid rgb(153, 153, 152);
   padding: 0 8px;
+  box-sizing: border-box;
 }
 
 .search-input:focus-within {
-  outline: solid 2px rgb(71, 71, 248);
+  border: solid 2px $border-highlight;
 }
 
 .log-search {
@@ -169,6 +171,7 @@ export default Vue.extend({
 }
 
 .search-clear-button {
+  color: $accent-text;
   border: none;
   background: transparent;
   font-size: 18px;

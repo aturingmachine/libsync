@@ -2,13 +2,17 @@ import express, { NextFunction } from 'express'
 import path from 'path'
 import { nextTick } from 'process'
 import EnvConfig from '../utils/config/env-config/env-config'
+import { logger, Logger } from '../utils/log-helper'
 import configApi from './config-api'
 import { LockWebSocket } from './lock-ws'
 import mountLogsRouter from './logs-api'
 import { LogWebSocket } from './logs-ws'
 
+let apiLogger: Logger
+
 // TODO this can be cleaned up
 function mountApi(): void {
+  apiLogger = logger.child({ func: 'api-main' })
   const app = express()
 
   app.use(express.json())
@@ -49,29 +53,25 @@ function mountApi(): void {
 
   app.use(mountLogsRouter())
   app.use(configApi)
+  apiLogger.info('REST Controllers mounted')
 
   const server = app.listen(3000)
+  apiLogger.info('LibSync API Initialized')
 
   LogWebSocket.init()
   LockWebSocket.init()
+  apiLogger.info('WebSockets Initialized')
 
   server.on('upgrade', (request, socket, head) => {
     const pathName: string = request.url
 
     if (pathName === '/ws/logs') {
-      console.log('Got WS Upgrade for Logs')
       LogWebSocket.handleUpgrade(request, socket, head)
     }
 
     if (pathName === '/ws/lock-status') {
-      console.log('Upgrade Lock')
       LockWebSocket.handleUpgrade(request, socket, head)
     }
-  })
-
-  EnvConfig.listen(['srcDir']).call((param, newSrcDir) => {
-    console.log('Update Listener Pinged At', param, newSrcDir)
-    return Promise.resolve()
   })
 }
 

@@ -11,9 +11,38 @@ let rezTimer: NodeJS.Timeout
 let rezCount = 0
 let mounted = false
 let abort: AbortController
+let allGoodTimer: NodeJS.Timer | undefined = undefined
+let mountedSignal: Promise<void>
 
 export function isWatcherMounted(): boolean {
   return mounted
+}
+
+// function onMounted(): Promise<boolean> {
+//   return mountedSignal
+// }
+
+function runAllGood(srcPath: PathLike): Promise<void> {
+  return new Promise((resolve) => {
+    allGoodTimer = setTimeout(() => {
+      watcherLogger.info(
+        `File Watcher mounted. Listening for changes to ${srcPath}`
+      )
+      mounted = true
+
+      clearTimeout(allGoodTimer as NodeJS.Timer)
+      resolve()
+    }, 2500)
+  })
+
+  // setTimeout(() => {
+  //   watcherLogger.info(
+  //     `File Watcher mounted. Listening for changes to ${srcPath}`
+  //   )
+  //   mounted = true
+
+  //   clearTimeout(allGoodTimer as NodeJS.Timer)
+  // }, 2500)
 }
 
 async function initiateSync() {
@@ -53,12 +82,12 @@ function attemptRez(srcPath: PathLike): void {
 }
 
 async function mountWatcher(srcPath: PathLike): Promise<void> {
+  clearTimeout(allGoodTimer as NodeJS.Timer)
   watcherLogger.info(`Attempting to mount file watcher to ${srcPath}`)
   const debouncedSync = debounce(
     () => initiateSync(),
     EnvConfig.get.debounceAmount
   )
-  let allGoodTimer: NodeJS.Timer | undefined = undefined
 
   try {
     const watcher = fs.watch(srcPath, {
@@ -66,16 +95,10 @@ async function mountWatcher(srcPath: PathLike): Promise<void> {
       signal: abort.signal,
     })
 
-    allGoodTimer = setTimeout(() => {
-      watcherLogger.info(
-        `File Watcher mounted. Listening for changes to ${srcPath}`
-      )
-      mounted = true
-      clearTimeout(allGoodTimer as NodeJS.Timer)
-    }, 2500)
+    mountedSignal = runAllGood(srcPath)
 
     for await (const _event of watcher) {
-      watcherLogger.verbose('File Change Event Recieved - Debouncing')
+      watcherLogger.silly('File Change Event Recieved - Debouncing')
       debouncedSync()
     }
   } catch (error) {
@@ -86,6 +109,16 @@ async function mountWatcher(srcPath: PathLike): Promise<void> {
     watcherLogger.error('Watcher Died - ', error)
     attemptRez(srcPath)
   }
+}
+
+function bindUpdateListenter(): void {
+  watcherLogger.info('Binding Watcher Update Listener')
+  EnvConfig.listen(['srcDir', 'debounceAmount']).call(async () => {
+    mounted = false
+    watcherLogger.info('Watcher recieved update signal - Remounting')
+    mountWatcher(LibSync.from.dir)
+    return mountedSignal
+  })
 }
 
 async function executeMount(): Promise<void> {
@@ -99,9 +132,7 @@ async function executeMount(): Promise<void> {
 
   LibSync.isRunningBackup = false
 
-  EnvConfig.listen(['srcDir', 'debounceAmount']).call(() =>
-    mountWatcher(LibSync.from.dir)
-  )
+  bindUpdateListenter()
 
   return await mountWatcher(LibSync.from.dir)
 }

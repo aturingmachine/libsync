@@ -30,32 +30,150 @@
       />
 
       <h3>Library Watcher Settings</h3>
-      <label for="debounceAmount">Debounce Amount</label>
+      <caption>
+        These settings will change how the file watcher behaves. Upon saving
+        these values will modify the current running instance of LibSync as well
+        as saving the new values to your configuration.
+      </caption>
+      <label for="debounceAmount">Debounce Amount (ms)</label>
       <input
         name="debounceAmount"
         type="number"
-        v-model="localConfig.debounceAmount"
+        v-model.number="localConfig.debounceAmount"
       />
 
       <label for="rezAttempts">Rez Attempts</label>
       <input
         name="rezAttempts"
         type="number"
-        v-model="localConfig.rezAttempts"
+        v-model.number="localConfig.rezAttempts"
       />
 
-      <label for="rezCooldown">Rez Cooldown</label>
+      <label for="rezCooldown">Rez Cooldown (ms)</label>
       <input
         name="rezCooldown"
         type="number"
-        v-model="localConfig.rezCooldown"
+        v-model.number="localConfig.rezCooldown"
       />
 
-      <input
-        :disabled="shouldDisableSubmit"
-        type="submit"
-        value="Update Configuration"
-      />
+      <h3>Configuration Options</h3>
+      <caption>
+        Not all options will have an effect on a currently running instance of
+        LibSync.
+      </caption>
+      <div class="options-grid">
+        <div class="option">
+          <label class="checkbox-label" for="backup-opt"
+            >Will Run Backups
+          </label>
+          <span class="checkbox-tooltip-holder">
+            <input
+              :disabled="disableInputs"
+              name="backup-opt"
+              type="checkbox"
+              v-model="localConfig.options.runBackUp"
+            />
+            <tooltip
+              msg="Will run a backup of the destination directory before each sync."
+            />
+          </span>
+        </div>
+
+        <div class="option">
+          <label class="checkbox-label" for="debug-opt">
+            Run In Debug Mode
+          </label>
+          <span class="checkbox-tooltip-holder">
+            <input
+              :disabled="disableInputs"
+              name="debug-opt"
+              type="checkbox"
+              v-model="localConfig.options.isDebug"
+            />
+            <tooltip msg="Increases the allowed log level." />
+          </span>
+        </div>
+
+        <div class="option">
+          <label class="checkbox-label" for="headless-opt"
+            >Run In Headless Mode
+          </label>
+          <span class="checkbox-tooltip-holder">
+            <input
+              :disabled="disableInputs"
+              name="headless-opt"
+              type="checkbox"
+              v-model="localConfig.options.isHeadless"
+            />
+            <tooltip msg="Run LibSync without the API or Client enabled." />
+          </span>
+        </div>
+
+        <div class="option">
+          <label class="checkbox-label" for="plan-opt">
+            Run In Plan Mode
+          </label>
+          <span class="checkbox-tooltip-holder">
+            <input
+              :disabled="disableInputs"
+              name="plan-opt"
+              type="checkbox"
+              v-model="localConfig.options.isPlan"
+            />
+            <tooltip
+              msg="Will output changes of a sync run without committing them."
+            />
+          </span>
+        </div>
+
+        <div class="option">
+          <label class="checkbox-label" for="run-once-opt">
+            Run Once
+          </label>
+          <span class="checkbox-tooltip-holder">
+            <input
+              :disabled="disableInputs"
+              name="run-once-opt"
+              type="checkbox"
+              v-model="localConfig.options.runOnce"
+            />
+            <tooltip msg="Will run LibSync once, then exit." />
+          </span>
+        </div>
+
+        <div class="option">
+          <label class="checkbox-label" for="sync-on-start-opt">
+            Sync On Start
+          </label>
+          <span class="checkbox-tooltip-holder">
+            <input
+              :disabled="disableInputs"
+              name="sync-on-start-opt"
+              type="checkbox"
+              v-model="localConfig.options.isDebug"
+            />
+            <tooltip
+              msg="If true LibSync will run a sync job on startup when run non-headless."
+            />
+          </span>
+        </div>
+      </div>
+
+      <div class="form-footer">
+        <input
+          class="button secondary-button"
+          :disabled="shouldDisableSubmit"
+          type="button"
+          @click.prevent="copyConfig()"
+          value="Reset Configuration"
+        />
+        <input
+          class="button submit-button"
+          :disabled="shouldDisableSubmit"
+          type="submit"
+          value="Update Configuration"
+        />
+      </div>
     </form>
   </div>
 </template>
@@ -65,8 +183,14 @@ import { EnvConfig } from '@/models/config'
 import { ConfigStoreTypes } from '@/store/config'
 import { deepInequals } from '@/utils/deep-equals'
 import Vue from 'vue'
+import Tooltip from '@/components/misc/Tooltip.vue'
+
 export default Vue.extend({
   name: 'EnvConfig',
+
+  components: {
+    Tooltip,
+  },
 
   data: () => {
     return {
@@ -80,7 +204,7 @@ export default Vue.extend({
     },
 
     isConfigUpdating(): boolean {
-      return this.$store.getters[ConfigStoreTypes.getters.IsEnvConfigUpdating]
+      return this.$store.getters[ConfigStoreTypes.getters.IsConfigUpdating]
     },
 
     envConfig(): EnvConfig {
@@ -136,7 +260,7 @@ export default Vue.extend({
 })
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .config-wrapper {
   display: flex;
   flex-direction: column;
@@ -168,13 +292,5 @@ export default Vue.extend({
 
 .config-description {
   text-align: left;
-}
-
-caption {
-  text-align: left;
-  border-left: 5px solid gray;
-  background-color: lightgray;
-  padding: 10px;
-  margin-bottom: 16px;
 }
 </style>

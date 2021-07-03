@@ -1,5 +1,5 @@
 <template>
-  <div class="config-page-wrapper">
+  <div class="page config-page-wrapper">
     <div class="tabs">
       <button
         class="config-tab left"

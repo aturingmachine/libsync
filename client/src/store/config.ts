@@ -1,7 +1,7 @@
 import { EnvConfig, RuntimeConfig } from '@/models/config'
 import { ConfigService } from '@/services/config-service'
 import { ActionTree, GetterTree, Module, MutationTree } from 'vuex'
-import { RootState } from '.'
+import { RootMutationTypes, RootState } from '.'
 import { namespaceModule } from './utils/module-helpers'
 
 export enum ConfigStatus {
@@ -26,6 +26,8 @@ export enum ConfigGetterTypes {
   HasRuntimeConfigLoaded = 'HasRuntimeConfigLoaded',
   GetEnvConfig = 'GetEnvConfig',
   GetRuntimeConfig = 'GetRuntimeConfig',
+  IsConfigUpdating = 'IsConfigUpdating',
+  IsConfigLoading = 'IsConfigLoading',
 }
 
 export enum ConfigMutationsTypes {
@@ -69,6 +71,16 @@ export const configGetters: GetterTree<ConfigState, RootState> = {
 
   [ConfigGetterTypes.GetRuntimeConfig]: (state): RuntimeConfig | undefined =>
     state.runtimeConfigRecord,
+
+  [ConfigGetterTypes.IsConfigUpdating]: (state): boolean =>
+    [state.envConfigStatus, state.runtimeConfigStatus].includes(
+      ConfigStatus.UPDATING
+    ),
+
+  [ConfigGetterTypes.IsConfigLoading]: (state): boolean =>
+    [state.envConfigStatus, state.runtimeConfigStatus].includes(
+      ConfigStatus.LOADING
+    ),
 }
 
 export const configMutations: MutationTree<ConfigState> = {
@@ -82,13 +94,11 @@ export const configMutations: MutationTree<ConfigState> = {
 
   [ConfigMutationsTypes.SetEnvConfigSuccess](state, payload) {
     state.envConfigStatus = ConfigStatus.SUCCESS
-    console.log(payload.config)
     state.envConfigRecord = payload.config
   },
 
   [ConfigMutationsTypes.SetRuntimeConfigSuccess](state, payload) {
     state.runtimeConfigStatus = ConfigStatus.SUCCESS
-    console.log(payload.config)
     state.runtimeConfigRecord = payload.config
   },
 
@@ -103,7 +113,6 @@ export const configMutations: MutationTree<ConfigState> = {
 
 export const configActions: ActionTree<ConfigState, RootState> = {
   [ConfigActionsTypes.GetEnvConfig]({ commit, state }) {
-    console.log('Getting ENV Conf')
     if (
       [
         ConfigStatus.SUCCESS,
@@ -111,14 +120,12 @@ export const configActions: ActionTree<ConfigState, RootState> = {
         ConfigStatus.LOADING,
       ].includes(state.envConfigStatus)
     ) {
-      console.log('EARLY EXIT ENV CONF', state.envConfigStatus)
       return
     }
 
     commit({ type: ConfigMutationsTypes.SetEnvConfigLoading })
 
     ConfigService.getEnvConfig().then(config => {
-      console.log(config)
       commit({ type: ConfigMutationsTypes.SetEnvConfigSuccess, config })
     })
   },
@@ -131,7 +138,10 @@ export const configActions: ActionTree<ConfigState, RootState> = {
     commit({ type: ConfigMutationsTypes.SetEnvConfigUpdating })
 
     ConfigService.updateEnvConfig(newConfig).then(res => {
-      console.log(res)
+      commit({
+        type: ConfigMutationsTypes.SetEnvConfigSuccess,
+        config: res.config,
+      })
     })
   },
 
@@ -149,7 +159,6 @@ export const configActions: ActionTree<ConfigState, RootState> = {
     commit({ type: ConfigMutationsTypes.SetRuntimeConfigLoading })
 
     ConfigService.getRuntimeConfig().then(config => {
-      console.log(config)
       commit({ type: ConfigMutationsTypes.SetRuntimeConfigSuccess, config })
     })
   },
@@ -163,6 +172,10 @@ export const configActions: ActionTree<ConfigState, RootState> = {
 
     ConfigService.updateRuntimeConfig(newConfig).then(res => {
       console.log(res)
+      commit({
+        type: ConfigMutationsTypes.SetRuntimeConfigSuccess,
+        config: res.config,
+      })
     })
   },
 }
