@@ -1,7 +1,11 @@
 <template>
   <div class="config-wrapper">
     <h2>Environment Configuration</h2>
-    <form @submit.prevent="updateConfig()" class="config-form">
+    <form
+      v-if="hasConfigLoaded"
+      @submit.prevent="updateConfig()"
+      class="config-form"
+    >
       <h3>Library Directories</h3>
       <label for="src">Source Library</label>
       <input name="src" type="text" v-model="localConfig.srcDir" />

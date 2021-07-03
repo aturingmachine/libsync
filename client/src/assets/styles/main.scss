@@ -23,6 +23,7 @@ body {
   a {
     font-weight: bold;
     color: $primary-text;
+    text-decoration: none;
 
     &.router-link-exact-active {
       color: $accent-text;
@@ -51,12 +52,6 @@ input {
   }
 }
 
-/* Hide scrollbar for Chrome, Safari and Opera */
-html::-webkit-scrollbar {
-  // display: none;
-}
-
-/* Hide scrollbar for IE, Edge and Firefox */
 html {
   overflow-x: hidden;
 }
@@ -64,12 +59,6 @@ html {
 .config-wrapper {
   min-width: 600px;
 }
-
-// form {
-//   label {
-//     margin-bottom: 6px;
-//   }
-// }
 
 .form-footer {
   margin-top: 24px;

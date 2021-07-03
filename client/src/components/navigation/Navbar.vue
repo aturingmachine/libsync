@@ -1,23 +1,15 @@
 <template>
   <div class="nav-bar">
+    <transition name="slide-in">
+      <nav-drawer v-show="isOpen" />
+    </transition>
     <div class="button-container">
-      <button class="menu-button">
-        &#9776;
+      <button @click.prevent="setDrawerOpen(isOpen)" class="menu-button">
+        <icon>menu</icon>
       </button>
 
       <router-link class="logo" to="/">
         LibSync
-      </router-link>
-    </div>
-
-    <div class="links">
-      <router-link
-        class="nav-link"
-        v-for="(link, index) in navLinks"
-        :key="index"
-        :to="link.route"
-      >
-        {{ link.title }}
       </router-link>
     </div>
   </div>
@@ -25,31 +17,30 @@
 
 <script lang="ts">
 import Vue from 'vue'
+import NavDrawer from '@/components/navigation/NavDrawer.vue'
+import { RootGetterTypes, RootMutationTypes } from '@/store'
+
 export default Vue.extend({
   name: 'Navbar',
 
-  props: {},
-
-  data: () => {
-    return {
-      navLinks: [
-        {
-          title: 'About',
-          route: '/about',
-        },
-        {
-          title: 'Logs',
-          route: '/logs',
-        },
-        {
-          title: 'Configuration',
-          route: '/config',
-        },
-      ],
-    }
+  components: {
+    NavDrawer,
   },
 
-  watch: {},
+  computed: {
+    isOpen(): boolean {
+      return this.$store.getters[RootGetterTypes.IsNavDrawerOpen]
+    },
+  },
+
+  methods: {
+    setDrawerOpen(isOpen: boolean): void {
+      this.$store.commit({
+        type: RootMutationTypes.SetNavDrawerOpen,
+        isOpen: !isOpen,
+      })
+    },
+  },
 })
 </script>
 
@@ -62,6 +53,19 @@ export default Vue.extend({
   box-shadow: rgb(10, 26, 37) 3px 0px 15px 3px;
   align-items: center;
   justify-content: space-between;
+}
+
+.material-icons {
+  font-size: 36px !important;
+}
+
+.button-container {
+  display: flex;
+  align-items: center;
+}
+
+.menu-button {
+  display: flex;
 }
 
 .logo,
@@ -99,5 +103,16 @@ export default Vue.extend({
 .logo.router-link-exact-active:hover,
 .nav-link.router-link-exact-active:hover {
   text-shadow: none;
+}
+
+.slide-in-enter-active,
+.slide-in-leave-active {
+  transition: all 0.3s ease;
+}
+
+.slide-in-enter,
+.slide-in-leave-to {
+  position: fixed;
+  margin-left: -100%;
 }
 </style>

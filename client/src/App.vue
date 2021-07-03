@@ -6,7 +6,7 @@
       </div>
       <loading-bar />
     </div>
-    <router-view />
+    <router-view :class="[openClass, collapsedClass]" />
   </div>
 </template>
 
@@ -15,7 +15,7 @@ import Vue from 'vue'
 import NavBar from '@/components/navigation/Navbar.vue'
 import LoadingBar from '@/components/misc/LoadingBar.vue'
 import { LockWebSocket } from './services/websocket'
-import { RootMutationTypes } from './store'
+import { RootGetterTypes, RootMutationTypes } from './store'
 
 export default Vue.extend({
   name: 'LibSync',
@@ -23,6 +23,20 @@ export default Vue.extend({
   components: {
     LoadingBar,
     NavBar,
+  },
+
+  computed: {
+    openClass(): string {
+      return this.$store.getters[RootGetterTypes.IsNavDrawerOpen]
+        ? 'drawer-open'
+        : ''
+    },
+
+    collapsedClass(): string {
+      return this.$store.getters[RootGetterTypes.IsNavDrawerCollapsed]
+        ? 'drawer-collapsed'
+        : ''
+    },
   },
 
   mounted(): void {
@@ -52,5 +66,30 @@ export default Vue.extend({
 
 .page {
   padding: 100px;
+  transition: width 0.3s ease, margin 0.2s ease;
+
+  &.drawer-open {
+    width: calc(100% - 200px) !important;
+    margin-left: 200px !important;
+    &.drawer-collapsed {
+      width: calc(100% - 50px) !important;
+      margin-left: 50px !important;
+
+      &::before {
+        display: none;
+      }
+    }
+
+    &::before {
+      content: '';
+      height: 100%;
+      width: 100%;
+      display: block;
+      position: fixed;
+      top: 0;
+      right: 0;
+      background-color: rgba(0, 0, 0, 0.733);
+    }
+  }
 }
 </style>

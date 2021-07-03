@@ -18,10 +18,6 @@ export function isWatcherMounted(): boolean {
   return mounted
 }
 
-// function onMounted(): Promise<boolean> {
-//   return mountedSignal
-// }
-
 function runAllGood(srcPath: PathLike): Promise<void> {
   return new Promise((resolve) => {
     allGoodTimer = setTimeout(() => {
@@ -34,15 +30,6 @@ function runAllGood(srcPath: PathLike): Promise<void> {
       resolve()
     }, 2500)
   })
-
-  // setTimeout(() => {
-  //   watcherLogger.info(
-  //     `File Watcher mounted. Listening for changes to ${srcPath}`
-  //   )
-  //   mounted = true
-
-  //   clearTimeout(allGoodTimer as NodeJS.Timer)
-  // }, 2500)
 }
 
 async function initiateSync() {
