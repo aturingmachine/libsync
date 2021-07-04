@@ -1,6 +1,11 @@
 <template>
   <div class="dynamic-widget-wrapper">
-    <component :is="widget.name" :size-class="sizeClass" :widget="widget" />
+    <component
+      :is="widget.name"
+      :size-class="sizeClass"
+      :widget="widget"
+      :dataPoint="auxillaryOptions[0]"
+    />
   </div>
 </template>
 
@@ -8,18 +13,25 @@
 import { Widget } from '@/store/widgets/models'
 import Vue, { PropType } from 'vue'
 import LockStatusWidget from './LockStatusWidget.vue'
+import ProcessStatsWidget from './process-widget/ProcessStatsWidget.vue'
 
 export default Vue.extend({
   name: 'DynamicWidget',
 
   components: {
     LockStatusWidget,
+    ProcessStatsWidget,
   },
 
   props: {
     widget: {
       type: Object as PropType<Widget>,
       required: true,
+    },
+
+    auxillaryOptions: {
+      type: Array as PropType<string[]>,
+      default: () => [],
     },
   },
 

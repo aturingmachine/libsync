@@ -1,11 +1,12 @@
 import express, { NextFunction } from 'express'
 import path from 'path'
 import { logger, Logger } from '../utils/log-helper'
-import aboutApi from './about-api'
-import configApi from './config-api'
-import { LockWebSocket } from './lock-ws'
-import mountLogsRouter from './logs-api'
-import { LogWebSocket } from './logs-ws'
+import aboutApi from './rest-apis/about-api'
+import configApi from './rest-apis/config-api'
+import { LockWebSocket } from './websockets/lock-ws'
+import mountLogsRouter from './rest-apis/logs-api'
+import { LogWebSocket } from './websockets/logs-ws'
+import { ProcessWebSocket } from './websockets/process-ws'
 
 let apiLogger: Logger
 
@@ -60,6 +61,7 @@ function mountApi(): void {
 
   LogWebSocket.init()
   LockWebSocket.init()
+  ProcessWebSocket.init()
   apiLogger.info('WebSockets Initialized')
 
   server.on('upgrade', (request, socket, head) => {
@@ -71,6 +73,10 @@ function mountApi(): void {
 
     if (pathName === '/ws/lock-status') {
       LockWebSocket.handleUpgrade(request, socket, head)
+    }
+
+    if (pathName === '/ws/process-info') {
+      ProcessWebSocket.handleUpgrade(request, socket, head)
     }
   })
 }

@@ -1,5 +1,5 @@
 import ws from 'ws'
-import { logger, Logger } from '../utils/log-helper'
+import { logger, Logger } from '../../utils/log-helper'
 import { Socket } from 'net'
 import { IncomingMessage } from 'http'
 

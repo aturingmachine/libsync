@@ -1,8 +1,6 @@
 import express from 'express'
-import fs from 'fs/promises'
-import EnvConfig from '../utils/config/env-config/env-config'
-import { Logger, logger } from '../utils/log-helper'
-import { version } from '../package.json'
+import { logger } from '../../utils/log-helper'
+import { version } from '../../package.json'
 
 const aboutApiLogger = logger.child({ func: 'about-api' })
 
@@ -17,6 +15,11 @@ aboutApi.get('/api/about', (req: express.Request, res: express.Response) => {
     cwd: process.cwd(),
     pid: process.pid,
   }
+
+  console.log(process.cpuUsage())
+  console.log(process.memoryUsage())
+  console.log(process.resourceUsage())
+  console.log(process.uptime()) // keep
 
   res.json({ about: response })
 })

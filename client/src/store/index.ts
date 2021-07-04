@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Vuex, { GetterTree, MutationTree } from 'vuex'
 import { configModule } from './config'
 import { logsModule } from './logs'
+import { processModule } from './process'
 import { widgetsModule } from './widgets/widget-store'
 
 export interface RootState {
@@ -84,5 +85,6 @@ export default new Vuex.Store({
     logs: logsModule,
     config: configModule,
     widgets: widgetsModule,
+    process: processModule,
   },
 })

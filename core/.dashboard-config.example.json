@@ -1,13 +1,28 @@
 {
   "visibleWidgets": [
-    "LockStatusWidget"
+    "LockStatusWidget",
+    "ProcessStatsWidget"
   ],
   "widgets": {
     "LockStatusWidget": {
       "name": "LockStatusWidget",
       "configuration": {
+        "size": "Small",
+        "customOptions": {
+          "pollingPeriod": 3000,
+          "showTimeline": false
+        }
+      }
+    },
+    "ProcessStatsWidget": {
+      "name": "ProcessStatsWidget",
+      "configuration": {
         "size": "Large",
         "customOptions": {
+          "auxillary": [
+            "cpu",
+            "mem"
+          ],
           "pollingPeriod": 3000,
           "showTimeline": true
         }

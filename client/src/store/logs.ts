@@ -47,7 +47,7 @@ export const logsGetters: GetterTree<LogsState, RootState> = {
               )
             )
           }) ||
-        new Date(log.timestamp)
+        new Date(log.timestamp as string)
           .toLocaleString()
           .toLowerCase()
           .split(' ')

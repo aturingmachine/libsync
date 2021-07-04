@@ -2,11 +2,19 @@
   <div class="page dashboard-page">
     <h1>LibSync Dashboard</h1>
     <div v-if="hasLoaded" class="widgets">
-      <dynamic-widget
-        v-for="widget in visibleWidgets"
-        :key="widget.name"
-        :widget="widget"
-      />
+      <template v-for="widget in visibleWidgets">
+        <template v-if="hasAuxillaryOptions">
+          <dynamic-widget
+            v-for="opt in widget.configuration.customOptions.auxillary"
+            :key="opt"
+            :widget="widget"
+            :auxillaryOptions="[opt]"
+          />
+        </template>
+        <template v-else>
+          <dynamic-widget :key="widget.name" :widget="widget" />
+        </template>
+      </template>
     </div>
   </div>
 </template>
@@ -35,6 +43,12 @@ export default Vue.extend({
 
     visibleWidgets(): Widget[] {
       return this.$store.getters[WidgetStoreTypes.getters.GetVisibleWidgets]
+    },
+  },
+
+  methods: {
+    hasAuxillaryOptions(widget: Widget): boolean {
+      return !!widget?.configuration?.customOptions?.auxillary
     },
   },
 

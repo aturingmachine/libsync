@@ -54,10 +54,21 @@ export class LockWebSocketClient extends WebSocketClient {
   }
 }
 
+export class ProcessWebSocketClient extends WebSocketClient {
+  addStatusHandler(handler: (ev: MessageEvent<any>) => void): void {
+    this.addMessageHandler('ProcessWebSocketStatsStream', handler)
+  }
+}
+
 // TODO properly configure this
 export const LogsWebSocket = new LogsWebSocketClient(
   'ws://localhost:3000/ws/logs'
 )
+
 export const LockWebSocket = new LockWebSocketClient(
   'ws://localhost:3000/ws/lock-status'
+)
+
+export const ProcessWebSocket = new ProcessWebSocketClient(
+  'ws://localhost:3000/ws/process-info'
 )

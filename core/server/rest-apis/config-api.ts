@@ -1,11 +1,11 @@
 import express from 'express'
-import EnvConfig from '../utils/config/env-config/env-config'
+import EnvConfig from '../../utils/config/env-config/env-config'
 import {
   ConfigurableLibSyncState,
   EnvConfigStruct,
-} from '../utils/config/models'
-import { logger } from '../utils/log-helper'
-import LibSync from '../utils/config/runtime-config/state'
+} from '../../utils/config/models'
+import { logger } from '../../utils/log-helper'
+import LibSync from '../../utils/config/runtime-config/state'
 import fs from 'fs/promises'
 import path from 'path'
 
@@ -46,7 +46,7 @@ configApi.post(
       LibSync.lock()
       await EnvConfig.updateConfigFields(changedFields)
       await fs.writeFile(
-        path.resolve(__dirname, '../../.config.json'),
+        path.resolve(__dirname, '../../../.config.json'),
         JSON.stringify({ ...EnvConfig.get }, null, 2)
       )
       configApiLogger.info('EnvConfig Update complete - Unlocking')
@@ -106,7 +106,7 @@ configApi.get(
   async (req: express.Request, res: express.Response) => {
     try {
       const dashConf = await fs.readFile(
-        path.resolve(__dirname, '../../.dashboard-config.json'),
+        path.resolve(__dirname, '../../../.dashboard-config.json'),
         { encoding: 'utf-8' }
       )
 
@@ -123,7 +123,7 @@ configApi.post(
     try {
       const updatedConf = req.body
       await fs.writeFile(
-        path.resolve(__dirname, '../../.dashboard-config.json'),
+        path.resolve(__dirname, '../../../.dashboard-config.json'),
         JSON.stringify({ ...updatedConf }, null, 2)
       )
 

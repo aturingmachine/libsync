@@ -13,6 +13,7 @@ export enum WidgetStatus {
 
 export enum WidgetName {
   LockStatusWidget = 'LockStatusWidget',
+  ProcessStatsWidget = 'ProcessStatsWidget',
 }
 
 export enum WidgetSize {
@@ -24,7 +25,7 @@ export enum WidgetSize {
 
 export type WidgetConfig = {
   size: WidgetSize
-  customOptions: Record<string, string | number | boolean>
+  customOptions: Record<string, string | number | boolean | string[]>
 }
 
 export type Widget = {
