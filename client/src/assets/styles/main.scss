@@ -1,4 +1,5 @@
 @import './colors.scss';
+@import './widgets.scss';
 
 body {
   background-color: $primary;
@@ -133,6 +134,15 @@ caption {
     align-items: center;
     height: 26px;
   }
+}
+
+.option {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  align-items: center;
+  height: 26px;
 }
 
 .checkbox-label {

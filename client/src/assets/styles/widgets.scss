@@ -1,0 +1,139 @@
+@import './colors.scss';
+
+.widget-wrapper {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid $border-primary;
+  background-color: $secondary;
+  padding: 16px;
+  border-radius: 15px;
+  min-height: 200px;
+
+  &.widget-size-Small {
+    width: 25%;
+  }
+
+  &.widget-size-Medium {
+    width: 50%;
+  }
+
+  &.widget-size-Large {
+    width: 75%;
+  }
+
+  &.widget-size-XLarge {
+    width: 100%;
+  }
+}
+
+.widget-header {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+
+  .widget-options-close-button {
+    width: 24px;
+    height: 24px;
+    padding: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid $border-primary;
+    background-color: $button-destructive;
+    color: $primary-text;
+    position: absolute;
+    left: -5%;
+    top: -5%;
+    border-radius: 50%;
+
+    &:hover {
+      span {
+        background-color: $primary-text;
+        color: $button-destructive;
+        border-radius: 50%;
+      }
+    }
+  }
+}
+
+.widget-options-anchor {
+  position: relative;
+}
+
+.widget-options-button {
+  border: none;
+  background-color: transparent;
+  color: $primary-text;
+  position: relative;
+
+  span {
+    border-radius: 25px;
+    transition: all 0.1s ease-in;
+
+    &:hover {
+      background-color: $tertiary;
+      color: $accent-text;
+    }
+  }
+}
+
+.widget-options-container {
+  position: absolute;
+  background-color: $tertiary;
+  left: calc(125% - 125px);
+  top: -200%;
+  padding: 16px;
+  border-radius: 10px;
+  border: 1px solid $border-primary;
+  max-width: 250px;
+  min-width: 100px;
+  z-index: 11;
+
+  &:hover {
+    color: $primary-text;
+  }
+
+  h4 {
+    margin-top: 4px;
+  }
+}
+
+.widget-update-form {
+  display: flex;
+  flex-direction: column;
+
+  .submit-button {
+    margin-top: 8px;
+  }
+}
+
+.widget-title {
+  margin: 0;
+  text-align: left;
+}
+
+.widget-body {
+  height: 100%;
+  margin-top: 16px;
+
+  .widget-main-icon {
+    font-size: 64px;
+  }
+}
+
+.widget-body-template {
+  display: flex;
+  justify-content: space-between;
+  height: 100%;
+  align-items: center;
+}
+
+.global-fade-in-enter-active,
+.global-fade-in-leave-active {
+  transition: all 0.3s ease-in-out;
+}
+
+.global-fade-in-enter,
+.global-fade-in-leave-to {
+  opacity: 0;
+}

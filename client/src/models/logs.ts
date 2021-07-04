@@ -4,5 +4,5 @@ export interface Log {
   level: string
   message: string
   timestamps: string
-  [key: string]: any
+  [key: string]: unknown
 }

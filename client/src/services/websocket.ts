@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 class WebSocketClient {
   private uri!: string
   private websocket!: WebSocket
@@ -11,7 +13,7 @@ class WebSocketClient {
     this.uri = uri
     this.websocket = new WebSocket(uri)
 
-    this.websocket.onopen = (_ev: any) => {
+    this.websocket.onopen = () => {
       this.open.then(ws => ws)
     }
   }

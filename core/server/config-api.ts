@@ -101,4 +101,37 @@ configApi.post(
   }
 )
 
+configApi.get(
+  '/api/dashboard',
+  async (req: express.Request, res: express.Response) => {
+    try {
+      const dashConf = await fs.readFile(
+        path.resolve(__dirname, '../../.dashboard-config.json'),
+        { encoding: 'utf-8' }
+      )
+
+      res.json(JSON.parse(dashConf))
+    } catch {
+      res.sendStatus(500)
+    }
+  }
+)
+
+configApi.post(
+  '/api/dashboard',
+  async (req: express.Request, res: express.Response) => {
+    try {
+      const updatedConf = req.body
+      await fs.writeFile(
+        path.resolve(__dirname, '../../.dashboard-config.json'),
+        JSON.stringify({ ...updatedConf }, null, 2)
+      )
+
+      res.json(req.body)
+    } catch {
+      res.sendStatus(500)
+    }
+  }
+)
+
 export default configApi

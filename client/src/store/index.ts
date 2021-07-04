@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Vuex, { GetterTree, MutationTree } from 'vuex'
 import { configModule } from './config'
 import { logsModule } from './logs'
+import { widgetsModule } from './widgets/widget-store'
 
 export interface RootState {
   isDarkMode: boolean
@@ -82,5 +83,6 @@ export default new Vuex.Store({
   modules: {
     logs: logsModule,
     config: configModule,
+    widgets: widgetsModule,
   },
 })

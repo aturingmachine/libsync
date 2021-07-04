@@ -1,0 +1,17 @@
+{
+  "visibleWidgets": [
+    "LockStatusWidget"
+  ],
+  "widgets": {
+    "LockStatusWidget": {
+      "name": "LockStatusWidget",
+      "configuration": {
+        "size": "Large",
+        "customOptions": {
+          "pollingPeriod": 3000,
+          "showTimeline": true
+        }
+      }
+    }
+  }
+}

@@ -31,6 +31,11 @@ export default Vue.extend({
     return {
       navLinks: [
         {
+          title: 'Dashboard',
+          route: '/dashboard',
+          icon: 'dashboard',
+        },
+        {
           title: 'Logs',
           route: '/logs',
           icon: 'list',

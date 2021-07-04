@@ -6,6 +6,8 @@ test-data/test-dest-folder/**
 
 .config.json
 
+.dashboard-config.json
+
 core/logs/**
 
 todos
