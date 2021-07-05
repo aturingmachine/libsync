@@ -5,6 +5,11 @@ import {
   WidgetStatus,
 } from '@/store/widgets/models'
 
+export interface WidgetOrdering {
+  index: number
+  widget: Widget
+}
+
 const lockStatusWidget: Widget = {
   name: WidgetName.LockStatusWidget,
   status: WidgetStatus.IDLE,

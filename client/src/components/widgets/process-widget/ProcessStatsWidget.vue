@@ -43,7 +43,7 @@ import { WidgetStoreTypes } from '@/store/widgets/widget-store'
 import Vue, { PropType } from 'vue'
 import BaseWidget from '../BaseWidget.vue'
 import ProcessStatsChart from './ProcessStatsChart.vue'
-import { ChartConfiguration, ChartData, LinearScale } from 'chart.js'
+import { ChartConfiguration, ChartData, Easing, LinearScale } from 'chart.js'
 
 export default Vue.extend({
   name: 'ProcessStatsWidget',
@@ -73,6 +73,38 @@ export default Vue.extend({
       resize: false,
       localConfig: {} as WidgetConfig,
       memLabel: '',
+      defaultChartConfig: {
+        type: 'line',
+        options: {
+          animation: {
+            duration: 250,
+            easing: 'linear' as Easing,
+          },
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: true,
+              reverse: true,
+            },
+          },
+          scales: {
+            type: 'linear',
+            xAxes: [
+              {
+                ticks: {
+                  reverse: true,
+                  min: 0,
+                  fontColor: '#a3a29f',
+                },
+                gridLines: {
+                  color: '#a3a29f',
+                },
+              },
+            ],
+          },
+        },
+      },
     }
   },
 
@@ -116,29 +148,12 @@ export default Vue.extend({
 
     cpuChart(): ChartConfiguration {
       return {
-        type: 'line',
+        ...this.defaultChartConfig,
         data: this.cpuChartData,
         options: {
-          animation: {
-            duration: 1000,
-            easing: 'easeInOutCirc',
-          },
-          responsive: true,
-          maintainAspectRatio: false,
+          ...this.defaultChartConfig.options,
           scales: {
-            type: 'linear',
-            xAxes: [
-              {
-                ticks: {
-                  reverse: true,
-                  min: 0,
-                  fontColor: '#a3a29f',
-                },
-                gridLines: {
-                  color: '#a3a29f',
-                },
-              },
-            ],
+            ...this.defaultChartConfig.options?.scales,
             yAxes: [
               {
                 ticks: {
@@ -155,41 +170,18 @@ export default Vue.extend({
               },
             ],
           },
-          plugins: {
-            legend: {
-              display: true,
-              reverse: true,
-            },
-          },
         },
       }
     },
 
     memChart(): ChartConfiguration {
       return {
-        type: 'line',
+        ...this.defaultChartConfig,
         data: this.memChartData,
         options: {
-          animation: {
-            duration: 1000,
-            easing: 'easeInOutCirc',
-          },
-          responsive: true,
-          maintainAspectRatio: false,
+          ...this.defaultChartConfig.options,
           scales: {
-            type: 'linear',
-            xAxes: [
-              {
-                ticks: {
-                  reverse: true,
-                  min: 0,
-                  fontColor: '#a3a29f',
-                },
-                gridLines: {
-                  color: '#a3a29f',
-                },
-              },
-            ],
+            ...this.defaultChartConfig.options.scales,
             yAxes: [
               {
                 type: 'linear',
@@ -206,12 +198,6 @@ export default Vue.extend({
               },
             ],
           } as LinearScale,
-          plugins: {
-            legend: {
-              display: true,
-              reverse: true,
-            },
-          },
         },
       }
     },
@@ -283,16 +269,10 @@ export default Vue.extend({
 
       console.log(payload)
 
-      this.$store
-        .dispatch(WidgetStoreTypes.actions.UpdateWidgetConfiguration, payload)
-        .then(() => {
-          if (payload.configuration.isVisible) {
-            // this.resize = true
-            // const refs = this.$refs as Record<string, Vue>
-            // refs.baseWidget.$data.optionsOpen = false
-            // ;(refs[this.refName] as Record<string, any>)?.makeChart()
-          }
-        })
+      this.$store.dispatch(
+        WidgetStoreTypes.actions.UpdateWidgetConfiguration,
+        payload
+      )
     },
 
     pushStats(ev: MessageEvent<any>): void {

@@ -175,7 +175,7 @@ export default Vue.extend({
 }
 
 .search-clear-button {
-  color: $accent-text;
+  color: $text-accent;
   border: none;
   background: transparent;
   font-size: 18px;

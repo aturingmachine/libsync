@@ -1,5 +1,4 @@
 @import './colors.scss';
-@import './widgets.scss';
 
 body {
   background-color: $primary;
@@ -11,7 +10,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: $primary-text;
+  color: $text-primary;
   display: flex;
   align-items: center;
   flex-direction: column;
@@ -23,19 +22,53 @@ body {
 
   a {
     font-weight: bold;
-    color: $primary-text;
+    color: $text-primary;
     text-decoration: none;
 
     &.router-link-exact-active {
-      color: $accent-text;
+      color: $text-accent;
     }
   }
 }
 
 a {
   font-weight: 700;
-  color: $accent-text;
+  color: $text-accent;
   text-decoration: none;
+}
+
+a {
+  transition: all 0.3s ease-in-out;
+  position: relative;
+  &:before,
+  &:after {
+    left: 0;
+    content: '';
+    position: absolute;
+    bottom: 0;
+    width: 0px;
+    height: 2px;
+    transition: all 0.3s ease-in-out;
+    opacity: 0;
+    background-color: $green-bright;
+  }
+
+  &.router-link-exact-active {
+    &:before,
+    &:after {
+      width: 100%;
+      opacity: 1;
+    }
+  }
+
+  &:hover {
+    cursor: pointer;
+    &:before,
+    &:after {
+      width: 100%;
+      opacity: 1;
+    }
+  }
 }
 
 input {
@@ -44,7 +77,7 @@ input {
   padding: 2px 4px;
   font-size: 16px;
   background-color: $tertiary;
-  color: $primary-text;
+  color: $text-primary;
   font-weight: 600;
   font-family: 'Roboto Mono';
 
@@ -53,12 +86,12 @@ input {
   }
 
   &:disabled {
-    color: $tertiary-text;
+    color: $text-tertiary;
     background-color: $primary;
   }
 
   &::placeholder {
-    color: $placeholder-text;
+    color: $text-placeholder;
     font-weight: 600;
   }
 }
@@ -76,38 +109,6 @@ html {
   width: 100%;
   display: flex;
   justify-content: space-between;
-
-  button, .button {
-    height: 48px;
-  }
-}
-
-button, .button {
-  transition: background-color 0.2s ease-in, color 0.2s ease-in;
-  cursor: pointer;
-
-  &:disabled {
-    cursor: not-allowed;
-  }
-
-  &.submit-button {
-    color: $primary-text;
-    background-color: $button-primary;
-
-    &:disabled {
-      color: $tertiary-text;
-      background-color: $button-primary-disabled;
-    }
-  }
-
-  &.secondary-button {
-    background-color: $button-destructive;
-
-    &:disabled {
-      color: $tertiary-text;
-      background-color: $button-destructive-disabled;
-    }
-  }
 }
 
 caption {

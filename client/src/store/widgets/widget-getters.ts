@@ -11,15 +11,23 @@ import {
 
 export enum WidgetGetterTypes {
   HasConfigLoaded = 'HasConfigLoaded',
+  IsConfigUpdating = 'IsConfigUpdating',
   GetWidgets = 'GetWidets',
   GetWidget = 'GetWidget',
   GetWidgetStatus = 'GetWidgetStatus',
   GetVisibleWidgets = 'GetVisibleWidgets',
+  AnyWidgetUpdating = 'AnyWidgetUpdating',
 }
 
 export const widgetGetters: GetterTree<WidgetState, RootState> = {
   [WidgetGetterTypes.HasConfigLoaded]: (state): boolean =>
-    state.status === WidgetConfigurationStatus.LOADED,
+    [
+      WidgetConfigurationStatus.LOADED,
+      WidgetConfigurationStatus.UPDATING,
+    ].includes(state.status),
+
+  [WidgetGetterTypes.IsConfigUpdating]: (state): boolean =>
+    state.status === WidgetConfigurationStatus.UPDATING,
 
   [WidgetGetterTypes.GetWidgetStatus]: state => (
     widgetName: WidgetName
@@ -43,4 +51,7 @@ export const widgetGetters: GetterTree<WidgetState, RootState> = {
     widgetName: WidgetName
   ): WidgetConfig | undefined =>
     state.widgets.find(w => w.name === widgetName)?.configuration,
+
+  [WidgetGetterTypes.AnyWidgetUpdating]: (state): boolean =>
+    state.widgets.some(w => w.status === WidgetStatus.UPDATING),
 }

@@ -10,6 +10,7 @@ export enum WidgetMutationTypes {
   SetStateLoading = 'SetStateLoading',
   SetStateLoaded = 'SetStateLoaded',
   SetStateError = 'SetStateError',
+  SetStateUpdating = 'SetStateUpdating',
 
   SetWidgetRunning = 'SetWidgetRunning',
   SetWidgetUpdating = 'SetWidgetUpdating',
@@ -25,7 +26,6 @@ export const widgetMutations: MutationTree<WidgetState> = {
   },
 
   [WidgetMutationTypes.SetStateLoaded](state, payload) {
-    console.log(payload)
     state.status = WidgetConfigurationStatus.LOADED
     state.visibleWidgets = [...(payload.visibleWidgets || [])]
     state.widgets = [...payload.widgets]
@@ -33,6 +33,10 @@ export const widgetMutations: MutationTree<WidgetState> = {
 
   [WidgetMutationTypes.SetStateError](state) {
     state.status = WidgetConfigurationStatus.ERROR
+  },
+
+  [WidgetMutationTypes.SetStateUpdating](state) {
+    state.status = WidgetConfigurationStatus.UPDATING
   },
 
   /** Widget Status Mutations **/
@@ -67,6 +71,7 @@ export const widgetMutations: MutationTree<WidgetState> = {
     const widgetCopy = [...state.widgets]
     widgetCopy.splice(index, 1, update)
 
+    state.status = WidgetConfigurationStatus.UPDATING
     state.widgets = widgetCopy
   },
 

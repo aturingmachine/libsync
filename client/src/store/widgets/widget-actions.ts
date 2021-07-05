@@ -1,4 +1,5 @@
 import { UpdateWidgetActionPayload } from '@/models/config'
+import { definedWidgets, WidgetOrdering } from '@/models/widgets'
 import {
   DasboardServiceWrapper,
   DashboardService,
@@ -18,6 +19,8 @@ import { WidgetMutationTypes } from './widget-mutations'
 export enum WidgetActionTypes {
   GetWidgetConfigurations = 'GetWidgetConfigurations',
   UpdateWidgetConfiguration = 'UpdateWidgetConfiguration',
+  UpdateWidgetOrder = 'UpdateWidgetOrder',
+  UpdateVisibleWidgets = 'UpdateVisibleWidgets',
 }
 
 export const widgetActions: ActionTree<WidgetState, RootState> = {
@@ -30,11 +33,33 @@ export const widgetActions: ActionTree<WidgetState, RootState> = {
 
     DashboardService.getDashboardConfig()
       .then(response => {
-        commit({
-          type: WidgetMutationTypes.SetStateLoaded,
-          visibleWidgets: response.visibleWidgets,
-          widgets: response.widgets,
-        })
+        const newWidgetConfigs: Widget[] = definedWidgets.filter(
+          definedWidgetId => {
+            return (
+              response.widgets.findIndex(
+                widget =>
+                  widget.name === definedWidgetId.name &&
+                  widget.auxId === definedWidgetId.auxId
+              ) === -1
+            )
+          }
+        )
+
+        if (newWidgetConfigs.length > 0) {
+          commit({
+            type: WidgetMutationTypes.SetStateLoaded,
+            visibleWidgets: response.visibleWidgets,
+            widgets: [...response.widgets, ...newWidgetConfigs],
+          })
+        }
+
+        if (newWidgetConfigs.length === 0) {
+          commit({
+            type: WidgetMutationTypes.SetStateLoaded,
+            visibleWidgets: response.visibleWidgets,
+            widgets: response.widgets,
+          })
+        }
       })
       .catch(err => {
         console.error(err)
@@ -100,6 +125,77 @@ export const widgetActions: ActionTree<WidgetState, RootState> = {
     const requestPayload: DasboardServiceWrapper = {
       visibleWidgets,
       widgets: widgetCopy,
+    }
+
+    return DashboardService.updateDashboardConfig(requestPayload)
+      .then(response => {
+        commit({
+          type: WidgetMutationTypes.SetStateLoaded,
+          visibleWidgets: response.visibleWidgets,
+          widgets: response.widgets,
+        })
+      })
+      .catch(err => {
+        console.error(err)
+        commit({ type: WidgetMutationTypes.SetStateError })
+      })
+  },
+
+  [WidgetActionTypes.UpdateWidgetOrder]: (
+    { commit, state },
+    payload: { orderedWidgets: WidgetOrdering[] }
+  ) => {
+    if (
+      [
+        WidgetConfigurationStatus.LOADING,
+        WidgetConfigurationStatus.UPDATING,
+      ].includes(state.status)
+    ) {
+      return
+    }
+
+    commit({ type: WidgetMutationTypes.SetStateUpdating })
+
+    const requestPayload: DasboardServiceWrapper = {
+      visibleWidgets: state.visibleWidgets,
+      widgets: payload.orderedWidgets.map(w => w.widget),
+    }
+
+    return DashboardService.updateDashboardConfig(requestPayload)
+      .then(response => {
+        commit({
+          type: WidgetMutationTypes.SetStateLoaded,
+          visibleWidgets: response.visibleWidgets,
+          widgets: response.widgets,
+        })
+      })
+      .catch(err => {
+        console.error(err)
+        commit({ type: WidgetMutationTypes.SetStateError })
+      })
+  },
+
+  [WidgetActionTypes.UpdateVisibleWidgets]: (
+    { commit, state },
+    payload: { visibleWidgets: Widget[] }
+  ) => {
+    if (
+      [
+        WidgetConfigurationStatus.LOADING,
+        WidgetConfigurationStatus.UPDATING,
+      ].includes(state.status)
+    ) {
+      return
+    }
+
+    commit({ type: WidgetMutationTypes.SetStateUpdating })
+
+    const requestPayload: DasboardServiceWrapper = {
+      visibleWidgets: payload.visibleWidgets.map(w => ({
+        name: w.name,
+        auxId: w.auxId,
+      })),
+      widgets: state.widgets,
     }
 
     return DashboardService.updateDashboardConfig(requestPayload)

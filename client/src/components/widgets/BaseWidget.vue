@@ -5,7 +5,7 @@
       <div class="widget-options-anchor">
         <button
           @click.prevent="optionsOpen = true"
-          class="widget-options-button"
+          class="widget-options-button icon"
         >
           <icon>more_vert</icon>
         </button>
@@ -15,7 +15,7 @@
               <h4>{{ headline }} Options</h4>
               <button
                 @click.stop="optionsOpen = false"
-                class="widget-options-close-button"
+                class="widget-options-close-button icon close-button"
               >
                 <icon>close</icon>
               </button>
@@ -40,11 +40,7 @@
                 </select>
               </div>
 
-              <input
-                class="button submit-button"
-                type="submit"
-                value="Update"
-              />
+              <input class="button submit" type="submit" value="Update" />
             </form>
           </div>
         </transition>

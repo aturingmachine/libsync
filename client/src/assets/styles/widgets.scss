@@ -1,6 +1,6 @@
 @import './colors.scss';
 
-$base-widget-size: 22%;
+$base-widget-size: 23%;
 
 .dynamic-widget-wrapper {
   margin: 16px;
@@ -51,21 +51,10 @@ $base-widget-size: 22%;
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 1px solid $border-primary;
-    background-color: $button-destructive;
-    color: $primary-text;
     position: absolute;
     left: -5%;
     top: -5%;
     border-radius: 50%;
-
-    &:hover {
-      span {
-        background-color: $primary-text;
-        color: $button-destructive;
-        border-radius: 50%;
-      }
-    }
   }
 }
 
@@ -74,19 +63,9 @@ $base-widget-size: 22%;
 }
 
 .widget-options-button {
-  border: none;
-  background-color: transparent;
-  color: $primary-text;
-  position: relative;
-
   span {
     border-radius: 25px;
     transition: all 0.1s ease-in;
-
-    &:hover {
-      background-color: $tertiary;
-      color: $accent-text;
-    }
   }
 }
 
@@ -103,7 +82,7 @@ $base-widget-size: 22%;
   z-index: 11;
 
   &:hover {
-    color: $primary-text;
+    color: $text-primary;
   }
 
   h4 {
@@ -115,7 +94,7 @@ $base-widget-size: 22%;
   display: flex;
   flex-direction: column;
 
-  .submit-button {
+  .submit {
     margin-top: 8px;
   }
 }
@@ -123,6 +102,9 @@ $base-widget-size: 22%;
 .widget-title {
   margin: 0;
   text-align: left;
+  align-items: center;
+  justify-content: center;
+  display: flex;
 }
 
 .widget-body {

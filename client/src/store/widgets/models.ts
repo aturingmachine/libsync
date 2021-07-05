@@ -2,6 +2,7 @@ export enum WidgetConfigurationStatus {
   UNLOADED = 'UNLOADED',
   LOADED = 'LOADED',
   LOADING = 'LOADING',
+  UPDATING = 'UPDATING',
   ERROR = 'ERROR',
 }
 

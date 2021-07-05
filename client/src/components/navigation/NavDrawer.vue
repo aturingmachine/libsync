@@ -151,7 +151,7 @@ export default Vue.extend({
 }
 
 .collapse-button {
-  color: $primary-text;
+  color: $text-primary;
   border-color: $primary;
   background-color: rgb(35, 46, 57);
   position: absolute;
@@ -159,7 +159,7 @@ export default Vue.extend({
   top: 0;
   left: 100%;
   border: none;
-  border-bottom-right-radius: 10px;
+  border-radius: 0 0 10px 0;
   z-index: 3;
 
   &:hover {
