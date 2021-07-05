@@ -120,6 +120,12 @@ export default Vue.extend({
     },
   },
 
+  watch: {
+    widget(): void {
+      this.optionsOpen = false
+    },
+  },
+
   mounted(): void {
     this.size = this.widget.configuration.size
   },

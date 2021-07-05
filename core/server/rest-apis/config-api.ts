@@ -122,6 +122,7 @@ configApi.post(
   async (req: express.Request, res: express.Response) => {
     try {
       const updatedConf = req.body
+      console.log(updatedConf)
       await fs.writeFile(
         path.resolve(__dirname, '../../../.dashboard-config.json'),
         JSON.stringify({ ...updatedConf }, null, 2)

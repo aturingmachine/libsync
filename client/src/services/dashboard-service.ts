@@ -1,8 +1,8 @@
-import { Widget, WidgetName } from '@/store/widgets/models'
+import { Widget, WidgetId, WidgetName } from '@/store/widgets/models'
 
 export type DasboardServiceWrapper = {
-  visibleWidgets: WidgetName[]
-  widgets: { [K in keyof typeof WidgetName]?: Exclude<Widget, 'status'> }
+  visibleWidgets: WidgetId[]
+  widgets: Exclude<Widget, 'status'>[]
 }
 
 export class DashboardService {

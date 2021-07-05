@@ -1,7 +1,7 @@
 import { MutationTree } from 'vuex'
 import {
+  Widget,
   WidgetConfigurationStatus,
-  WidgetName,
   WidgetState,
   WidgetStatus,
 } from './models'
@@ -27,8 +27,8 @@ export const widgetMutations: MutationTree<WidgetState> = {
   [WidgetMutationTypes.SetStateLoaded](state, payload) {
     console.log(payload)
     state.status = WidgetConfigurationStatus.LOADED
-    state.visibleWidget = [...(payload.visibleWidgets || [])]
-    state.widgets = { ...payload.widgets }
+    state.visibleWidgets = [...(payload.visibleWidgets || [])]
+    state.widgets = [...payload.widgets]
   },
 
   [WidgetMutationTypes.SetStateError](state) {
@@ -37,46 +37,77 @@ export const widgetMutations: MutationTree<WidgetState> = {
 
   /** Widget Status Mutations **/
   [WidgetMutationTypes.SetWidgetRunning](state, payload) {
-    state.widgets = {
-      ...state.widgets,
-      [payload.widgetName]: {
-        ...state.widgets[payload.widgetName as WidgetName],
-        status: WidgetStatus.RUNNING,
-      },
+    const index = state.widgets.findIndex(
+      widget =>
+        widget.name === payload.widgetName && payload.auxId === widget.auxId
+    )
+
+    const update: Widget = {
+      ...state.widgets[index],
+      status: WidgetStatus.RUNNING,
     }
+
+    const widgetCopy = [...state.widgets]
+    widgetCopy.splice(index, 1, update)
+
+    state.widgets = widgetCopy
   },
 
   [WidgetMutationTypes.SetWidgetUpdating](state, payload) {
-    state.widgets = {
-      ...state.widgets,
-      [payload.widgetName]: {
-        ...state.widgets[payload.widgetName as WidgetName],
-        status: WidgetStatus.UPDATING,
-      },
+    const index = state.widgets.findIndex(
+      widget =>
+        widget.name === payload.widgetName && payload.auxId === widget.auxId
+    )
+
+    const update: Widget = {
+      ...state.widgets[index],
+      status: WidgetStatus.UPDATING,
     }
+
+    const widgetCopy = [...state.widgets]
+    widgetCopy.splice(index, 1, update)
+
+    state.widgets = widgetCopy
   },
 
   [WidgetMutationTypes.SetWidgetIdle](state, payload) {
-    state.widgets = {
-      ...state.widgets,
-      [payload.widgetName]: {
-        ...state.widgets[payload.widgetName as WidgetName],
-        status: WidgetStatus.IDLE,
-      },
+    const index = state.widgets.findIndex(
+      widget =>
+        widget.name === payload.widgetName && payload.auxId === widget.auxId
+    )
+
+    const update: Widget = {
+      ...state.widgets[index],
+      status: WidgetStatus.IDLE,
     }
+
+    const widgetCopy = [...state.widgets]
+    widgetCopy.splice(index, 1, update)
+
+    state.widgets = widgetCopy
   },
 
   /** Widget Configuration Mutations **/
   [WidgetMutationTypes.SetWidgetConfiguration](state, payload) {
-    state.widgets = {
-      ...state.widgets,
-      [payload.widgetName]: {
-        ...state.widgets[payload.widgetName as WidgetName],
-        status: state.visibleWidget.includes(payload.widgetName)
-          ? WidgetStatus.RUNNING
-          : WidgetStatus.IDLE,
-        configuration: payload.configuration,
-      },
+    const index = state.widgets.findIndex(
+      widget =>
+        widget.name === payload.widgetName && payload.auxId === widget.auxId
+    )
+
+    const update: Widget = {
+      ...state.widgets[index],
+      status: state.visibleWidgets.includes({
+        name: payload.widgetName,
+        auxId: payload.auxId,
+      })
+        ? WidgetStatus.RUNNING
+        : WidgetStatus.IDLE,
+      configuration: payload.configuration,
     }
+
+    const widgetCopy = [...state.widgets]
+    widgetCopy.splice(index, 1, update)
+
+    state.widgets = widgetCopy
   },
 }

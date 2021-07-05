@@ -5,7 +5,6 @@ import {
   WidgetConfig,
   WidgetConfigurationStatus,
   WidgetName,
-  WidgetRecords,
   WidgetState,
   WidgetStatus,
 } from './models'
@@ -24,16 +23,24 @@ export const widgetGetters: GetterTree<WidgetState, RootState> = {
 
   [WidgetGetterTypes.GetWidgetStatus]: state => (
     widgetName: WidgetName
-  ): WidgetStatus | undefined => state.widgets[widgetName]?.status,
+  ): WidgetStatus | undefined =>
+    state.widgets.find(w => w.name === widgetName)?.status,
 
-  [WidgetGetterTypes.GetWidgets]: (state): WidgetRecords => state.widgets,
+  [WidgetGetterTypes.GetWidgets]: (state): Widget[] => state.widgets,
 
   [WidgetGetterTypes.GetVisibleWidgets]: (state): Widget[] =>
-    state.visibleWidget
-      .map(widgetName => state.widgets[widgetName])
+    state.visibleWidgets
+      .map(visibleWidget =>
+        state.widgets.find(
+          w =>
+            w.name === visibleWidget.name &&
+            (visibleWidget.auxId ? w.auxId === visibleWidget.auxId : true)
+        )
+      )
       .filter(r => r !== undefined) as Widget[],
 
   [WidgetGetterTypes.GetWidget]: state => (
     widgetName: WidgetName
-  ): WidgetConfig | undefined => state.widgets[widgetName]?.configuration,
+  ): WidgetConfig | undefined =>
+    state.widgets.find(w => w.name === widgetName)?.configuration,
 }

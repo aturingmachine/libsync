@@ -97,11 +97,11 @@ export default Vue.extend({
     },
 
     pollingInterval(): number {
-      return this.widget.configuration.customOptions.pollingPeriod as number
+      return this.widget.configuration.customOptions?.pollingPeriod as number
     },
 
     showTimeline(): boolean {
-      return !!this.widget.configuration.customOptions.showTimeline
+      return !!this.widget.configuration.customOptions?.showTimeline
     },
   },
 
@@ -151,9 +151,11 @@ export default Vue.extend({
       this.$store
         .dispatch(WidgetStoreTypes.actions.UpdateWidgetConfiguration, payload)
         .then(() => {
-          const refs = this.$refs as Record<string, Vue>
-          refs.baseWidget.$data.optionsOpen = false
-          this.startPolling()
+          if (payload.configuration.isVisible) {
+            const refs = this.$refs as Record<string, Vue>
+            refs.baseWidget.$data.optionsOpen = false
+            this.startPolling()
+          }
         })
 
       this.clearPoll()

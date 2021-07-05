@@ -9,20 +9,24 @@
 
     <template v-slot:widget-body>
       <process-stats-chart
-        v-if="dataPoint === 'cpu'"
+        class="process-chart"
+        v-if="auxId === 'cpu'"
         ref="cpuChart"
         :height="200"
         :width="100"
         :chart-data="cpuChartData"
         :conf="cpuChart"
+        :sizeClass="sizeClass"
       />
       <process-stats-chart
-        v-if="dataPoint === 'mem'"
+        class="process-chart"
+        v-if="auxId === 'mem'"
         ref="memChart"
         :height="200"
         :width="100"
         :chart-data="memChartData"
         :conf="memChart"
+        :sizeClass="sizeClass"
       />
     </template>
   </base-widget>
@@ -59,13 +63,14 @@ export default Vue.extend({
       required: true,
     },
 
-    dataPoint: {
+    auxId: {
       type: String,
     },
   },
 
   data: () => {
     return {
+      resize: false,
       localConfig: {} as WidgetConfig,
       memLabel: '',
     }
@@ -193,11 +198,7 @@ export default Vue.extend({
                 },
                 ticks: {
                   fontColor: '#a3a29f',
-                  callback: (
-                    value: string,
-                    index: number,
-                    values: string[]
-                  ) => {
+                  callback: (value: string) => {
                     return value + this.memLabel
                   },
                   maxTicksLimit: 6,
@@ -245,6 +246,10 @@ export default Vue.extend({
         ],
       }
     },
+
+    refName(): string {
+      return this.auxId === 'cpu' ? 'cpuChart' : 'memChart'
+    },
   },
 
   methods: {
@@ -256,6 +261,7 @@ export default Vue.extend({
     },
 
     dispatchUpdate(baseUpdate: WidgetBaseUpdate): void {
+      console.log('Inside Dispatch  update')
       const payload: UpdateWidgetActionPayload = {
         widgetName: this.widget.name,
         configuration: {
@@ -272,14 +278,20 @@ export default Vue.extend({
             },
           },
         },
+        auxId: this.auxId,
       }
+
+      console.log(payload)
 
       this.$store
         .dispatch(WidgetStoreTypes.actions.UpdateWidgetConfiguration, payload)
         .then(() => {
-          const refs = this.$refs as Record<string, Vue>
-          refs.baseWidget.$data.optionsOpen = false
-          ;(refs.cpuChart as Record<string, any>).makeChart()
+          if (payload.configuration.isVisible) {
+            // this.resize = true
+            // const refs = this.$refs as Record<string, Vue>
+            // refs.baseWidget.$data.optionsOpen = false
+            // ;(refs[this.refName] as Record<string, any>)?.makeChart()
+          }
         })
     },
 
@@ -326,48 +338,6 @@ export default Vue.extend({
   display: flex;
   flex-direction: row;
   justify-content: flex-end;
-
-  tbody {
-    width: 100%;
-  }
-
-  tr {
-    height: 100%;
-    display: flex;
-    justify-content: flex-end;
-    flex-direction: row;
-
-    td {
-      height: 100%;
-      width: 9%;
-      color: white;
-      border-left: 1px solid $primary;
-      border-right: 1px solid $primary;
-      transition: background-color 0.3s ease-in;
-      box-sizing: border-box;
-
-      &.locked {
-        background-color: $warning;
-      }
-
-      &.unlocked {
-        background-color: $success;
-      }
-
-      div {
-        height: 10%;
-        width: initial;
-        text-align: right;
-        margin: 0;
-        transform-origin: 100% 50%;
-        transform: rotate(90deg);
-
-        &.widget-size-Small {
-          display: none;
-        }
-      }
-    }
-  }
 }
 
 .list-transition {

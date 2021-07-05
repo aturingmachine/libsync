@@ -58,6 +58,10 @@ export class ProcessWebSocketClient extends WebSocketClient {
   addStatusHandler(handler: (ev: MessageEvent<any>) => void): void {
     this.addMessageHandler('ProcessWebSocketStatsStream', handler)
   }
+
+  removeStatusHandler(): void {
+    this.removeMessageHandler('ProcessWebSocketStatsStream')
+  }
 }
 
 // TODO properly configure this

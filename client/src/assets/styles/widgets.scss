@@ -1,29 +1,42 @@
 @import './colors.scss';
 
-.widget-wrapper {
-  display: flex;
-  flex-direction: column;
+$base-widget-size: 22%;
+
+.dynamic-widget-wrapper {
+  margin: 16px;
   border: 1px solid $border-primary;
   background-color: $secondary;
-  padding: 16px;
   border-radius: 15px;
-  min-height: 200px;
+  padding: 16px;
+  box-sizing: border-box;
+  transition: all 1s ease-in-out;
 
   &.widget-size-Small {
-    width: 25%;
+    max-width: $base-widget-size;
+    flex-basis: $base-widget-size;
   }
 
   &.widget-size-Medium {
-    width: 50%;
+    max-width: calc(#{$base-widget-size} * 2 - 32px);
+    flex-basis: calc(#{$base-widget-size} * 2 - 32px);
   }
 
   &.widget-size-Large {
-    width: 75%;
+    max-width: calc(#{$base-widget-size} * 3 - 32px);
+    flex-basis: calc(#{$base-widget-size} * 3 - 32px);
   }
 
   &.widget-size-XLarge {
-    width: 100%;
+    max-width: calc(#{$base-widget-size} * 4 - 32px);
+    flex-basis: calc(#{$base-widget-size} * 4 - 32px);
   }
+}
+
+.widget-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 200px;
+  width: 100%;
 }
 
 .widget-header {
@@ -80,8 +93,8 @@
 .widget-options-container {
   position: absolute;
   background-color: $tertiary;
-  left: calc(125% - 125px);
-  top: -200%;
+  right: 25%;
+  top: -250%;
   padding: 16px;
   border-radius: 10px;
   border: 1px solid $border-primary;
@@ -138,4 +151,6 @@
   opacity: 0;
 }
 
-$asdf: #a3a29f
+.process-chart {
+  position: relative;
+}

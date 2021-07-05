@@ -8,8 +8,8 @@ import { widgetMutations, WidgetMutationTypes } from './widget-mutations'
 
 export const widgetState = (): WidgetState => ({
   status: WidgetConfigurationStatus.UNLOADED,
-  visibleWidget: [],
-  widgets: {},
+  visibleWidgets: [],
+  widgets: [],
 })
 
 export const WidgetStoreTypes = namespaceModule(

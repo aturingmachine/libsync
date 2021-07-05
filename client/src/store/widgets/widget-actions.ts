@@ -5,7 +5,14 @@ import {
 } from '@/services/dashboard-service'
 import { ActionTree } from 'vuex'
 import { RootState } from '..'
-import { WidgetConfigurationStatus, WidgetState, WidgetStatus } from './models'
+import {
+  findWidget,
+  Widget,
+  WidgetConfigurationStatus,
+  WidgetId,
+  WidgetState,
+  WidgetStatus,
+} from './models'
 import { WidgetMutationTypes } from './widget-mutations'
 
 export enum WidgetActionTypes {
@@ -39,9 +46,15 @@ export const widgetActions: ActionTree<WidgetState, RootState> = {
     { commit, state },
     payload: UpdateWidgetActionPayload
   ) => {
+    const { widget, index } = findWidget(
+      state.widgets,
+      payload.widgetName,
+      payload.auxId
+    )
+
     if (
       state.status !== WidgetConfigurationStatus.LOADED ||
-      state.widgets[payload.widgetName]?.status === WidgetStatus.UPDATING
+      widget?.status === WidgetStatus.UPDATING
     ) {
       return
     }
@@ -49,23 +62,44 @@ export const widgetActions: ActionTree<WidgetState, RootState> = {
     commit({
       type: WidgetMutationTypes.SetWidgetUpdating,
       widgetName: payload.widgetName,
+      auxId: payload.auxId,
     })
 
-    const visibleWidgets = payload.configuration.isVisible
-      ? Array.of(...new Set([...state.visibleWidget, payload.widgetName]))
-      : [
-          ...state.visibleWidget.slice(
-            state.visibleWidget.indexOf(payload.widgetName),
-            1
-          ),
-        ]
+    const visibleWidgetCopy = [...state.visibleWidgets]
+    let visibleWidgets: WidgetId[]
+
+    if (payload.configuration.isVisible) {
+      visibleWidgets = visibleWidgetCopy.filter(
+        (v, index) => visibleWidgetCopy.indexOf(v, index + 1) === -1
+      )
+    } else {
+      const targetIndex = visibleWidgetCopy.findIndex(
+        v => v.name === payload.widgetName && v.auxId === payload.auxId
+      )
+
+      visibleWidgets = [
+        ...visibleWidgetCopy.slice(0, targetIndex),
+        ...visibleWidgetCopy.slice(targetIndex + 1),
+      ]
+    }
+
+    const update: Widget = {
+      ...state.widgets[index],
+      status: payload.configuration.isVisible
+        ? WidgetStatus.RUNNING
+        : WidgetStatus.IDLE,
+      configuration: {
+        ...state.widgets[index].configuration,
+        ...payload.configuration.widget.configuration,
+      },
+    }
+
+    const widgetCopy = [...state.widgets]
+    widgetCopy.splice(index, 1, update)
 
     const requestPayload: DasboardServiceWrapper = {
       visibleWidgets,
-      widgets: {
-        ...state.widgets,
-        [payload.widgetName]: { ...payload.configuration.widget },
-      },
+      widgets: widgetCopy,
     }
 
     return DashboardService.updateDashboardConfig(requestPayload)

@@ -17,6 +17,9 @@ export default (Vue as VueConstructor<
     conf: {
       type: Object as PropType<ChartConfiguration>,
     },
+    sizeClass: {
+      type: String,
+    },
   },
 
   data: () => {
@@ -41,11 +44,23 @@ export default (Vue as VueConstructor<
 
   methods: {
     makeChart(): void {
+      console.log('make chart called')
       if (this.conf.options && this.conf.data) {
         this.renderChart(this.conf.data, this.conf.options)
       }
     },
   },
+
+  // watch: {
+  //   sizeClass(newVal: string): void {
+  //     console.log('Chart Watch', newVal)
+  //     this.makeChart()
+  //   },
+  //   // resize(newVal: boolean): void {
+  //   //   console.log('resize changed')
+  //   //   this.makeChart()
+  //   // },
+  // },
 
   mounted(): void {
     console.log(this.conf)

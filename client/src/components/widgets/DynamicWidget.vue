@@ -1,10 +1,10 @@
 <template>
-  <div class="dynamic-widget-wrapper">
+  <div class="dynamic-widget-wrapper" :class="sizeClass">
     <component
       :is="widget.name"
       :size-class="sizeClass"
       :widget="widget"
-      :dataPoint="auxillaryOptions[0]"
+      :auxId="widget.auxId"
     />
   </div>
 </template>

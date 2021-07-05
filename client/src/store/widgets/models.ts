@@ -25,13 +25,14 @@ export enum WidgetSize {
 
 export type WidgetConfig = {
   size: WidgetSize
-  customOptions: Record<string, string | number | boolean | string[]>
+  customOptions?: Record<string, string | number | boolean | string[]>
 }
 
 export type Widget = {
   name: WidgetName
   status: WidgetStatus
   configuration: WidgetConfig
+  auxId?: string
 }
 
 export type WidgetRecords = {
@@ -40,6 +41,40 @@ export type WidgetRecords = {
 
 export interface WidgetState {
   status: WidgetConfigurationStatus
-  visibleWidget: WidgetName[]
-  widgets: WidgetRecords
+  visibleWidgets: WidgetId[]
+  widgets: Widget[]
+}
+
+export type WidgetId = {
+  name: WidgetName
+  auxId?: string
+}
+
+export const findWidget = (
+  widgets: Widget[],
+  widgetName: WidgetName,
+  auxId?: string
+): { index: number; widget?: Widget } => {
+  let target: Widget | undefined
+  let index: number
+
+  if (auxId) {
+    target = widgets.find(w => w.auxId?.includes(auxId))
+    index = widgets.findIndex(w => w.auxId?.includes(auxId))
+
+    if (target) {
+      return {
+        index,
+        widget: target,
+      }
+    }
+  }
+
+  target = widgets.find(w => w.name === widgetName)
+  index = widgets.findIndex(w => w.name === widgetName)
+
+  return {
+    index,
+    widget: target,
+  }
 }

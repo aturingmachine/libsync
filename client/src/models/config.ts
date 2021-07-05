@@ -40,4 +40,5 @@ export type UpdateWidgetActionPayload = {
     isVisible: boolean
     widget: Widget
   }
+  auxId?: string
 }

@@ -1,10 +1,19 @@
 {
   "visibleWidgets": [
-    "LockStatusWidget",
-    "ProcessStatsWidget"
+    {
+      "name": "LockStatusWidget"
+    },
+    {
+      "name": "ProcessStatsWidget",
+      "auxId": "mem"
+    },
+    {
+      "name": "ProcessStatsWidget",
+      "auxId": "cpu"
+    }
   ],
-  "widgets": {
-    "LockStatusWidget": {
+  "widgets": [
+    {
       "name": "LockStatusWidget",
       "configuration": {
         "size": "Small",
@@ -14,19 +23,21 @@
         }
       }
     },
-    "ProcessStatsWidget": {
+    {
       "name": "ProcessStatsWidget",
+      "auxId": "mem",
       "configuration": {
         "size": "Large",
-        "customOptions": {
-          "auxillary": [
-            "cpu",
-            "mem"
-          ],
-          "pollingPeriod": 3000,
-          "showTimeline": true
-        }
+        "customOptions": {}
+      }
+    },
+    {
+      "name": "ProcessStatsWidget",
+      "auxId": "cpu",
+      "configuration": {
+        "size": "Large",
+        "customOptions": {}
       }
     }
-  }
+  ]
 }
