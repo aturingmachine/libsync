@@ -5,10 +5,11 @@ import { logHelpMessage } from './utils/help-log'
 import EnvConfig from './utils/config/env-config/env-config'
 import mountApi from './server'
 import LibSync from './utils/config/runtime-config/state'
+import { LibSyncDatabase } from './db'
 
 let mainLogger: Logger
 
-async function runOnce(): Promise<any> {
+async function runOnce(): Promise<void> {
   if (LibSync.options.runBackUp) {
     mainLogger.info('Running Backup Sync')
     await sync(true)
@@ -25,6 +26,8 @@ async function init() {
   if (LibSync.options.runHelp) {
     logHelpMessage()
   }
+
+  LibSyncDatabase.init()
 
   mainLogger = logger.child({ func: 'main' })
   mainLogger.info('LibSync Initialised.')

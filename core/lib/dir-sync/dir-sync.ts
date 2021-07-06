@@ -5,6 +5,7 @@ import LibSync from '../../utils/config/runtime-config/state'
 import buildCommands from '../command-runner/command-mapper'
 import executeCommands from '../command-runner/command-runner'
 import mapDirectoryStructure from './dir-mapper'
+import { LibSyncDatabase } from '../../db'
 
 let syncLogger: Logger
 
@@ -30,6 +31,13 @@ async function sync(isBackupRun: boolean): Promise<void> {
     mapDirectoryStructure(LibSync.to.dir, LibSync.to.name),
   ])
   syncLogger.info('Mapping Complete')
+
+  LibSyncDatabase.writeLibSnapshot({
+    libName: LibSync.from.lib,
+    timestamp: Date.now(),
+    path: LibSync.from.dir as string,
+    dirStruct: LibSync.from.dirStruct,
+  })
 
   const diffTag = 'diff'
   LogHelper.start('diff')
