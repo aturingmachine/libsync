@@ -1,7 +1,7 @@
 import { Socket } from 'net'
 import ws from 'ws'
-import LibSync from '../../utils/config/runtime-config/state'
-import { logger, Logger } from '../../utils/log-helper'
+import LibSync from '../../utils/config/runtime-config/state.js'
+import { logger, Logger } from '../../utils/log-helper.js'
 
 export class LockWebSocket {
   static wsServer: ws.Server

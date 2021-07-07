@@ -1,7 +1,7 @@
 import fs from 'fs/promises'
-import { Command, Commands } from '../../models/commands'
-import { logger, Logger, LogHelper } from '../../utils/log-helper'
-import LibSync from '../../utils/config/runtime-config/state'
+import { Command, Commands } from '../../models/commands.js'
+import { logger, Logger, LogHelper } from '../../utils/log-helper.js'
+import LibSync from '../../utils/config/runtime-config/state.js'
 
 let cmdRunnerLogger: Logger
 

@@ -1,11 +1,11 @@
 import { Logger } from 'winston'
-import { DirStructInside } from '../../models/dirs'
-import { logger, LogHelper } from '../../utils/log-helper'
-import LibSync from '../../utils/config/runtime-config/state'
-import buildCommands from '../command-runner/command-mapper'
-import executeCommands from '../command-runner/command-runner'
-import mapDirectoryStructure from './dir-mapper'
-import { LibSyncDatabase } from '../../db'
+import { DirStructInside } from '../../models/dirs.js'
+import { logger, LogHelper } from '../../utils/log-helper.js'
+import LibSync from '../../utils/config/runtime-config/state.js'
+import buildCommands from '../command-runner/command-mapper.js'
+import executeCommands from '../command-runner/command-runner.js'
+import mapDirectoryStructure from './dir-mapper.js'
+import { LibSyncDatabase } from '../../db/index.js'
 
 let syncLogger: Logger
 

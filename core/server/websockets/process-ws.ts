@@ -1,8 +1,8 @@
 import { IncomingMessage } from 'http'
 import { Socket } from 'net'
 import ws from 'ws'
-import { logger, Logger } from '../../utils/log-helper'
 import pidusage from 'pidusage'
+import { logger, Logger } from '../../utils/log-helper.js'
 
 export class ProcessWebSocket {
   static wsServer: ws.Server

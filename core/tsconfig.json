@@ -4,7 +4,7 @@
 
     /* Basic Options */
     // "incremental": true,                         /* Enable incremental compilation */
-    "target": "ES2021",
+    "target": "ES2020",
     "module": "ES2020",
     "strict": true,
     "esModuleInterop": true,
@@ -17,8 +17,7 @@
     "outDir": "./dist/",
     "sourceMap": true,
     "types": ["node", "express"],
-    "lib": ["ES2021"],
-    "resolveJsonModule": true
+    "lib": ["ES2020"]
   },
   "exclude": ["client/**"],
   "watchOptions": {

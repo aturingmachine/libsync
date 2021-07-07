@@ -1,6 +1,6 @@
-import { Command, CommandType, Commands } from '../../models/commands'
-import { DirStruct } from '../../models/dirs'
-import LibSync from '../../utils/config/runtime-config/state'
+import { Command, CommandType, Commands } from '../../models/commands.js'
+import { DirStruct } from '../../models/dirs.js'
+import LibSync from '../../utils/config/runtime-config/state.js'
 
 const commandSorter = (a: Command, b: Command): number => {
   if (a.type === CommandType.MKDIR && b.type === CommandType.COPY) {

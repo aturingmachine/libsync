@@ -1,12 +1,13 @@
 import express, { NextFunction } from 'express'
 import path from 'path'
-import { logger, Logger } from '../utils/log-helper'
-import aboutApi from './rest-apis/about-api'
-import configApi from './rest-apis/config-api'
-import { LockWebSocket } from './websockets/lock-ws'
-import mountLogsRouter from './rest-apis/logs-api'
-import { LogWebSocket } from './websockets/logs-ws'
-import { ProcessWebSocket } from './websockets/process-ws'
+import { logger, Logger } from '../utils/log-helper.js'
+import aboutApi from './rest-apis/about-api.js'
+import configApi from './rest-apis/config-api.js'
+import { LockWebSocket } from './websockets/lock-ws.js'
+import mountLogsRouter from './rest-apis/logs-api.js'
+import { LogWebSocket } from './websockets/logs-ws.js'
+import { ProcessWebSocket } from './websockets/process-ws.js'
+import { fileURLToPath } from 'url'
 
 let apiLogger: Logger
 
@@ -35,7 +36,12 @@ function mountApi(): void {
   })
 
   app.get('/client', (req: express.Request, res: express.Response) => {
-    res.sendFile(path.resolve(__dirname, '../client/index.html'))
+    res.sendFile(
+      path.resolve(
+        path.dirname(fileURLToPath(import.meta.url)),
+        '../client/index.html'
+      )
+    )
   })
 
   // TODO this is very, very unsafe and should be fixed
@@ -44,7 +50,7 @@ function mountApi(): void {
     (req: express.Request, res: express.Response) => {
       res.sendFile(
         path.resolve(
-          __dirname,
+          path.dirname(fileURLToPath(import.meta.url)),
           `../client/${req.params.dir}/${req.params.resource}`
         )
       )

@@ -1,9 +1,9 @@
 import { Dirent, PathLike } from 'fs'
 import fs from 'fs/promises'
 import path from 'path'
-import { DirStruct, TargetName } from '../../models/dirs'
-import { Logger, logger, LogHelper } from '../../utils/log-helper'
-import LibSync from '../../utils/config/runtime-config/state'
+import { DirStruct, TargetName } from '../../models/dirs.js'
+import { Logger, logger, LogHelper } from '../../utils/log-helper.js'
+import LibSync from '../../utils/config/runtime-config/state.js'
 
 let dirMapLogger: Logger
 

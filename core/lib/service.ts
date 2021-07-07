@@ -1,10 +1,10 @@
 import { PathLike } from 'fs'
 import fs from 'fs/promises'
-import { debounce } from '../utils/debounce'
-import sync from './dir-sync/dir-sync'
-import { Logger, logger } from '../utils/log-helper'
-import LibSync from '../utils/config/runtime-config/state'
-import EnvConfig from '../utils/config/env-config/env-config'
+import { debounce } from '../utils/debounce.js'
+import sync from './dir-sync/dir-sync.js'
+import { Logger, logger } from '../utils/log-helper.js'
+import LibSync from '../utils/config/runtime-config/state.js'
+import EnvConfig from '../utils/config/env-config/env-config.js'
 
 let watcherLogger: Logger
 let rezTimer: NodeJS.Timeout
@@ -71,10 +71,7 @@ function attemptRez(srcPath: PathLike): void {
 async function mountWatcher(srcPath: PathLike): Promise<void> {
   clearTimeout(allGoodTimer as NodeJS.Timer)
   watcherLogger.info(`Attempting to mount file watcher to ${srcPath}`)
-  const debouncedSync = debounce(
-    () => initiateSync(),
-    EnvConfig.get.debounceAmount
-  )
+  const debouncedSync = debounce(() => initiateSync(), 1500)
 
   try {
     const watcher = fs.watch(srcPath, {

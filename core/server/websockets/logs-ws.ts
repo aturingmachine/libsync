@@ -1,7 +1,7 @@
 import ws from 'ws'
-import { logger, Logger } from '../../utils/log-helper'
 import { Socket } from 'net'
 import { IncomingMessage } from 'http'
+import { logger, Logger } from '../../utils/log-helper.js'
 
 export class LogWebSocket {
   static wsServer: ws.Server

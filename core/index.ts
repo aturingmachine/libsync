@@ -1,11 +1,11 @@
-import { initLogger, logger, Logger } from './utils/log-helper'
-import sync from './lib/dir-sync/dir-sync'
-import executeMount from './lib/service'
-import { logHelpMessage } from './utils/help-log'
-import EnvConfig from './utils/config/env-config/env-config'
-import mountApi from './server'
-import LibSync from './utils/config/runtime-config/state'
-import { LibSyncDatabase } from './db'
+import { initLogger, logger, Logger } from './utils/log-helper.js'
+import sync from './lib/dir-sync/dir-sync.js'
+import executeMount from './lib/service.js'
+import { logHelpMessage } from './utils/help-log.js'
+import EnvConfig from './utils/config/env-config/env-config.js'
+import mountApi from './server/index.js'
+import LibSync from './utils/config/runtime-config/state.js'
+import { LibSyncDatabase } from './db/index.js'
 
 let mainLogger: Logger
 
@@ -27,7 +27,7 @@ async function init() {
     logHelpMessage()
   }
 
-  LibSyncDatabase.init()
+  await LibSyncDatabase.init()
 
   mainLogger = logger.child({ func: 'main' })
   mainLogger.info('LibSync Initialised.')
@@ -67,5 +67,3 @@ const main = async () => {
 }
 
 main()
-
-module.exports = main

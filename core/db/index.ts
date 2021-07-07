@@ -1,16 +1,20 @@
 import { Low, JSONFile } from 'lowdb'
 import path from 'path'
-import { logger, Logger } from '../utils/log-helper'
-import { DBInit, LibSyncDatabaseSchema } from './models'
-import { LibSnapshot, LibSnapshotRecord } from './models/lib-snapshot'
+import { fileURLToPath } from 'url'
+import { logger, Logger } from '../utils/log-helper.js'
+import { DBInit, LibSyncDatabaseSchema } from './models/index.js'
+import { LibSnapshot, LibSnapshotRecord } from './models/lib-snapshot.js'
 
 export class LibSyncDatabase {
   private static logger: Logger
-  private static file = path.resolve(__dirname, './db.json')
+  private static file = path.resolve(
+    path.dirname(fileURLToPath(import.meta.url)),
+    '../data/db.json'
+  )
   private static adapter: JSONFile<LibSyncDatabaseSchema>
   private static connection: Low<LibSyncDatabaseSchema>
 
-  static init(): void {
+  static async init(): Promise<void> {
     if (!LibSyncDatabase.connection?.data) {
       LibSyncDatabase.logger = logger.child({ func: 'db' })
 
@@ -22,6 +26,7 @@ export class LibSyncDatabase {
       LibSyncDatabase.logger.info('Connection Established')
 
       LibSyncDatabase.connection.data ||= DBInit
+      await LibSyncDatabase.connection.write()
     }
   }
 
@@ -41,7 +46,7 @@ export class LibSyncDatabase {
         LibSyncDatabase.connection.data.libSnapshots[snapshot.libName]
 
       existingRecord.push(snapshot)
-    } else if (LibSyncDatabase.connection.data?.libSnapshots) {
+    } else if (LibSyncDatabase.connection.data) {
       LibSyncDatabase.connection.data.libSnapshots[snapshot.libName] = [
         snapshot,
       ]

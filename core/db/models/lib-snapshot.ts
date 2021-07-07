@@ -1,4 +1,4 @@
-import { DirStruct } from '../../models/dirs'
+import { DirStruct } from '../../models/dirs.js'
 
 export type LibSnapshot = {
   libName: string

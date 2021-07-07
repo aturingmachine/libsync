@@ -1,8 +1,8 @@
 import chalk from 'chalk'
 import winston from 'winston'
-import EnvConfig from './config/env-config/env-config'
 import { v4 as uuidv4 } from 'uuid'
-import LibSync from './config/runtime-config/state'
+import EnvConfig from './config/env-config/env-config.js'
+import LibSync from './config/runtime-config/state.js'
 
 export type Logger = winston.Logger
 
