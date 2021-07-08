@@ -5,7 +5,7 @@ import LibSync from '../../utils/config/runtime-config/state.js'
 import buildCommands from '../command-runner/command-mapper.js'
 import executeCommands from '../command-runner/command-runner.js'
 import mapDirectoryStructure from './dir-mapper.js'
-import { LibSyncDatabase } from '../../db/index.js'
+import { LibSnapshotter } from '../snapshotter/lib-snapshotter.js'
 
 let syncLogger: Logger
 
@@ -32,12 +32,7 @@ async function sync(isBackupRun: boolean): Promise<void> {
   ])
   syncLogger.info('Mapping Complete')
 
-  LibSyncDatabase.writeLibSnapshot({
-    libName: LibSync.from.lib,
-    timestamp: Date.now(),
-    path: LibSync.from.dir as string,
-    dirStruct: LibSync.from.dirStruct,
-  })
+  LibSnapshotter.takeSnapshots()
 
   const diffTag = 'diff'
   LogHelper.start('diff')

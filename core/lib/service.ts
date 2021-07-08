@@ -71,7 +71,10 @@ function attemptRez(srcPath: PathLike): void {
 async function mountWatcher(srcPath: PathLike): Promise<void> {
   clearTimeout(allGoodTimer as NodeJS.Timer)
   watcherLogger.info(`Attempting to mount file watcher to ${srcPath}`)
-  const debouncedSync = debounce(() => initiateSync(), 1500)
+  const debouncedSync = debounce(
+    () => initiateSync(),
+    EnvConfig.get.debounceAmount
+  )
 
   try {
     const watcher = fs.watch(srcPath, {

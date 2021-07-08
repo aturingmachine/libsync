@@ -19,8 +19,8 @@
     "types": ["node", "express"],
     "lib": ["ES2020"]
   },
-  "exclude": ["client/**"],
+  "exclude": ["client/**", "data/**"],
   "watchOptions": {
-    "excludeFiles": ["client/**"]
+    "excludeFiles": ["client/**", "data/**"]
   }
 }

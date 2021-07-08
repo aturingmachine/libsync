@@ -41,6 +41,11 @@ export default Vue.extend({
           icon: 'list',
         },
         {
+          title: 'Snapshots',
+          route: '/snapshots',
+          icon: 'settings_backup_restore',
+        },
+        {
           title: 'Configuration',
           route: '/config',
           icon: 'settings',

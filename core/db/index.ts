@@ -9,7 +9,7 @@ export class LibSyncDatabase {
   private static logger: Logger
   private static file = path.resolve(
     path.dirname(fileURLToPath(import.meta.url)),
-    '../data/db.json'
+    '../../data/db.json'
   )
   private static adapter: JSONFile<LibSyncDatabaseSchema>
   private static connection: Low<LibSyncDatabaseSchema>
@@ -22,7 +22,7 @@ export class LibSyncDatabase {
       LibSyncDatabase.adapter = new JSONFile(LibSyncDatabase.file)
       LibSyncDatabase.connection = new Low(LibSyncDatabase.adapter)
 
-      LibSyncDatabase.establishConnection()
+      await LibSyncDatabase.establishConnection()
       LibSyncDatabase.logger.info('Connection Established')
 
       LibSyncDatabase.connection.data ||= DBInit

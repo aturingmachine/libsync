@@ -1,4 +1,12 @@
-import { DirStruct } from '../../models/dirs.js'
+export interface DirStruct {
+  [key: string]: DirStructInside
+}
+
+export interface DirStructInside {
+  fullRelativePath: string
+  isDir: boolean
+  contents: DirStruct
+}
 
 export type RunDetails = {
   source: string

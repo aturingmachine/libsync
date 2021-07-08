@@ -22,7 +22,8 @@
       "scripts/*.*",
       "temp/*.*",
       "logs/*.*",
-      "dist/client/*"
+      "dist/client/*",
+      "data/*.*"
     ],
     "delay": 4000
   },

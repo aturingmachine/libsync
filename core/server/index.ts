@@ -8,6 +8,7 @@ import mountLogsRouter from './rest-apis/logs-api.js'
 import { LogWebSocket } from './websockets/logs-ws.js'
 import { ProcessWebSocket } from './websockets/process-ws.js'
 import { fileURLToPath } from 'url'
+import snapshotApi from './rest-apis/snapshot-api.js'
 
 let apiLogger: Logger
 
@@ -60,6 +61,7 @@ function mountApi(): void {
   app.use(mountLogsRouter())
   app.use(configApi)
   app.use(aboutApi)
+  app.use(snapshotApi)
   apiLogger.info('REST Controllers mounted')
 
   const server = app.listen(3000)
