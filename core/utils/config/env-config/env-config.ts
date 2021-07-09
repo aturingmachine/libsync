@@ -1,13 +1,13 @@
 import { PathLike } from 'fs'
 import fs from 'fs/promises'
 import path from 'path'
-import { EventBinder, EventHandler } from '../../event-binder'
+import { EventBinder, EventHandler } from '../../event-binder.js'
 import {
   defaultEnvConfigOptions,
   EnvConfigValidator,
   parseDefaults,
-} from '../config-utils'
-import { EnvConfigStruct } from '../models'
+} from '../config-utils.js'
+import { EnvConfigStruct } from '../models.js'
 
 const defaultEnvConfig: EnvConfigStruct = {
   srcDir: '',

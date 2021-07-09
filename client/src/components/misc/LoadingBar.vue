@@ -9,6 +9,7 @@
 <script lang="ts">
 import { RootGetterTypes } from '@/store'
 import { ConfigStoreTypes } from '@/store/config'
+import { WidgetStoreTypes } from '@/store/widgets/widget-store'
 import Vue from 'vue'
 
 export default Vue.extend({
@@ -19,7 +20,9 @@ export default Vue.extend({
       return (
         this.$store.getters[ConfigStoreTypes.getters.IsConfigUpdating] ||
         this.$store.getters[ConfigStoreTypes.getters.IsConfigLoading] ||
-        this.$store.getters[RootGetterTypes.IsLoading]
+        this.$store.getters[RootGetterTypes.IsLoading] ||
+        this.$store.getters[WidgetStoreTypes.getters.AnyWidgetUpdating] ||
+        this.$store.getters[WidgetStoreTypes.getters.AnyWidgetUpdating]
       )
     },
   },

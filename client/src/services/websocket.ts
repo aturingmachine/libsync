@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 class WebSocketClient {
   private uri!: string
   private websocket!: WebSocket
@@ -11,7 +13,7 @@ class WebSocketClient {
     this.uri = uri
     this.websocket = new WebSocket(uri)
 
-    this.websocket.onopen = (_ev: any) => {
+    this.websocket.onopen = () => {
       this.open.then(ws => ws)
     }
   }
@@ -52,10 +54,25 @@ export class LockWebSocketClient extends WebSocketClient {
   }
 }
 
+export class ProcessWebSocketClient extends WebSocketClient {
+  addStatusHandler(handler: (ev: MessageEvent<any>) => void): void {
+    this.addMessageHandler('ProcessWebSocketStatsStream', handler)
+  }
+
+  removeStatusHandler(): void {
+    this.removeMessageHandler('ProcessWebSocketStatsStream')
+  }
+}
+
 // TODO properly configure this
 export const LogsWebSocket = new LogsWebSocketClient(
   'ws://localhost:3000/ws/logs'
 )
+
 export const LockWebSocket = new LockWebSocketClient(
   'ws://localhost:3000/ws/lock-status'
+)
+
+export const ProcessWebSocket = new ProcessWebSocketClient(
+  'ws://localhost:3000/ws/process-info'
 )

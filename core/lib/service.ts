@@ -1,10 +1,10 @@
 import { PathLike } from 'fs'
 import fs from 'fs/promises'
-import { debounce } from '../utils/debounce'
-import sync from './dir-sync/dir-sync'
-import { Logger, logger } from '../utils/log-helper'
-import LibSync from '../utils/config/runtime-config/state'
-import EnvConfig from '../utils/config/env-config/env-config'
+import { debounce } from '../utils/debounce.js'
+import sync from './dir-sync/dir-sync.js'
+import { Logger, logger } from '../utils/log-helper.js'
+import LibSync from '../utils/config/runtime-config/state.js'
+import EnvConfig from '../utils/config/env-config/env-config.js'
 
 let watcherLogger: Logger
 let rezTimer: NodeJS.Timeout

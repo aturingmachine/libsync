@@ -1,13 +1,14 @@
 import express from 'express'
-import EnvConfig from '../utils/config/env-config/env-config'
+import fs from 'fs/promises'
+import path from 'path'
+import EnvConfig from '../../utils/config/env-config/env-config.js'
 import {
   ConfigurableLibSyncState,
   EnvConfigStruct,
-} from '../utils/config/models'
-import { logger } from '../utils/log-helper'
-import LibSync from '../utils/config/runtime-config/state'
-import fs from 'fs/promises'
-import path from 'path'
+} from '../../utils/config/models.js'
+import { logger } from '../../utils/log-helper.js'
+import LibSync from '../../utils/config/runtime-config/state.js'
+import { fileURLToPath } from 'url'
 
 const configApiLogger = logger.child({ func: 'config-api' })
 
@@ -46,7 +47,10 @@ configApi.post(
       LibSync.lock()
       await EnvConfig.updateConfigFields(changedFields)
       await fs.writeFile(
-        path.resolve(__dirname, '../../.config.json'),
+        path.resolve(
+          path.dirname(fileURLToPath(import.meta.url)),
+          '../../../.config.json'
+        ),
         JSON.stringify({ ...EnvConfig.get }, null, 2)
       )
       configApiLogger.info('EnvConfig Update complete - Unlocking')
@@ -97,6 +101,46 @@ configApi.post(
     } catch (error) {
       res.sendStatus(500)
       configApiLogger.error('Failed To Update RuntimeConfig', error)
+    }
+  }
+)
+
+configApi.get(
+  '/api/dashboard',
+  async (req: express.Request, res: express.Response) => {
+    try {
+      const dashConf = await fs.readFile(
+        path.resolve(
+          path.dirname(fileURLToPath(import.meta.url)),
+          '../../../.dashboard-config.json'
+        ),
+        { encoding: 'utf-8' }
+      )
+
+      res.json(JSON.parse(dashConf))
+    } catch {
+      res.sendStatus(500)
+    }
+  }
+)
+
+configApi.post(
+  '/api/dashboard',
+  async (req: express.Request, res: express.Response) => {
+    try {
+      const updatedConf = req.body
+      console.log(updatedConf)
+      await fs.writeFile(
+        path.resolve(
+          path.dirname(fileURLToPath(import.meta.url)),
+          '../../../.dashboard-config.json'
+        ),
+        JSON.stringify({ ...updatedConf }, null, 2)
+      )
+
+      res.json(req.body)
+    } catch {
+      res.sendStatus(500)
     }
   }
 )

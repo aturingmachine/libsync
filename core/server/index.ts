@@ -1,11 +1,14 @@
 import express, { NextFunction } from 'express'
 import path from 'path'
-import { logger, Logger } from '../utils/log-helper'
-import aboutApi from './about-api'
-import configApi from './config-api'
-import { LockWebSocket } from './lock-ws'
-import mountLogsRouter from './logs-api'
-import { LogWebSocket } from './logs-ws'
+import { logger, Logger } from '../utils/log-helper.js'
+import aboutApi from './rest-apis/about-api.js'
+import configApi from './rest-apis/config-api.js'
+import { LockWebSocket } from './websockets/lock-ws.js'
+import mountLogsRouter from './rest-apis/logs-api.js'
+import { LogWebSocket } from './websockets/logs-ws.js'
+import { ProcessWebSocket } from './websockets/process-ws.js'
+import { fileURLToPath } from 'url'
+import snapshotApi from './rest-apis/snapshot-api.js'
 
 let apiLogger: Logger
 
@@ -34,7 +37,12 @@ function mountApi(): void {
   })
 
   app.get('/client', (req: express.Request, res: express.Response) => {
-    res.sendFile(path.resolve(__dirname, '../client/index.html'))
+    res.sendFile(
+      path.resolve(
+        path.dirname(fileURLToPath(import.meta.url)),
+        '../client/index.html'
+      )
+    )
   })
 
   // TODO this is very, very unsafe and should be fixed
@@ -43,7 +51,7 @@ function mountApi(): void {
     (req: express.Request, res: express.Response) => {
       res.sendFile(
         path.resolve(
-          __dirname,
+          path.dirname(fileURLToPath(import.meta.url)),
           `../client/${req.params.dir}/${req.params.resource}`
         )
       )
@@ -53,6 +61,7 @@ function mountApi(): void {
   app.use(mountLogsRouter())
   app.use(configApi)
   app.use(aboutApi)
+  app.use(snapshotApi)
   apiLogger.info('REST Controllers mounted')
 
   const server = app.listen(3000)
@@ -60,6 +69,7 @@ function mountApi(): void {
 
   LogWebSocket.init()
   LockWebSocket.init()
+  ProcessWebSocket.init()
   apiLogger.info('WebSockets Initialized')
 
   server.on('upgrade', (request, socket, head) => {
@@ -71,6 +81,10 @@ function mountApi(): void {
 
     if (pathName === '/ws/lock-status') {
       LockWebSocket.handleUpgrade(request, socket, head)
+    }
+
+    if (pathName === '/ws/process-info') {
+      ProcessWebSocket.handleUpgrade(request, socket, head)
     }
   })
 }

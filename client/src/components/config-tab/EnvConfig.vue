@@ -165,14 +165,14 @@
 
       <div class="form-footer">
         <input
-          class="button secondary-button"
+          class="button secondary-button fluffy"
           :disabled="shouldDisableSubmit"
           type="button"
           @click.prevent="copyConfig()"
           value="Reset Configuration"
         />
         <input
-          class="button submit-button"
+          class="button submit fluffy"
           :disabled="shouldDisableSubmit"
           type="submit"
           value="Update Configuration"

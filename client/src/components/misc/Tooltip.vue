@@ -119,6 +119,6 @@ export default Vue.extend({
   padding: 0 6px;
   border-radius: 15px;
   color: $accent;
-  background-color: $accent-text;
+  background-color: $text-accent;
 }
 </style>

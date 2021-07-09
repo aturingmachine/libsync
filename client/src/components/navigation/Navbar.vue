@@ -4,7 +4,7 @@
       <nav-drawer v-show="isOpen" />
     </transition>
     <div class="button-container">
-      <button @click.prevent="setDrawerOpen(isOpen)" class="menu-button">
+      <button @click.prevent="setDrawerOpen(isOpen)" class="menu-button icon">
         <transition name="menu-icon">
           <icon :key="menuIcon">{{ menuIcon }}</icon>
         </transition>
@@ -130,10 +130,18 @@ export default Vue.extend({
   text-decoration: none;
 }
 
-.logo:hover,
-.menu-button:hover {
-  transition: text-shadow 0.2s ease-in-out;
-  text-shadow: 2px 2px 2px #42b983, -2px -2px 2px #42b983;
+.menu-button {
+  width: 54px;
+  height: 44px;
+  border-radius: 8px;
+}
+
+#nav a.logo {
+  &:before,
+  &:after {
+    bottom: -5px;
+    height: 5px;
+  }
 }
 
 .links {

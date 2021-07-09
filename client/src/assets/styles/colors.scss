@@ -1,25 +1,79 @@
-$primary: rgb(21, 32, 43);
-$secondary: rgb(48, 68, 87);
-$tertiary: rgb(65, 92, 117);
-$accent: rgb(30, 41, 52);
+/************************************
+*       BASE COLORS
+************************************/
+$white: rgb(232, 230, 227);
 
-$primary-text: rgb(232, 230, 227);
-$accent-text: rgb(66, 185, 131);
-$tertiary-text: rgb(168, 168, 168);
-$placeholder-text: rgb(146, 175, 162);
+$gray-light: rgb(153, 153, 152);
+$gray: rgb(94, 94, 94);
+$gray-disabled: rgb(168, 168, 168);
+$gray-placeholder: rgb(146, 175, 162);
 
-$border-primary: rgb(153, 153, 152);
-$border-highlight: rgb(163, 163, 231);
+$red-soft: rgb(163, 66, 36);
+$red: rgb(243, 55, 55);
+$red-dark: rgb(77, 31, 17);
 
-$button-primary: rgb(36, 163, 106);
-$button-destructive: rgb(163, 66, 36);
-$button-primary-disabled: rgb(27, 90, 62);
-$button-destructive-disabled: rgb(77, 31, 17);
+$green: rgb(30, 136, 88);
+$green-flat: rgb(75, 128, 71);
+$green-dark: rgb(27, 90, 62);
+$green-bright: rgb(66, 185, 131);
+$green-light: rgb(47, 156, 120);
 
-$log-info: rgb(75, 128, 71);
-$log-error: rgb(243, 55, 55);
-$log-debug: rgb(147, 123, 255);
+$blue: rgb(36, 95, 163);
+$blue-light: rgb(147, 123, 255);
+$blue-soft: rgb(163, 163, 231);
+
+$blue-gray: rgb(65, 92, 117);
+$blue-gray-dark: rgb(48, 68, 87);
+$blue-gray-darkest: rgb(21, 32, 43);
+$blue-gray-accent: rgb(30, 41, 52);
+
+/************************************
+*       THEME VARIABLES
+************************************/
+$primary: $blue-gray-darkest;
+$secondary: $blue-gray-dark;
+$tertiary: $blue-gray;
+$accent: $blue-gray-accent;
+
+$text-primary: $white;
+$text-secondary: $blue-gray-darkest;
+$text-tertiary: $gray-disabled;
+$text-accent: $green-bright;
+$text-secondary-accent: rgb(175, 53, 124);
+$text-placeholder: $gray-placeholder;
+
+$border-primary: $gray-light;
+$border-secondary: $gray;
+$border-highlight: $blue-soft;
+
+$button-primary: $green;
+$button-secondary: $tertiary;
+$button-destructive: $red-soft;
+$button-nuetral: $blue;
+$button-primary-disabled: $green-dark;
+$button-destructive-disabled: $red-dark;
+
+$log-info: $green-flat;
+$log-error: $red;
+$log-debug: $blue-light;
 $log-verbose: rgb(148, 104, 138);
 
-$success: rgb(47, 156, 120);
+$success: $green-light;
 $warning: rgb(219, 183, 62);
+
+$pChartCpu: #2f9c78;
+$pChartMem: #d4bf60;
+$pChartCtm: #cf5d93;
+
+/************************************
+*       SPELLING VARIABLES
+************************************/
+$grey-light: $gray-light;
+$grey: $gray;
+$grey-disabled: $gray-disabled;
+$grey-placeholder: $gray-placeholder;
+
+$blue-grey: $blue-gray;
+$blue-grey-dark: $blue-gray-dark;
+$blue-grey-darkest: $blue-gray-darkest;
+$blue-grey-accent: $blue-gray-accent;

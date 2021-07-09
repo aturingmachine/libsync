@@ -1,11 +1,11 @@
 import fs from 'fs/promises'
-import EnvConfig from './env-config/env-config'
+import EnvConfig from './env-config/env-config.js'
 import {
   ConfigurableLibSyncState,
   EnvConfigStruct,
   LibSyncDirConfig,
   LibSyncOpts,
-} from './models'
+} from './models.js'
 
 /**
  * STATE HELPERS

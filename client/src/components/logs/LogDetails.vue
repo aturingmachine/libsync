@@ -37,6 +37,7 @@ export default Vue.extend({
       }
     },
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     generateDetailsFromLog(obj: any, depth = 1): string {
       return Object.entries(obj)
         .map(([key, value]) => {

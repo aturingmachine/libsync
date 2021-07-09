@@ -1,7 +1,7 @@
 import { EnvConfig, RuntimeConfig } from '@/models/config'
 import { ConfigService } from '@/services/config-service'
 import { ActionTree, GetterTree, Module, MutationTree } from 'vuex'
-import { RootMutationTypes, RootState } from '.'
+import { RootState } from '.'
 import { namespaceModule } from './utils/module-helpers'
 
 export enum ConfigStatus {

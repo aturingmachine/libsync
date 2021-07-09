@@ -1,0 +1,138 @@
+@import './colors.scss';
+
+$base-widget-size: 23%;
+
+.dynamic-widget-wrapper {
+  margin: 16px;
+  border: 1px solid $border-primary;
+  background-color: $secondary;
+  border-radius: 15px;
+  padding: 16px;
+  box-sizing: border-box;
+  transition: all 1s ease-in-out;
+
+  &.widget-size-Small {
+    max-width: $base-widget-size;
+    flex-basis: $base-widget-size;
+  }
+
+  &.widget-size-Medium {
+    max-width: calc(#{$base-widget-size} * 2 - 32px);
+    flex-basis: calc(#{$base-widget-size} * 2 - 32px);
+  }
+
+  &.widget-size-Large {
+    max-width: calc(#{$base-widget-size} * 3 - 32px);
+    flex-basis: calc(#{$base-widget-size} * 3 - 32px);
+  }
+
+  &.widget-size-XLarge {
+    max-width: calc(#{$base-widget-size} * 4 - 32px);
+    flex-basis: calc(#{$base-widget-size} * 4 - 32px);
+  }
+}
+
+.widget-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 200px;
+  width: 100%;
+}
+
+.widget-header {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+
+  .widget-options-close-button {
+    width: 24px;
+    height: 24px;
+    padding: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    left: -5%;
+    top: -5%;
+    border-radius: 50%;
+  }
+}
+
+.widget-options-anchor {
+  position: relative;
+}
+
+.widget-options-button {
+  span {
+    border-radius: 25px;
+    transition: all 0.1s ease-in;
+  }
+}
+
+.widget-options-container {
+  position: absolute;
+  background-color: $tertiary;
+  right: 25%;
+  top: -250%;
+  padding: 16px;
+  border-radius: 10px;
+  border: 1px solid $border-primary;
+  max-width: 250px;
+  min-width: 100px;
+  z-index: 11;
+
+  &:hover {
+    color: $text-primary;
+  }
+
+  h4 {
+    margin-top: 4px;
+  }
+}
+
+.widget-update-form {
+  display: flex;
+  flex-direction: column;
+
+  .submit {
+    margin-top: 8px;
+  }
+}
+
+.widget-title {
+  margin: 0;
+  text-align: left;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+}
+
+.widget-body {
+  height: 100%;
+  margin-top: 16px;
+
+  .widget-main-icon {
+    font-size: 64px;
+  }
+}
+
+.widget-body-template {
+  display: flex;
+  justify-content: space-between;
+  height: 100%;
+  align-items: center;
+}
+
+.global-fade-in-enter-active,
+.global-fade-in-leave-active {
+  transition: all 0.3s ease-in-out;
+}
+
+.global-fade-in-enter,
+.global-fade-in-leave-to {
+  opacity: 0;
+}
+
+.process-chart {
+  position: relative;
+}

@@ -1,5 +1,5 @@
-import { getOptsFlags, LibSyncOpts, optsFlags } from './config/models'
-import { LogHelper } from './log-helper'
+import { getOptsFlags, LibSyncOpts, optsFlags } from './config/models.js'
+import { LogHelper } from './log-helper.js'
 
 function getSpacer(): string {
   return ' '.padStart(22, ' ')

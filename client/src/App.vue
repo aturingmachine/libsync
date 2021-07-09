@@ -54,7 +54,8 @@ export default Vue.extend({
 </script>
 
 <style lang="scss">
-@import './assets/styles/main.scss';
+@import './assets/styles/index.scss';
+
 .header {
   display: flex;
   width: 100%;

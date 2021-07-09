@@ -3,7 +3,7 @@ import {
   EnvConfigStruct,
   LibSyncDirConfig,
   LibSyncOpts,
-} from './config/models'
+} from './config/models.js'
 
 type EventHolder<C> = EnvConfigEvents extends C
   ? EnvConfigEvents

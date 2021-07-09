@@ -221,17 +221,19 @@ li {
   .about-tab {
     border: 1px solid $border-primary;
     border-bottom: none;
-    background-color: transparent;
-    color: $primary-text;
+    background-color: $primary;
+    color: $text-primary;
     padding: 4px 8px;
     font-size: 18px;
+    border-radius: 8px 8px 0 0;
 
     &:hover {
       background-color: $tertiary;
+      box-shadow: none;
     }
 
     &.active {
-      color: $accent-text;
+      color: $text-accent;
       background-color: $secondary;
     }
   }

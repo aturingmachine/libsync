@@ -4,6 +4,8 @@ import Home from '../views/Home.vue'
 import Logs from '../views/Logs.vue'
 import Config from '../views/Config.vue'
 import About from '../views/About.vue'
+import Dashboard from '../views/Dashboard.vue'
+import Snapshots from '../views/LibSnapshots.vue'
 
 Vue.use(VueRouter)
 
@@ -27,6 +29,16 @@ const routes: Array<RouteConfig> = [
     path: '/config',
     name: 'Config',
     component: Config,
+  },
+  {
+    path: '/dashboard',
+    name: 'Dashboard',
+    component: Dashboard,
+  },
+  {
+    path: '/snapshots',
+    name: 'Snapshots',
+    component: Snapshots,
   },
 ]
 

@@ -31,9 +31,19 @@ export default Vue.extend({
     return {
       navLinks: [
         {
+          title: 'Dashboard',
+          route: '/dashboard',
+          icon: 'dashboard',
+        },
+        {
           title: 'Logs',
           route: '/logs',
           icon: 'list',
+        },
+        {
+          title: 'Snapshots',
+          route: '/snapshots',
+          icon: 'settings_backup_restore',
         },
         {
           title: 'Configuration',
@@ -146,7 +156,7 @@ export default Vue.extend({
 }
 
 .collapse-button {
-  color: $primary-text;
+  color: $text-primary;
   border-color: $primary;
   background-color: rgb(35, 46, 57);
   position: absolute;
@@ -154,7 +164,7 @@ export default Vue.extend({
   top: 0;
   left: 100%;
   border: none;
-  border-bottom-right-radius: 10px;
+  border-radius: 0 0 10px 0;
   z-index: 3;
 
   &:hover {
