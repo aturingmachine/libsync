@@ -52,6 +52,16 @@ button,
     padding: 16px;
   }
 
+  &.bare {
+    background: none;
+    border: none;
+
+    &:hover {
+      filter: none;
+      box-shadow: none;
+    }
+  }
+
   &.icon {
     background: transparent;
     border: none;

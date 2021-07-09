@@ -1,20 +1,20 @@
 import { PathLike } from 'fs'
-import { DirStruct, TargetName } from '../../../models/dirs'
+import { DirStruct, TargetName } from '../../../models/dirs.js'
 import {
   getLibFromDir,
   parseCliDirs,
   RuntimeConfigvalidator,
-} from '../config-utils'
-import EnvConfig from '../env-config/env-config'
+} from '../config-utils.js'
+import EnvConfig from '../env-config/env-config.js'
 import {
   ConfigurableLibSyncState,
   EnvConfigStruct,
   LibSyncDirConfig,
   LibSyncOpts,
   optsFlags,
-} from '../models'
-import { EventBinder, EventHandler } from '../../event-binder'
-import { Logger, logger } from '../../log-helper'
+} from '../models.js'
+import { EventBinder, EventHandler } from '../../event-binder.js'
+import { Logger, logger } from '../../log-helper.js'
 
 declare type Lockhandler = (lockStatus: boolean) => any
 

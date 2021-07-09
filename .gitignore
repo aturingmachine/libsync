@@ -13,3 +13,5 @@ core/logs/**
 todos
 
 temp
+
+db.json
