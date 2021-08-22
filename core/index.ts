@@ -6,6 +6,7 @@ import EnvConfig from './utils/config/env-config/env-config.js'
 import mountApi from './server/index.js'
 import LibSync from './utils/config/runtime-config/state.js'
 import { LibSyncDatabase } from './db/index.js'
+import { FileSystemHelper } from './utils/filesystem-helper.js'
 
 let mainLogger: Logger
 
@@ -19,6 +20,10 @@ async function runOnce(): Promise<void> {
 
 async function init() {
   await EnvConfig.init()
+
+  FileSystemHelper.checkFSCaseSensitivity()
+
+  console.log('>>>>>>>>>>> CASE SENSITIVE', EnvConfig.caseSensitiveFs)
 
   LibSync.state // TODO this is a fucked up way to init lol
   initLogger()

@@ -31,6 +31,7 @@ class EnvConfig {
   private static _initialConfig: EnvConfigStruct
   private static _config: EnvConfigStruct
   private static eventBinder: EventBinder<EnvConfigStruct>
+  static caseSensitiveFs: boolean
 
   static async init(): Promise<void> {
     if (!this.eventBinder) {

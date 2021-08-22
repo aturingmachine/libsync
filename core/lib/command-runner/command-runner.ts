@@ -1,4 +1,5 @@
 import fs from 'fs/promises'
+import { constants } from 'fs'
 import { Command, Commands } from '../../models/commands.js'
 import { logger, Logger, LogHelper } from '../../utils/log-helper.js'
 import LibSync from '../../utils/config/runtime-config/state.js'
@@ -9,8 +10,16 @@ async function executeMkdirCommands(mkdirCommands: Command[]): Promise<void> {
   for (const mkdirCommand of mkdirCommands) {
     const dir = mkdirCommand.text as string
     cmdRunnerLogger.verbose(`Running mkdir ${dir}`)
-    await fs.mkdir(dir)
-    cmdRunnerLogger.verbose(`mkdir ${dir} complete.`)
+    try {
+      await fs.mkdir(dir)
+      cmdRunnerLogger.verbose(`mkdir ${dir} complete.`)
+    } catch (error) {
+      if (error.code === 'EEXIST') {
+        cmdRunnerLogger.warn(
+          `${dir} already exists, skipping mkdir. This most likely is caused by a case-insensitive filesystem.`
+        )
+      }
+    }
   }
 }
 
@@ -18,8 +27,16 @@ async function executeCopyCommands(copyCommands: Command[]): Promise<void> {
   for (const copyCommand of copyCommands) {
     const [srcPath, destPath] = copyCommand.text as string[]
     cmdRunnerLogger.verbose(`Running Copy ${srcPath} - ${destPath}`)
-    await fs.copyFile(srcPath, destPath)
-    cmdRunnerLogger.verbose(`Copy Done ${srcPath} - ${destPath}`)
+    try {
+      await fs.copyFile(srcPath, destPath, constants.COPYFILE_EXCL)
+      cmdRunnerLogger.verbose(`Copy Done ${srcPath} - ${destPath}`)
+    } catch (error) {
+      if (error.code === 'EEXIST') {
+        cmdRunnerLogger.warn(
+          `${destPath} already exists, skipping copy. This most likely is caused by a case-insensitive filesystem.`
+        )
+      }
+    }
   }
 }
 

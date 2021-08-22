@@ -4,6 +4,7 @@ import path from 'path'
 import { DirStruct, TargetName } from '../../models/dirs.js'
 import { Logger, logger, LogHelper } from '../../utils/log-helper.js'
 import LibSync from '../../utils/config/runtime-config/state.js'
+import EnvConfig from '../../utils/config/env-config/env-config.js'
 
 let dirMapLogger: Logger
 
@@ -23,11 +24,17 @@ async function recursiveDirTraverse(
   let currentRelativePath = ''
   let hasSetRoot = false
 
-  newPath.split('/').forEach((x, index) => {
-    const libName =
+  newPath.split('/').forEach((pathPiece, index) => {
+    const normalizedPathPiece = EnvConfig.caseSensitiveFs
+      ? pathPiece.toUpperCase()
+      : pathPiece
+    const baseLibname =
       targetTree === LibSync.from.name ? LibSync.from.lib : LibSync.to.lib
+    const libName = EnvConfig.caseSensitiveFs
+      ? baseLibname.toUpperCase()
+      : baseLibname
 
-    if (x !== libName && !hasSetRoot) {
+    if (pathPiece !== libName && !hasSetRoot) {
       return
     }
     hasSetRoot = true
@@ -36,16 +43,16 @@ async function recursiveDirTraverse(
       targetMem = targetTree === TargetName.Source ? LibSync.src : LibSync.dest
     }
 
-    const existing = targetMem[x]
+    const existing = targetMem[normalizedPathPiece]
     if (existing) {
       targetMem = existing.contents
     } else {
-      targetMem[x] = {
+      targetMem[normalizedPathPiece] = {
         fullRelativePath: currentRelativePath,
         isDir: wrappedEntry.isDirectory(),
         contents: {},
       }
-      targetMem = targetMem[x].contents
+      targetMem = targetMem[normalizedPathPiece].contents
     }
   })
 
